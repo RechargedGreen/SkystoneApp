@@ -5,4 +5,6 @@ data class Angle(var rad: Double, var deg: Double) {
         fun createDeg(deg: Double) = Angle(Math.toRadians(deg), deg)
         fun createRad(rad: Double) = Angle(rad, Math.toRadians(rad))
     }
+
+    fun wrap() = createRad(rad)
 }

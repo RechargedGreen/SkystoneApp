@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.movement
 
-class GoToPosition(val x: Double, val y: Double, degrees: Double) : PathSegment{
+class GoToPosition(val x: Double, val y: Double, degrees: Double) : PathSegment {
     val targetAngle = Angle.createDeg(degrees)
 
     override fun trigger() {

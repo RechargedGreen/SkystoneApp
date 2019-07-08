@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.movement
 
+import org.firstinspires.ftc.teamcode.field.Geometry
+import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.odometry.Odometry
 
 object DriveMovement {
@@ -9,11 +11,17 @@ object DriveMovement {
 
     fun followSetPath() = path.follow()
 
-    // don't set world variables directly in programs
     var world_x = 0.0
     var world_y = 0.0
 
     var world_angle = Angle(0.0, 0.0)
+        private set
+
+    var world_angle_unwrapped = Angle(0.0, 0.0)
+        private set(value) {
+            world_angle = value.wrap()
+            field = value
+        }
 
     var movement_y = 0.0
     var movement_x = 0.0
@@ -26,6 +34,23 @@ object DriveMovement {
     }
 
     fun setPosition(x: Double, y: Double, angle_rad: Double) {
-        odometer.setPosition(x, y, angle_rad)
+        world_x = x
+        world_y = x
+        odometer.setAngleRad(angle_rad)
+    }
+
+    fun setAngleRad(angle_rad: Double) = odometer.setAngleRad(angle_rad)
+
+    fun updatePos(baseDelta: Pose, finalAngle: Angle) {
+        val circleArcDelta = Geometry.circleArcRelativeDelta(Pose(
+                baseDelta.point.x,
+                baseDelta.point.x,
+                baseDelta.heading
+        ))
+
+        val finalDelta = Geometry.pointDelta(circleArcDelta, world_angle.rad)
+        world_x += finalDelta.x
+        world_y += finalDelta.y
+        world_angle_unwrapped = finalAngle
     }
 }
