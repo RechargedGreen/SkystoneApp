@@ -53,8 +53,11 @@ class mp1dprotoype : LinearOpMode() {
 
         val turnController = PIDFController(turnPID, 0.0, 0.0, 0.0, { 0.0 })
 
-        while (!isStopRequested && Clock.seconds - startTime <= profile.duration()) {
-            val currentMotionState = profile[Clock.seconds - startTime]
+        while (!isStopRequested) {
+            val time = Clock.seconds - startTime
+            if (time > profile.duration())
+                break
+            val currentMotionState = profile[time]
             feedbackController.targetPosition = currentMotionState.x
             val currentPosition = arrayOf(lf.currentPosition, lb.currentPosition, rf.currentPosition, rb.currentPosition).average() / ticksPerInch
             val forwardSpeed = feedbackController.update(currentPosition, currentMotionState.v, currentMotionState.a)
@@ -70,9 +73,9 @@ class mp1dprotoype : LinearOpMode() {
         val left = forward + turn
         val right = forward - turn
         val max = Collections.max(arrayListOf(1.0, left.absoluteValue, right.absoluteValue))
-        lf.power = left.absoluteValue
-        lb.power = left.absoluteValue
-        rf.power = left.absoluteValue
-        rb.power = left.absoluteValue
+        lf.power = left / max
+        lb.power = left / max
+        rf.power = right / max
+        rb.power = right / max
     }
 }
