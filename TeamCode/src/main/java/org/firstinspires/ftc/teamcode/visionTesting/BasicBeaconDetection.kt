@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.visionTesting
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.ryanVision.TrackerShortcut
 import org.firstinspires.ftc.teamcode.ryanVision.VuforiaCamera
 import org.opencv.core.Core
 import org.opencv.core.Mat
 
+@TeleOp
 class BasicBeaconDetectionTest : LinearOpMode() {
     override fun runOpMode() {
         val camera = VuforiaCamera()
@@ -28,6 +30,6 @@ class BasicBeaconDetectionTracker : TrackerShortcut() {
     var lastColor = Color.RED
     override fun processFrame(frame: Mat, timestamp: Double) {
         val total = Core.sumElems(frame).`val`
-        lastColor = if (total[0] < total[2]) Color.RED else Color.BLUE
+        lastColor = if (total[0] > total[2]) Color.RED else Color.BLUE
     }
 }
