@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.leaguebot
 
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.teleop.LeagueTeleOp
 import org.firstinspires.ftc.teamcode.lib.BaseBot
 import org.firstinspires.ftc.teamcode.sharedhardware.SharedDrive
 
@@ -14,4 +15,6 @@ object LeagueBot : BaseBot {
         LeagueOdometry.update()
         drive.update()
     }
+
+    override val teleopName: String = LeagueTeleOp::class.java.name
 }

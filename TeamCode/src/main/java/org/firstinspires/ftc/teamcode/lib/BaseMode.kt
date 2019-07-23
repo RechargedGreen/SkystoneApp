@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.lib
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.util.AutomaticTeleopInit
 import org.firstinspires.ftc.teamcode.util.ChangeValidator
 
 abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : LinearOpMode() {
@@ -68,6 +69,8 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : L
                         changedStage = stateChangeValidator.validate()
                         onMainLoop()
                     } else {
+                        if (isAutonomous)
+                            AutomaticTeleopInit.transitionOnStop(this, bot.teleopName)
                         onStart()
                         hasStarted = true
                     }

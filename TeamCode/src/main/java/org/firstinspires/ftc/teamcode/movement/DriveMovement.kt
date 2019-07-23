@@ -53,4 +53,14 @@ object DriveMovement {
         world_y += finalDelta.y
         world_angle_unwrapped = finalAngle
     }
+
+    fun moveRobotCentric(x: Double, y: Double, turn: Double) {
+        movement_x = x
+        movement_y = y
+        movement_turn = turn
+    }
+
+    fun moveFieldCentric(x: Double, y: Double, turn: Double) {
+
+    }
 }

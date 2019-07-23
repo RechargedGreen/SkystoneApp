@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.leaguebot
 
+import com.acmerobotics.dashboard.config.Config
 import org.firstinspires.ftc.teamcode.odometry.ThreeWheel
 import org.firstinspires.ftc.teamcode.odometry.ThreeWheelProvider
 
+@Config
 object LeagueOdometry : ThreeWheelProvider {
     @JvmField
     var turnTrackWidth = 1.0
@@ -21,5 +23,5 @@ object LeagueOdometry : ThreeWheelProvider {
     override fun rightTicksPerInch(): Double = rightTicksPerInch
     override fun auxTicksPerInch(): Double = auxTicksPerInch
 
-    fun update() = ThreeWheel.update(0, 0, 0)
+    fun update() = ThreeWheel.update(0, 0, 0, this)
 }

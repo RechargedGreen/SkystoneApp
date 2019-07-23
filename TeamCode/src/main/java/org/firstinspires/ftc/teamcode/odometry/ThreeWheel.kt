@@ -5,8 +5,6 @@ import org.firstinspires.ftc.teamcode.movement.Angle
 import org.firstinspires.ftc.teamcode.movement.DriveMovement
 
 object ThreeWheel : Odometry {
-    lateinit var provider: ThreeWheelProvider
-
     // last encoder positions
     private var last_l_encoder = 0
     private var last_r_encoder = 0
@@ -17,7 +15,7 @@ object ThreeWheel : Odometry {
     private var rightInitialReading = 0
     private var lastResetAngle = 0.0
 
-    fun update(curr_l_encoder: Int, curr_r_encoder: Int, curr_a_encoder: Int) {
+    fun update(curr_l_encoder: Int, curr_r_encoder: Int, curr_a_encoder: Int, provider: ThreeWheelProvider) {
         val leftTicksPerInch = provider.leftTicksPerInch()
         val rightTicksPerInch = provider.rightTicksPerInch()
         val auxTicksPerInch = provider.auxTicksPerInch()
