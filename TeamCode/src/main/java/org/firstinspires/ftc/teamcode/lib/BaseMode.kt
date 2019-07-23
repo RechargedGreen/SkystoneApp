@@ -1,8 +1,29 @@
 package org.firstinspires.ftc.teamcode.lib
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.util.ChangeValidator
 
 abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : LinearOpMode() {
+    var stage = 0
+        private set
+    var changedStage = true
+        private set
+    private val stateChangeValidator = ChangeValidator(true)
+
+    fun nextStage(nextStage: Int = stage + 1) {
+        stage = nextStage
+        stateChangeValidator.trigger()
+        stageTimer.reset()
+    }
+
+    fun timeoutStage(seconds: Double, nextStage: Int = stage + 1) {
+        if (stageTimer.seconds() > seconds)
+            nextStage(nextStage)
+    }
+
+    val stageTimer = ElapsedTime()
+
     lateinit var driver: Controller
     lateinit var operator: Controller
 
@@ -44,6 +65,7 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : L
                 }
                 Status.PLAY -> {
                     if (hasStarted) {
+                        changedStage = stateChangeValidator.validate()
                         onMainLoop()
                     } else {
                         onStart()
