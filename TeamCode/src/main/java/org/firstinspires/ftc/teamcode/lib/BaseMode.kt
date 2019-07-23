@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.lib
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.robotcore.internal.opmode.OpModeManagerImpl
 import org.firstinspires.ftc.teamcode.util.AutomaticTeleopInit
 import org.firstinspires.ftc.teamcode.util.ChangeValidator
 
@@ -13,9 +14,11 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : L
     private val stateChangeValidator = ChangeValidator(true)
 
     fun nextStage(nextStage: Int = stage + 1) {
+        if (stage != nextStage) {
+            stateChangeValidator.trigger()
+            stageTimer.reset()
+        }
         stage = nextStage
-        stateChangeValidator.trigger()
-        stageTimer.reset()
     }
 
     fun timeoutStage(seconds: Double, nextStage: Int = stage + 1) {
@@ -24,6 +27,7 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : L
     }
 
     val stageTimer = ElapsedTime()
+    private val runTimeTimer = ElapsedTime()
 
     lateinit var driver: Controller
     lateinit var operator: Controller
@@ -71,6 +75,8 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : L
                     } else {
                         if (isAutonomous)
                             AutomaticTeleopInit.transitionOnStop(this, bot.teleopName)
+                        stageTimer.reset()
+                        runTimeTimer.reset()
                         onStart()
                         hasStarted = true
                     }
@@ -80,10 +86,17 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : L
                 }
             }
             bot.update()
+            combinedPacket.update()
         }
 
         onStop()
     }
+
+    val secondsTillEnd: Double
+        get() = (if (isAutonomous) 30.0 else 120.0) - secondsIntoMode
+    val secondsIntoMode: Double
+        get() = runTimeTimer.seconds()
+
 
     open fun onInit() {}
     open fun onInitLoop() {}
