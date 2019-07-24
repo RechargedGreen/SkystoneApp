@@ -1,16 +1,21 @@
 package org.firstinspires.ftc.teamcode.field
 
+import kotlin.math.atan2
 import kotlin.math.cos
+import kotlin.math.hypot
 import kotlin.math.sin
 
 data class Point(
-        val x: Double,
-        val y: Double
-)
+        @JvmField val x: Double,
+        @JvmField val y: Double
+) {
+    fun distanceTo(other: Point): Double = hypot(x - other.x, y - other.y)
+    fun angleTo(other: Point): Double = atan2(other.y - y, other.x - x)
+}
 
 data class Pose(
-        val point: Point,
-        val heading: Double
+        @JvmField val point: Point,
+        @JvmField val heading: Double
 ) {
     constructor(x: Double, y: Double, heading: Double) : this(Point(x, y), heading)
 }
@@ -47,3 +52,5 @@ object Geometry {
         )
     }
 }
+
+data class Line(var p1: Point, var p2: Point)
