@@ -18,12 +18,14 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : L
         stage = nextStage
     }
 
+    fun isTimedOut(seconds: Double) = stageTimer.seconds() > seconds
+
     fun forceStageChange() {
         forceStageChange()
     }
 
     fun timeoutStage(seconds: Double, nextStage: Int = stage + 1) {
-        if (stageTimer.seconds() > seconds)
+        if (isTimedOut(seconds))
             nextStage(nextStage)
     }
 
