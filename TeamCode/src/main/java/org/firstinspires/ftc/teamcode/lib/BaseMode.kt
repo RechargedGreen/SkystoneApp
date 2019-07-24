@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.lib
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.util.ElapsedTime
-import org.firstinspires.ftc.robotcore.internal.opmode.OpModeManagerImpl
 import org.firstinspires.ftc.teamcode.util.AutomaticTeleopInit
 import org.firstinspires.ftc.teamcode.util.ChangeValidator
 
@@ -14,11 +13,13 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : L
     private val stateChangeValidator = ChangeValidator(true)
 
     fun nextStage(nextStage: Int = stage + 1) {
-        if (stage != nextStage) {
-            stateChangeValidator.trigger()
-            stageTimer.reset()
-        }
+        if (stage != nextStage)
+            forceStageChange()
         stage = nextStage
+    }
+
+    fun forceStageChange() {
+        forceStageChange()
     }
 
     fun timeoutStage(seconds: Double, nextStage: Int = stage + 1) {
