@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.visionTesting
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.ryanVision.TrackerShortcut
-import org.firstinspires.ftc.teamcode.ryanVision.VuforiaCamera
-import org.opencv.core.Core
-import org.opencv.core.Mat
+import com.qualcomm.robotcore.eventloop.opmode.*
+import org.firstinspires.ftc.teamcode.ryanVision.*
+import org.opencv.core.*
 
 @TeleOp
 class BasicBeaconDetectionTest : LinearOpMode() {

@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.leaguebot
 
-import com.acmerobotics.dashboard.config.Config
-import org.firstinspires.ftc.teamcode.odometry.ThreeWheel
-import org.firstinspires.ftc.teamcode.odometry.ThreeWheelProvider
+import com.acmerobotics.dashboard.config.*
+import org.firstinspires.ftc.teamcode.odometry.*
 
 @Config
 object LeagueOdometry : ThreeWheelProvider {

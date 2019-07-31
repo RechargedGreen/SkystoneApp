@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.ryanVision;
 
-import android.view.SurfaceView;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.view.*;
+import android.widget.*;
 
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.JavaCameraView;
-import org.opencv.core.Mat;
+import org.firstinspires.ftc.robotcore.external.navigation.*;
+import org.opencv.android.*;
+import org.opencv.core.*;
 
 public class OpenCVCamera extends VisionCamera implements CameraBridgeViewBase.CvCameraViewListener2 {
 	private ViewGroup      cameraMonitorView;

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.movement
 
-import org.firstinspires.ftc.teamcode.util.Clock
-import kotlin.math.absoluteValue
+import org.firstinspires.ftc.teamcode.util.*
+import kotlin.math.*
 
 object Speedometer {
     private var lastUpdateTime = 0.0

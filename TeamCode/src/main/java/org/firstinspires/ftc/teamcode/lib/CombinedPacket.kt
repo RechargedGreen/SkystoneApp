@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.lib
 
-import com.acmerobotics.dashboard.FtcDashboard
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket
-import org.firstinspires.ftc.robotcore.external.Telemetry
+import com.acmerobotics.dashboard.*
+import com.acmerobotics.dashboard.telemetry.*
+import org.firstinspires.ftc.robotcore.external.*
 
 class CombinedPacket(val telemetry: Telemetry) {
     var packet = TelemetryPacket()

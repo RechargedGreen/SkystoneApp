@@ -1,24 +1,20 @@
 package org.firstinspires.ftc.teamcode.ryanVision;
 
-import android.app.Activity;
-import android.content.Context;
-import android.support.annotation.IdRes;
-import android.util.Log;
+import android.app.*;
+import android.content.*;
+import android.support.annotation.*;
+import android.util.*;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerNotifier;
+import com.qualcomm.robotcore.eventloop.opmode.*;
 
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.internal.opmode.OpModeManagerImpl;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Mat;
+import org.firstinspires.ftc.robotcore.external.navigation.*;
+import org.firstinspires.ftc.robotcore.internal.opmode.*;
+import org.firstinspires.ftc.robotcore.internal.system.*;
+import org.opencv.android.*;
+import org.opencv.core.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.*;
+import java.util.concurrent.*;
 
 public abstract class VisionCamera implements OpModeManagerNotifier.Notifications {
 	public static final String TAG = "VisionCamera";

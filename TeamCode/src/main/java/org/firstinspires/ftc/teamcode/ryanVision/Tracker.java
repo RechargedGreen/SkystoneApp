@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.ryanVision;
 
-import org.jetbrains.annotations.NotNull;
-import org.opencv.core.Mat;
+import org.jetbrains.annotations.*;
+import org.opencv.core.*;
 
-import java.util.LinkedHashMap;
+import java.util.*;
 
 public abstract class Tracker {
 	private boolean                    enabled       = true;

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.lib
 
-import com.qualcomm.robotcore.hardware.Gamepad
+import com.qualcomm.robotcore.hardware.*
 
 class Controller(private val gamepad: Gamepad) {
     val leftY: Double

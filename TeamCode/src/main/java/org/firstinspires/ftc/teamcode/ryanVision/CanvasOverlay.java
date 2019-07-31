@@ -1,17 +1,12 @@
 package org.firstinspires.ftc.teamcode.ryanVision;
 
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
+import android.graphics.*;
 
-import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
+import org.opencv.core.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class CanvasOverlay implements Overlay {
 	private static final Map<TextAlign, Paint.Align> PAINT_ALIGN_MAP = new HashMap<>();

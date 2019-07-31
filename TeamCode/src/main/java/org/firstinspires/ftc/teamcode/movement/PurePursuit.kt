@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.movement
 
-import org.firstinspires.ftc.teamcode.field.Point
+import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_turn
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_x
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_y
-import org.firstinspires.ftc.teamcode.util.MathUtil
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_point
+import org.firstinspires.ftc.teamcode.util.*
 import kotlin.math.*
 
 object PurePursuit {
@@ -29,6 +30,11 @@ object PurePursuit {
     var state_movement_turn_prof = ProfileStates.GUNNING
 
 
+    fun initAll() {
+        initForMove()
+        initCurve()
+    }
+
     enum class ProfileStates {
         GUNNING,
         SLIPPING,
@@ -48,8 +54,49 @@ object PurePursuit {
     }
 
     fun followCurve(builder: Builder): Boolean = followCurve(builder.list)
-    fun followCurve(curvePoints: ArrayList<CurvePoint>): Boolean {
-        return true
+
+    var followCurveIndex = 0
+    fun initCurve() {
+        followCurveIndex = 0
+    }
+
+    fun followCurve(allPoints: ArrayList<CurvePoint>): Boolean {
+        // todo add visual for path
+
+        val pathExtended = allPoints.clone() as ArrayList<CurvePoint>
+
+        val clippedToPath = clipToPath(allPoints, world_point)
+        val currFollowIndex = clippedToPath.index + 1
+
+        val followMe =
+
+                return true
+    }
+
+    fun clipToPath(pathPoints: ArrayList<CurvePoint>, point: Point): PointWithIndex {
+        var closestClippedDistance = Double.NaN
+        var closestClippedIndex = 0
+        var clippedToLine = Point(0.0, 0.0)
+
+        for (i in 0 until pathPoints.size - 1) {
+            val firstPoint = pathPoints[i]
+            val secondPoint = pathPoints[i + 1]
+
+            val currLine = Line(firstPoint.point, secondPoint.point)
+            val currClippedToLine = currLine.castFromPoint(point)
+            val distanceToClipped = point.distanceTo(currClippedToLine)
+
+            if (closestClippedDistance.isNaN() || distanceToClipped < closestClippedDistance) {
+                closestClippedDistance = distanceToClipped
+                closestClippedIndex = i
+                clippedToLine = currClippedToLine
+            }
+        }
+        return PointWithIndex(clippedToLine, closestClippedIndex)
+    }
+
+    fun getFollowPointPath() {
+
     }
 
     // todo finish with different states

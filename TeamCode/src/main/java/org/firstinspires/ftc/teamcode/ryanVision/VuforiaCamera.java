@@ -1,25 +1,17 @@
 package org.firstinspires.ftc.teamcode.ryanVision;
 
-import android.app.Activity;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.app.*;
+import android.widget.*;
 
-import com.qualcomm.robotcore.util.ThreadPool;
-import com.vuforia.CameraCalibration;
-import com.vuforia.CameraDevice;
-import com.vuforia.Image;
-import com.vuforia.PIXEL_FORMAT;
-import com.vuforia.Vuforia;
+import com.qualcomm.robotcore.util.*;
+import com.vuforia.*;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
+import org.firstinspires.ftc.robotcore.external.*;
+import org.firstinspires.ftc.robotcore.external.navigation.*;
+import org.opencv.core.*;
 
-import java.nio.ByteBuffer;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
+import java.nio.*;
+import java.util.concurrent.*;
 
 public class VuforiaCamera extends VisionCamera {
 	public static final String TAG = "VuforiaCamera";

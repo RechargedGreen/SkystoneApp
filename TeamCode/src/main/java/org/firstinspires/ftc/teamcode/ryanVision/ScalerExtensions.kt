@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.ryanVision
 
-import org.opencv.core.Scalar
+import org.opencv.core.*
 
 object RGBScalers {
     val WHITE: Scalar

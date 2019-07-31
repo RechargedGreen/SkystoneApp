@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode
 
-import org.firstinspires.ftc.teamcode.field.Point
-import org.firstinspires.ftc.teamcode.leaguebot.LeagueBotAutoBase
-import org.firstinspires.ftc.teamcode.movement.PurePursuit
+import org.firstinspires.ftc.teamcode.field.*
+import org.firstinspires.ftc.teamcode.leaguebot.*
+import org.firstinspires.ftc.teamcode.movement.*
 
 class PurePursuitTest : LeagueBotAutoBase() {
     enum class Stage {

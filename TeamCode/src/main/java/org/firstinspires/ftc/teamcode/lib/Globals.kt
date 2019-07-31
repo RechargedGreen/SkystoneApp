@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.lib
 
-import com.acmerobotics.dashboard.config.Config
-import com.qualcomm.robotcore.hardware.HardwareMap
+import com.acmerobotics.dashboard.config.*
+import com.qualcomm.robotcore.hardware.*
 
 @Config
 object Globals {

@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.lib
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.util.ElapsedTime
-import org.firstinspires.ftc.teamcode.util.AutomaticTeleopInit
-import org.firstinspires.ftc.teamcode.util.ChangeValidator
+import com.acmerobotics.dashboard.canvas.*
+import com.qualcomm.robotcore.eventloop.opmode.*
+import com.qualcomm.robotcore.util.*
+import org.firstinspires.ftc.teamcode.util.*
 
 abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : LinearOpMode() {
     var stage = 0
@@ -11,6 +11,9 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : L
     var changedStage = true
         private set
     private val stateChangeValidator = ChangeValidator(true)
+
+    val fieldOverlay: Canvas
+        get() = combinedPacket.packet.fieldOverlay()
 
     fun nextStage(nextStage: Int = stage + 1) {
         if (stage != nextStage)

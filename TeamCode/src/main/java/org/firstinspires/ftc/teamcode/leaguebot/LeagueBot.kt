@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.leaguebot
 
-import org.firstinspires.ftc.teamcode.leaguebot.opmode.teleop.LeagueTeleOp
-import org.firstinspires.ftc.teamcode.lib.BaseBot
-import org.firstinspires.ftc.teamcode.sharedhardware.SharedDrive
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.teleop.*
+import org.firstinspires.ftc.teamcode.lib.*
+import org.firstinspires.ftc.teamcode.sharedhardware.*
 
 object LeagueBot : BaseBot {
     lateinit var drive: SharedDrive

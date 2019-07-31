@@ -1,17 +1,15 @@
 package org.firstinspires.ftc.teamcode
 
-import com.acmerobotics.dashboard.config.Config
+import com.acmerobotics.dashboard.config.*
+import com.acmerobotics.roadrunner.control.*
 import com.acmerobotics.roadrunner.control.PIDCoefficients
-import com.acmerobotics.roadrunner.control.PIDFController
-import com.acmerobotics.roadrunner.profile.MotionProfileGenerator
-import com.acmerobotics.roadrunner.profile.MotionState
-import com.qualcomm.hardware.bosch.BNO055IMU
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.hardware.DcMotor
-import org.firstinspires.ftc.teamcode.util.Clock
-import org.firstinspires.ftc.teamcode.util.MathUtil
+import com.acmerobotics.roadrunner.profile.*
+import com.qualcomm.hardware.bosch.*
+import com.qualcomm.robotcore.eventloop.opmode.*
+import com.qualcomm.robotcore.hardware.*
+import org.firstinspires.ftc.teamcode.util.*
 import java.util.*
-import kotlin.math.absoluteValue
+import kotlin.math.*
 
 @Config
 class mp1dprotoype : LinearOpMode() {

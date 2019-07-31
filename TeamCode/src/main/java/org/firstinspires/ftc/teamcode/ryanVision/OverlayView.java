@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode.ryanVision;
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.view.View;
+import android.content.*;
+import android.graphics.*;
+import android.view.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class OverlayView extends View {
 	private List<Tracker> trackers;

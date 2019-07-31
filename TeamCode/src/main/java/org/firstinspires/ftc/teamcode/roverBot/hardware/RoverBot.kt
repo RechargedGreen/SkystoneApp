@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.roverBot.hardware
 
-import org.firstinspires.ftc.teamcode.lib.BaseBot
+import org.firstinspires.ftc.teamcode.lib.*
 
 object RoverBot : BaseBot {
     lateinit var drive: RoverDrive

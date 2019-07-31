@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.util
 
-import android.util.Log
-import com.qualcomm.robotcore.eventloop.opmode.OpMode
-import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity
-import org.firstinspires.ftc.robotcore.internal.opmode.OpModeManagerImpl
+import android.util.*
+import com.qualcomm.robotcore.eventloop.opmode.*
+import org.firstinspires.ftc.robotcontroller.internal.*
+import org.firstinspires.ftc.robotcore.internal.opmode.*
 
 object AutomaticTeleopInit : Thread() {
     init {

@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.ryanVision
 
-import org.opencv.core.Mat
-import org.opencv.core.Point
-import org.opencv.core.Rect
+import org.opencv.core.*
 
 fun Mat.setRGBToBlack() = setTo(RGBScalers.BLACK)
 

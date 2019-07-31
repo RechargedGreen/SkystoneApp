@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.ryanVision;
 
 
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
+import org.opencv.core.*;
 
-import java.util.Locale;
+import java.util.*;
 
 public class FpsTracker extends Tracker {
 	private VisionExponentialSmoother smoother;

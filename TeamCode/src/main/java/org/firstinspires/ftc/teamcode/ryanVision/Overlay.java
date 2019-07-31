@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode.ryanVision;
 
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
+import org.opencv.core.*;
 
 public interface Overlay {
 	enum TextAlign {

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.leaguebot
 
-import org.firstinspires.ftc.teamcode.lib.BaseMode
+import org.firstinspires.ftc.teamcode.lib.*
 
 abstract class LeagueModeBase(isAutonomous: Boolean) : BaseMode(LeagueBot, isAutonomous)
 abstract class LeagueBotAutoBase : LeagueModeBase(true)

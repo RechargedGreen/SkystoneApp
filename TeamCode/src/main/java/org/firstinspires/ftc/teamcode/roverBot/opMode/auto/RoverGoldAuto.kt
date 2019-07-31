@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.roverBot.opMode.auto
 
-import org.firstinspires.ftc.teamcode.roverBot.hardware.RoverBot
-import org.firstinspires.ftc.teamcode.roverBot.opMode.RoverAutoBase
+import org.firstinspires.ftc.teamcode.roverBot.hardware.*
+import org.firstinspires.ftc.teamcode.roverBot.opMode.*
 
 class RoverGoldAuto : RoverAutoBase() {
     enum class MyStages {

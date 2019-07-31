@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.ryanVision
 
-import org.opencv.core.Mat
+import org.opencv.core.*
 
 abstract class TrackerShortcut : Tracker() {
     override fun init(camera: VisionCamera) {}

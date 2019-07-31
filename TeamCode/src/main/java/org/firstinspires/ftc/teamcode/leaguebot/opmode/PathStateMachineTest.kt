@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.leaguebot.LeagueBotAutoBase
-import org.firstinspires.ftc.teamcode.movement.DriveMovement
-import org.firstinspires.ftc.teamcode.movement.GoToPosition
-import org.firstinspires.ftc.teamcode.movement.Path
+import com.qualcomm.robotcore.eventloop.opmode.*
+import org.firstinspires.ftc.teamcode.leaguebot.*
+import org.firstinspires.ftc.teamcode.movement.*
 
 @TeleOp
 class PathStateMachineTest : LeagueBotAutoBase() {
