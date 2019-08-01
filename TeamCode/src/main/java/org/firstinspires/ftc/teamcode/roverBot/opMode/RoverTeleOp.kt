@@ -25,10 +25,14 @@ class RoverTeleOp : RoverTeleOpBase() {
         if (callFeed)
             RoverBot.autoFeed.callNormalFeed()
 
+        if (hangMode)
+            RoverBot.autoFeed.abortFeed()
+
         if (RoverBot.autoFeed.doneWithAutoFeed()) {
             if (intake) {
                 RoverBot.intake.collect()
                 RoverBot.flip.flipDown()
+                RoverBot.autoFeed.callIfLoaded()
             } else {
                 RoverBot.intake.stop()
                 RoverBot.flip.flipUp()

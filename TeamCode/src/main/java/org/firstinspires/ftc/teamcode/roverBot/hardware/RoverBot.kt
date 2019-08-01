@@ -10,6 +10,7 @@ object RoverBot : BaseBot {
     lateinit var extension: RoverExtension
     lateinit var intake: RoverIntake
     lateinit var flip: RoverIntakeFlip
+    lateinit var intakeLoadingSensors: RoverIntakeSensors
 
     override fun setup() {
         drive = RoverDrive()
@@ -18,11 +19,17 @@ object RoverBot : BaseBot {
         dumper = RoverDumper()
         extension = RoverExtension()
         intake = RoverIntake()
+        intakeLoadingSensors = RoverIntakeSensors()
     }
 
     override fun update() {
         RoverMovement.updateGyro()
         drive.applyMovement()
+
+        dumper.update()
+        intakeLoadingSensors.update()
+
+        autoFeed.update()
     }
 
     override val teleopName: String = ""

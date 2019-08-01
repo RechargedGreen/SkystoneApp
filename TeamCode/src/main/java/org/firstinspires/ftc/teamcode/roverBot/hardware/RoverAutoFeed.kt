@@ -9,6 +9,7 @@ class RoverAutoFeed {
         exchanging,
         lifting,
         dumping,
+        lowering,
 
         disabled
     }
@@ -34,7 +35,6 @@ class RoverAutoFeed {
         when (state) {
             MyStates.waiting             -> {
                 RoverBot.dumper.setDumping(false)
-                RoverBot.lift.lower()
             }
             MyStates.retractingExtension -> {
                 RoverBot.dumper.setDumping(false)
@@ -71,6 +71,12 @@ class RoverAutoFeed {
                 RoverBot.intake.stop()
 
                 if (stateTimer.seconds() > currentFeedType.dumpDelay())
+                    nextStage(MyStates.lowering)
+            }
+            MyStates.lowering            -> {
+                RoverBot.dumper.setDumping(false)
+                RoverBot.lift.lower()
+                if (RoverBot.lift.isDown())
                     nextStage(MyStates.waiting)
             }
         }
@@ -104,11 +110,17 @@ class RoverAutoFeed {
             nextStage(MyStates.waiting)
     }
 
+    fun callIfLoaded() {
+        if (state == MyStates.waiting)
+            if (RoverBot.intakeLoadingSensors.isLoaded())
+                callNormalFeed()
+    }
+
     fun nextStage(newState: MyStates) {
         state = newState
         changedState = true
         stateTimer.reset()
     }
 
-    fun doneWithAutoFeed() = state == MyStates.waiting || state == MyStates.disabled
+    fun doneWithAutoFeed() = state == MyStates.waiting || state == MyStates.disabled || state == MyStates.lowering
 }
