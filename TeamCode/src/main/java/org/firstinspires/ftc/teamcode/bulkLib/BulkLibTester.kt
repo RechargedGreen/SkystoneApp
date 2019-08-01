@@ -19,6 +19,9 @@ class BulkLibTester : LinearOpMode() {
         val encoder2 = Encoder(hub1, 0, S4T.CPR_1000)
         val encoder3 = Encoder(hub1, 0, S4T.CPR_1000)
 
+        val touch = RevHubTouchSensor("touch")
+        val pot = RevHubPot("pot")
+
         waitForStart()
 
         while (opModeIsActive()) {
@@ -28,6 +31,9 @@ class BulkLibTester : LinearOpMode() {
             telemetry.addData("ticks", encoder1.ticks)
             telemetry.addData("rotations", encoder1.rotations)
             telemetry.addData("radians", encoder1.radians)
+            telemetry.addData("pressed", touch.isPressed)
+            telemetry.addData("pot degrees", pot.degrees)
+            telemetry.update()
             val v = hub1.cachedInput.getAnalogInput(0) / 1000.0
         }
     }

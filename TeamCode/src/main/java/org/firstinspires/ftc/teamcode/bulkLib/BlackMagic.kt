@@ -17,4 +17,28 @@ object BlackMagic {
         moduleField.isAccessible = true
         return moduleField[controller] as LynxModule
     }
+
+    fun controllerFromAnalogInput(input: AnalogInput): AnalogInputController {
+        val controllerField = AnalogInput::class.java.getDeclaredField("controller")
+        controllerField.isAccessible = true
+        return controllerField[input] as AnalogInputController
+    }
+
+    fun channelFromAnalogInput(input: AnalogInput): Int {
+        val channelField = AnalogInput::class.java.getDeclaredField("channel")
+        channelField.isAccessible = true
+        return channelField[input] as Int
+    }
+
+    fun controllerFromDigitalChannel(channel: DigitalChannel): DigitalChannelController {
+        val controllerField = DigitalChannel::class.java.getDeclaredField("controller")
+        controllerField.isAccessible = true
+        return controllerField[channel] as DigitalChannelController
+    }
+
+    fun channelFromDigitalChannel(channel: DigitalChannel): Int {
+        val channelField = DigitalChannel::class.java.getDeclaredField("channel")
+        channelField.isAccessible = true
+        return channelField[channel] as Int
+    }
 }

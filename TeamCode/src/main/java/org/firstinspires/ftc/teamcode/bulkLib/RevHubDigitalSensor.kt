@@ -3,7 +3,10 @@ package org.firstinspires.ftc.teamcode.bulkLib
 import com.qualcomm.hardware.lynx.*
 import com.qualcomm.robotcore.hardware.*
 
-class RevHubDigitalSensor(controller: DigitalChannelController, private val channel: Int) : DigitalChannelImpl(controller, channel) {
+open class RevHubDigitalSensor(controller: DigitalChannelController, private val channel: Int) : DigitalChannelImpl(controller, channel) {
+    constructor(digitalChannel: DigitalChannel) : this(BlackMagic.controllerFromDigitalChannel(digitalChannel), BlackMagic.channelFromDigitalChannel(digitalChannel))
+    constructor(name: String) : this(BlackMagic.hMap.get(DigitalChannel::class.java, name))
+
     private val lynxController = controller as LynxDigitalChannelController
     private val exModule = BlackMagic.lynxModuleFromController(lynxController)
 
