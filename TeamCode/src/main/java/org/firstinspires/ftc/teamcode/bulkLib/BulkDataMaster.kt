@@ -5,8 +5,10 @@ import com.qualcomm.hardware.lynx.*
 import com.qualcomm.hardware.lynx.commands.core.*
 import com.qualcomm.robotcore.eventloop.opmode.*
 
-object BulkDataListener : OpModeManagerNotifier.Notifications {
+object BulkDataMaster : OpModeManagerNotifier.Notifications {
     private val dataMap = HashMap<Int, BulkInputManager>()
+
+    private val imuMap = HashMap<Int, OptimizedGyro>()
 
     @OpModeRegistrar
     fun setupOpModeListenerOnStartRobot(context: Context, manager: AnnotatedOpModeManager) {
@@ -18,6 +20,7 @@ object BulkDataListener : OpModeManagerNotifier.Notifications {
 
     override fun onOpModePreInit(opMode: OpMode?) {
         dataMap.clear()
+        imuMap.clear()
     }
 
     override fun onOpModePreStart(opMode: OpMode?) {
@@ -35,12 +38,22 @@ object BulkDataListener : OpModeManagerNotifier.Notifications {
             m.clearCache()
     }
 
+    fun clearGyroCaches() {
+        for (g in imuMap.values)
+            g.clearCache()
+    }
+
     fun clearAllCaches() {
         clearInputCaches()
+    }
+
+    fun putGyro(address: Int, gyro: OptimizedGyro) {
+        if (!imuMap.containsKey(address))
+            imuMap[address] = gyro
     }
 }
 
 val LynxModule.cachedInput: LynxGetBulkInputDataResponse
-    get() = BulkDataListener.inputFrom(this).response
+    get() = BulkDataMaster.inputFrom(this).response
 
 fun LynxGetBulkInputDataResponse.getAnalogInputVoltage(port: Int) = getAnalogInput(port) / 1000.0

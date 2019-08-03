@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.leaguebot.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_point
+import kotlin.math.*
 
 @Config
 @TeleOp
@@ -17,7 +18,7 @@ class OrbitPrototype : LeagueBotAutoBase() {
     var targetRadius = 0.0
 
     @JvmField
-    var trackWidth = 17.0 // used for the turn:strafe ratio
+    var ratio = 1.0 // higher turns slower
 
     @JvmField
     var circleCenter = Point(0.0, 0.0)
@@ -31,16 +32,28 @@ class OrbitPrototype : LeagueBotAutoBase() {
         if (driver.y)
             useFeedback = true
 
-        var orbitStrafeSpeed = driver.rightTrigger - driver.leftTrigger
+        var orbitOpenTurn = driver.rightTrigger - driver.leftTrigger
 
         val currentRadius = circleCenter.distanceTo(world_point)
         val angleFromCenter = circleCenter.angleTo(world_point)
 
-        var orbitTurn = 0.0 // calculate to preserve curvature
+        var orbitOpenStrafe = orbitOpenTurn * currentRadius * ratio
+
+
+        val orbitOpenTotal = orbitOpenStrafe.absoluteValue + orbitOpenTurn.absoluteValue
+        if (orbitOpenTotal > 1.0) { // prevent vector from overpowering the correction
+            orbitOpenTurn /= orbitOpenTotal
+            orbitOpenStrafe /= orbitOpenStrafe
+        }
 
         var angleError = world_angle.rad - angleFromCenter
         val radiusError = targetRadius
 
+
+        val targetCircle = Circle(circleCenter, targetRadius)
+        val currentCircle = Circle(circleCenter, currentRadius)
         fieldOverlay.setStrokeWidth(strokeWidth)
+        targetCircle.stroke()
+        currentCircle.stroke()
     }
 }

@@ -41,4 +41,18 @@ object BlackMagic {
         channelField.isAccessible = true
         return channelField[channel] as Int
     }
+
+    fun lynxModuleFromIMU(imu: LynxEmbeddedIMU): LynxModule {
+        val i2cDeviceSynchDevice = imu as I2cDeviceSynchDevice<I2cDeviceSynchImplOnSimple>
+
+        val deviceClientField = I2cDeviceSynchDevice::class.java.getDeclaredField("deviceClient")
+        deviceClientField.isAccessible = true
+        val i2cDeviceSynchImplOnSimple = deviceClientField[i2cDeviceSynchDevice] as I2cDeviceSynchImplOnSimple
+
+        val lynxControllerField = I2cDeviceSynchImplOnSimple::class.java.getDeclaredField("i2cDeviceSynchSimple")
+        deviceClientField.isAccessible = true
+        val lynxController = lynxControllerField[i2cDeviceSynchImplOnSimple] as LynxController
+
+        return lynxModuleFromController(lynxController)
+    }
 }

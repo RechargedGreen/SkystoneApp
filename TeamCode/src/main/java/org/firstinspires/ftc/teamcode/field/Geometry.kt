@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.field
 
+import org.firstinspires.ftc.teamcode.lib.*
 import kotlin.math.*
 
 data class Pose(
@@ -64,6 +65,16 @@ data class Line(val p1: Point, val p2: Point) {
         val yCasted = (slope * (xCasted - p1.x)) + p1.y
         return Point(xCasted, yCasted)
     }
+
+    fun stroke(color: String = "", strokeWidth: Int = -1) {
+        if (color.isNotEmpty())
+            Globals.mode.fieldOverlay.setStroke(color)
+
+        if (strokeWidth > 0)
+            Globals.mode.fieldOverlay.setStrokeWidth(strokeWidth)
+
+        Globals.mode.fieldOverlay.strokeLine(p1.x, p1.y, p2.x, p2.y)
+    }
 }
 
 data class Circle(val center: Point, val radius: Double) {
@@ -97,5 +108,15 @@ data class Circle(val center: Point, val radius: Double) {
         }
         val p2 = Point(pointA.x - baX * abScalingFactor2, pointA.y - baY * abScalingFactor2)
         return arrayOf(p1, p2)
+    }
+
+    fun stroke(color: String = "", strokeWidth: Int = -1) {
+        if (color.isNotEmpty())
+            Globals.mode.fieldOverlay.setStroke(color)
+
+        if (strokeWidth > 0)
+            Globals.mode.fieldOverlay.setStrokeWidth(strokeWidth)
+
+        Globals.mode.fieldOverlay.strokeCircle(center.x, center.y, radius)
     }
 }

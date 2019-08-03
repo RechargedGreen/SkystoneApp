@@ -7,7 +7,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.*
 import kotlin.reflect.*
 
 class RevHubMotor(controller: DcMotorController, portNumber: Int, direction: DcMotorSimple.Direction, motorType: MotorConfigurationType) : DcMotorImplEx(controller, portNumber, direction, motorType) {
-    constructor(motor: DcMotor, configurationType: MotorConfigurationType) : this(motor.controller, motor.portNumber, motor.direction, motor.motorType)
+    constructor(motor: DcMotor, configurationType: MotorConfigurationType) : this(motor.controller, motor.portNumber, motor.direction, configurationType)
     constructor(motor: DcMotor) : this(motor, motor.motorType)
     constructor(controller: DcMotorController, portNumber: Int, motorType: MotorConfigurationType) : this(controller, portNumber, DcMotorSimple.Direction.FORWARD, motorType)
     constructor(name: String) : this(BlackMagic.hMap.dcMotor[name])
@@ -86,6 +86,18 @@ class RevHubMotor(controller: DcMotorController, portNumber: Int, direction: DcM
             super.setVelocity(angularRate, unit)
     }
 
-    fun adjustForDirection(v: Int) = if (operationalDirection == DcMotorSimple.Direction.REVERSE) -v else v
-    fun adjustForDirection(v: Double) = if (operationalDirection == DcMotorSimple.Direction.REVERSE) -v else v
+    fun zeroPowerBehavior(zeroPowerBehavior: DcMotor.ZeroPowerBehavior) = apply { this.zeroPowerBehavior = zeroPowerBehavior }
+    fun direction(direction: DcMotorSimple.Direction) = apply { this.direction = direction }
+    fun mode(mode: DcMotor.RunMode) = apply { this.mode = mode }
+
+    fun BRAKE() = zeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
+    fun FLOAT() = zeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT)
+    fun VELO_PID() = mode(DcMotor.RunMode.RUN_USING_ENCODER)
+    fun POSITION_PID() = mode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
+    fun OPEN_LOOP() = mode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
+    fun FORWARD() = direction(DcMotorSimple.Direction.FORWARD)
+    fun REVERSE() = direction(DcMotorSimple.Direction.REVERSE)
+
+    private fun adjustForDirection(v: Int) = if (operationalDirection == DcMotorSimple.Direction.REVERSE) -v else v
+    private fun adjustForDirection(v: Double) = if (operationalDirection == DcMotorSimple.Direction.REVERSE) -v else v
 }

@@ -22,10 +22,12 @@ class BulkLibTester : LinearOpMode() {
         val touch = RevHubTouchSensor("touch")
         val pot = RevHubPot("pot")
 
+        val gyro = OptimizedGyro(OptimizedGyro.Mounting.VERTICAL)
+
         waitForStart()
 
         while (opModeIsActive()) {
-            BulkDataListener.clearAllCaches()
+            BulkDataMaster.clearAllCaches()
 
             telemetry.addData("m1", motor1.currentPosition)
             telemetry.addData("ticks", encoder1.ticks)
@@ -33,6 +35,7 @@ class BulkLibTester : LinearOpMode() {
             telemetry.addData("radians", encoder1.radians)
             telemetry.addData("pressed", touch.isPressed)
             telemetry.addData("pot degrees", pot.degrees)
+            telemetry.addData("gyro degrees", gyro.heading_deg)
             telemetry.update()
             val v = hub1.cachedInput.getAnalogInput(0) / 1000.0
         }

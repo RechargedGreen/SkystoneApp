@@ -11,10 +11,10 @@ class BulkInputManager(val module: LynxModule) {
             if (!useCache) {
                 val newCache = BulkInput(module)
                 if (newCache.initiatedProperly)
-                    cache = newCache
+                    field = newCache
                 useCache = true
             }
-            return cache
+            return field
         }
 
     fun clearCache() {
