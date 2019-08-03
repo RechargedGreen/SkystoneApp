@@ -58,11 +58,11 @@ class PathStateMachineTest : LeagueBotAutoBase() {
         }
 
         when {
-            driver.dUp    -> nextState(Stage.P1)
-            driver.dRight -> nextState(Stage.P2)
-            driver.dDown  -> nextState(Stage.P3)
-            driver.dLeft  -> nextState(Stage.P4)
-            driver.b      -> nextState(Stage.CENTER)
+            driver.dUp.currentState    -> nextState(Stage.P1)
+            driver.dRight.currentState -> nextState(Stage.P2)
+            driver.dDown.currentState  -> nextState(Stage.P3)
+            driver.dLeft.currentState  -> nextState(Stage.P4)
+            driver.b.currentState      -> nextState(Stage.CENTER)
         }
     }
 }

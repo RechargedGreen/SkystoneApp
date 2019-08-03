@@ -57,7 +57,8 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : L
 
     final override fun runOpMode() {
         Globals.mode = this
-        Globals.hMap = hardwareMap
+
+        GamePadMaster.reset()
 
         driver = Controller(gamepad1)
         operator = Controller(gamepad2)
@@ -67,6 +68,8 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : L
         onInit()
 
         eventLoop@ while (true) {
+            GamePadMaster.update()
+
             combinedPacket = CombinedPacket(telemetry)
             combinedPacket.put("OpModeStatus", status)
 

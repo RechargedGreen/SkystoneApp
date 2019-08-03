@@ -7,6 +7,6 @@ import org.firstinspires.ftc.teamcode.movement.*
 @TeleOp
 class LeagueTeleOp : LeagueBotTeleOpBase() {
     override fun onMainLoop() {
-        DriveMovement.moveRobotCentric(driver.leftX, driver.leftY, driver.rightX)
+        DriveMovement.moveRobotCentric(driver.leftStick.x, driver.leftStick.y, driver.rightStick.x)
     }
 }

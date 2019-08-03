@@ -4,8 +4,8 @@ import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_turn
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_x
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_y
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_point
-import org.firstinspires.ftc.teamcode.util.*
 import kotlin.math.*
 
 object PurePursuit {
@@ -101,12 +101,12 @@ object PurePursuit {
 
     // todo finish with different states
     fun goToPosition(targetPoint: Point, point_angle: Double, movement_speed: Double, point_speed: Double) {
-        val worldPoint = DriveMovement.world_point
-        val worldRad = DriveMovement.world_angle.rad
+        val worldPoint = world_point
+        val worldRad = world_angle.rad
 
         val distanceToPoint = worldPoint.distanceTo(targetPoint)
         val angleToPoint = worldPoint.angleTo(targetPoint)
-        val deltaAngleToPoint = MathUtil.angleWrap(angleToPoint - worldRad)
+        val deltaAngleToPoint = Angle.createWrappedRad(angleToPoint - worldRad).rad
 
         // x and y components for moving to point
         val relative_x_to_point = cos(deltaAngleToPoint) * distanceToPoint

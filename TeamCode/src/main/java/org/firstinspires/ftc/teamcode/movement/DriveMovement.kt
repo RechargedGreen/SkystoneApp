@@ -15,12 +15,12 @@ object DriveMovement {
     val world_point: Point
         get() = Point(world_x, world_y)
 
-    var world_angle = Angle(0.0, 0.0)
+    var world_angle = Angle.createUnwrappedRad(0.0)
         private set
 
-    var world_angle_unwrapped = Angle(0.0, 0.0)
+    var world_angle_unwrapped = Angle.createUnwrappedRad(0.0)
         private set(value) {
-            world_angle = value.wrap()
+            world_angle = value.wrapped()
             field = value
         }
 
@@ -40,6 +40,8 @@ object DriveMovement {
         odometer.setAngleRad(angle_rad)
     }
 
+    fun setAngle(angle: Angle) = setAngleRad(angle.rad)
+    fun setAngle_deg(angle_deg: Double) = setAngleRad(angle_deg.toRadians)
     fun setAngleRad(angle_rad: Double) = odometer.setAngleRad(angle_rad)
 
     fun updatePos(baseDelta: Pose, finalAngle: Angle) {
@@ -67,5 +69,12 @@ object DriveMovement {
 
     fun moveFieldCentric(x: Double, y: Double, turn: Double) {
 
+    }
+}
+
+data class DriveVector(val speed: Double, val angleOnRobot: Angle) {
+    operator fun plus(other: DriveVector) = DriveVector(0.0, Angle.createUnwrappedRad(0.0)) //todo finish implementation
+    fun apply() {
+        // todo apply to x, y velocities
     }
 }

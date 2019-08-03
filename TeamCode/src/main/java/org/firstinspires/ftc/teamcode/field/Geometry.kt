@@ -11,6 +11,8 @@ data class Pose(
 }
 
 object Geometry {
+    const val TAU = Math.PI * 2.0
+
     fun circleArcRelativeDelta(robotDelta: Pose): Point {
         val angleIncrement = robotDelta.heading
 

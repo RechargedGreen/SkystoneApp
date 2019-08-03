@@ -96,7 +96,7 @@ class mp1dprotoype : LinearOpMode() {
             val currentPosition = position() - startPosition
 
             val forwardSpeed = feedbackController.update(currentPosition, currentMotionState.v, currentMotionState.a)
-            val turnSpeed = turnController.update(MathUtil.angleWrap(getAngle() - degrees))
+            val turnSpeed = 0.0//turnController.update(MathUtil.angleWrap(getAngle() - degrees))
 
             setVelocity(forwardSpeed, turnSpeed)
 

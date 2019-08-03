@@ -27,9 +27,9 @@ class OrbitPrototype : LeagueBotAutoBase() {
     var strokeWidth = 5
 
     override fun onMainLoop() {
-        if (driver.x)
+        if (driver.x.currentState)
             useFeedback = false
-        if (driver.y)
+        if (driver.y.currentState)
             useFeedback = true
 
         var orbitOpenTurn = driver.rightTrigger - driver.leftTrigger

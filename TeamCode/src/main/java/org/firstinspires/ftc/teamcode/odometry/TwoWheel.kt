@@ -37,7 +37,7 @@ object TwoWheel : Odometry {
         val r_x = xWheelDelta - xPrediction
         val r_y = yWheelDelta - yPrediction
 
-        DriveMovement.updatePos(Pose(r_x, r_y, angleIncrement), Angle.createRad(final_angle_rad))
+        DriveMovement.updatePos(Pose(r_x, r_y, angleIncrement), Angle.createUnwrappedRad(final_angle_rad))
 
         last_x_encoder = curr_x_encoder
         last_y_encoder = curr_y_encoder

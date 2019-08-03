@@ -36,25 +36,25 @@ class OptimizedGyro(lynxModule: LynxModule, mounting: Mounting) {
     }
 
     val rawHeading: Angle
-        get() = Angle.createRad(cache.firstAngle.toDouble())
+        get() = Angle.createUnwrappedRad(cache.firstAngle.toDouble())
 
     var heading: Angle
-        get() = Angle.createRad(rawHeading.rad + headingBias.rad)
+        get() = rawHeading + headingBias
         set(value) {
-            headingBias = Angle.createRad(value.rad - rawHeading.rad)
+            headingBias = value - rawHeading
         }
 
     var heading_rad: Double
         get() = heading.rad
         set(value) {
-            heading = Angle.createRad(value)
+            heading = Angle.createWrappedRad(value)
         }
 
     var heading_deg: Double
         get() = heading.deg
         set(value) {
-            heading = Angle.createDeg(value)
+            heading = Angle.createUnwrappedDeg(value)
         }
 
-    private var headingBias = Angle.createRad(0.0)
+    private var headingBias = Angle.createUnwrappedRad(0.0)
 }

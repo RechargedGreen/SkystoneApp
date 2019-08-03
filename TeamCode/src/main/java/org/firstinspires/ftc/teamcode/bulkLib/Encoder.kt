@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.bulkLib
 
 import com.qualcomm.hardware.lynx.*
+import org.firstinspires.ftc.teamcode.field.Geometry.TAU
 import org.firstinspires.ftc.teamcode.util.*
 
 class Encoder(private val module: LynxModule, private val portNumber: Int, private val ticks_per_revolution: Double) {
@@ -9,7 +10,7 @@ class Encoder(private val module: LynxModule, private val portNumber: Int, priva
     val rotations: Double
         get() = ticks / ticks_per_revolution
     val radians: Double
-        get() = rotations * MathUtil.TAU
+        get() = rotations * TAU
 }
 
 object S4T {
