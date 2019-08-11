@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.leaguebot
 
 import com.acmerobotics.dashboard.config.*
+import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 import org.firstinspires.ftc.teamcode.odometry.*
 
 @Config
@@ -23,4 +24,34 @@ object LeagueOdometry : ThreeWheelProvider {
     override fun auxTicksPerInch(): Double = auxTicksPerInch
 
     fun update() = ThreeWheel.update(0, 0, 0, this)
+}
+
+@Config
+object LeagueMovementConstants : MovementConstantsProvider {
+    override fun getXSlipFactor(): Double {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getYSlipFactor(): Double {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getTurnSlipFactor(): Double {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getMinY(): Double {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getMinX(): Double {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getMinTurn(): Double {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override val slippageGoToPosProvider: SlippageAlgConstantsProvider
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 }

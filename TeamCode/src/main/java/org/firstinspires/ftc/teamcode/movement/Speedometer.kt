@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.movement
 
+import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 import org.firstinspires.ftc.teamcode.util.*
 import kotlin.math.*
 
@@ -32,11 +33,15 @@ object Speedometer {
         get() = yInchPerSec * ySlipFactor
     val turnRadSlipPrediction: Double
         get() = radPerSec * turnSlipFactor
+    val turnDegSlipPrediction: Double
+        get() = degPerSec * turnSlipFactor
 
-    //todo make a provider
-    val xSlipFactor = 1.0
-    val ySlipFactor = 1.0
-    val turnSlipFactor = 1.0
+    val xSlipFactor: Double
+        get() = MovementAlgorithms.movementProvider.getXSlipFactor()
+    val ySlipFactor: Double
+        get() = MovementAlgorithms.movementProvider.getYSlipFactor()
+    val turnSlipFactor: Double
+        get() = MovementAlgorithms.movementProvider.getTurnSlipFactor()
 
     fun update() {
         val currTime = Clock.seconds

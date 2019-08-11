@@ -8,7 +8,7 @@ object LeagueBot : BaseBot {
     lateinit var drive: SharedDrive
 
     override fun setup() {
-        drive = SharedDrive()
+        drive = SharedDrive(LeagueMovementConstants)
     }
 
     override fun update() {

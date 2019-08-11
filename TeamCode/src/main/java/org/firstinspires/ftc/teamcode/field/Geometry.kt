@@ -1,20 +1,21 @@
 package org.firstinspires.ftc.teamcode.field
 
 import org.firstinspires.ftc.teamcode.lib.*
+import org.firstinspires.ftc.teamcode.movement.*
 import kotlin.math.*
 
 data class Pose(
-        @JvmField val point: Point,
-        @JvmField val heading: Double
+        val point: Point,
+        val heading: Angle
 ) {
-    constructor(x: Double, y: Double, heading: Double) : this(Point(x, y), heading)
+    constructor(x: Double, y: Double, heading_rad: Double) : this(Point(x, y), Angle.createWrappedRad(heading_rad))
 }
 
 object Geometry {
     const val TAU = Math.PI * 2.0
 
     fun circleArcRelativeDelta(robotDelta: Pose): Point {
-        val angleIncrement = robotDelta.heading
+        val angleIncrement = robotDelta.heading.rad
 
         var relativeX = robotDelta.point.x
         var relativeY = robotDelta.point.y
@@ -50,7 +51,7 @@ data class Point(
         @JvmField val y: Double
 ) {
     fun distanceTo(other: Point): Double = hypot(x - other.x, y - other.y)
-    fun angleTo(other: Point): Double = atan2(other.y - y, other.x - x)
+    fun angleTo(other: Point) = Angle.createWrappedRad(atan2(other.y - y, other.x - x))
 
     fun closestPoint(firstPoint: Point, vararg additionalPoints: Point) = additionalPoints.fold(firstPoint) { result, next ->
         if (distanceTo(next) < distanceTo(result)) next else result

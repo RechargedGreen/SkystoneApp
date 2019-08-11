@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.leaguebot.opmode
 
 import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.leaguebot.*
-import org.firstinspires.ftc.teamcode.movement.*
+import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 
 class PurePursuitTest : LeagueBotAutoBase() {
     enum class Stage {
@@ -12,7 +12,7 @@ class PurePursuitTest : LeagueBotAutoBase() {
 
     override fun onMainLoop() {
         if (changedStage)
-            PurePursuit.initForMove()
+            MovementAlgorithms.initAll()
         when (Stage.values()[stage]) {
             Stage.A -> {
                 val path = PurePursuit.Builder(0.0, 0.0, 0.0, 0.0, 0.0)

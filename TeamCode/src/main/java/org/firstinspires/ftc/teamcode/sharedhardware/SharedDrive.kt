@@ -5,8 +5,9 @@ import org.firstinspires.ftc.teamcode.bulkLib.RevHubMotor
 import org.firstinspires.ftc.teamcode.lib.*
 import org.firstinspires.ftc.teamcode.lib.hardware.*
 import org.firstinspires.ftc.teamcode.movement.*
+import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 
-class SharedDrive {
+class SharedDrive(provider:MovementConstantsProvider) {
     private val motorMode: DcMotor.RunMode
         get() = if (Globals.mode.isAutonomous) DcMotor.RunMode.RUN_USING_ENCODER else DcMotor.RunMode.RUN_WITHOUT_ENCODER
 

@@ -41,7 +41,7 @@ object ThreeWheel : Odometry {
 
         val r_yDistance = (l_wheel_delta + r_wheel_delta) / 2.0
 
-        DriveMovement.updatePos(Pose(r_xDistance, r_yDistance, angleIncrement), Angle.createRad(final_angle_rad))
+        DriveMovement.updatePos(Pose(r_xDistance, r_yDistance, angleIncrement), Angle.createUnwrappedRad(final_angle_rad))
 
         last_l_encoder = curr_l_encoder
         last_r_encoder = curr_r_encoder

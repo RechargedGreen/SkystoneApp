@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.lib.hardware
 
 import com.qualcomm.robotcore.hardware.*
-import org.firstinspires.ftc.teamcode.lib.*
+import org.firstinspires.ftc.teamcode.bulkLib.*
 import kotlin.math.*
 
 class RevHubMotor(config: String, mode: DcMotor.RunMode, direction: DcMotorSimple.Direction, zeroPowerBehavior: DcMotor.ZeroPowerBehavior) {
-    val delegate = Globals.hMap.get(DcMotorEx::class.java, config)
+    val delegate = BlackMagic.hMap.get(DcMotorEx::class.java, config)
 
     var mode: DcMotor.RunMode? = null
         set(value) {

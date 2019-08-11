@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.movement
 
 import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.lib.*
+import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.movementProvider
 import org.firstinspires.ftc.teamcode.odometry.*
 
 object DriveMovement {
@@ -15,6 +16,9 @@ object DriveMovement {
     var world_y = 0.0
     val world_point: Point
         get() = Point(world_x, world_y)
+
+    val world_pose: Pose
+        get() = Pose(world_point, world_angle)
 
     var world_angle = Angle.createUnwrappedRad(0.0)
         private set
@@ -49,7 +53,7 @@ object DriveMovement {
         val circleArcDelta = Geometry.circleArcRelativeDelta(Pose(
                 baseDelta.point.x,
                 baseDelta.point.x,
-                baseDelta.heading
+                baseDelta.heading.rad
         ))
 
         val finalDelta = Geometry.pointDelta(circleArcDelta, world_angle.rad)
@@ -74,6 +78,22 @@ object DriveMovement {
 
     fun gamepadControl(gamepad: Controller) {
 
+    }
+
+    fun verifyMinPower() {
+        when {
+            movement_x < movement_y && movement_y < movement_turn -> movement_turn = minPower(movement_turn, movementProvider.getMinTurn())
+            movement_x < movement_y && movement_turn < movement_y -> movement_turn = minPower(movement_y, movementProvider.getMinY())
+            movement_y < movement_x && movement_turn < movement_x -> movement_x = minPower(movement_x, movementProvider.getMinX())
+        }
+    }
+
+    fun minPower(power: Double, min: Double): Double {
+        if (power >= 0 && power <= min)
+            return min
+        if (power < 0 && power > -min)
+            return -min
+        return power
     }
 }
 
