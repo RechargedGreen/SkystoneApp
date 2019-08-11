@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.movement
 
 import org.firstinspires.ftc.teamcode.field.*
+import org.firstinspires.ftc.teamcode.lib.*
 import org.firstinspires.ftc.teamcode.odometry.*
 
 object DriveMovement {
@@ -68,6 +69,10 @@ object DriveMovement {
     }
 
     fun moveFieldCentric(x: Double, y: Double, turn: Double) {
+
+    }
+
+    fun gamepadControl(gamepad: Controller) {
 
     }
 }

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.bulkLib
 
-import org.firstinspires.ftc.teamcode.util.*
-
 
 open class RevHubPot(name: String) : RevHubAnalogSensor(name) {
     val rangeInDegrees = 270.0

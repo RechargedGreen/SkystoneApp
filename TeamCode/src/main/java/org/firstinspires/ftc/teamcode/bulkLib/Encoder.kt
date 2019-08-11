@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.bulkLib
 
 import com.qualcomm.hardware.lynx.*
 import org.firstinspires.ftc.teamcode.field.Geometry.TAU
-import org.firstinspires.ftc.teamcode.util.*
 
 class Encoder(private val module: LynxModule, private val portNumber: Int, private val ticks_per_revolution: Double) {
     val ticks: Int
