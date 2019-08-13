@@ -8,10 +8,6 @@ import org.firstinspires.ftc.teamcode.odometry.*
 object DriveMovement {
     lateinit var odometer: Odometry
 
-    var path = Path()
-
-    fun followSetPath() = path.follow()
-
     var world_x = 0.0
     var world_y = 0.0
     val world_point: Point
@@ -56,7 +52,7 @@ object DriveMovement {
                 baseDelta.heading.rad
         ))
 
-        val finalDelta = Geometry.pointDelta(circleArcDelta, world_angle.rad)
+        val finalDelta = Geometry.pointDelta(circleArcDelta, world_angle)
         world_x += finalDelta.x
         world_y += finalDelta.y
         world_angle_unwrapped = finalAngle

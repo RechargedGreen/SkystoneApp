@@ -59,6 +59,10 @@ data class Angle(var heading: Double, var unit: Angle.Unit) {
         Unit.RAD -> createUnwrappedRad(-rad)
         Unit.DEG -> createUnwrappedDeg(-deg)
     }
+
+    val sin = sin(rad)
+    val cos = cos(rad)
+    val tan = tan(rad)
 }
 
 val Double.toRadians get() = Math.toRadians(this)

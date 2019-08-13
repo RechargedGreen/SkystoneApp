@@ -34,9 +34,9 @@ object Geometry {
         return Point(relativeX, relativeY)
     }
 
-    fun pointDelta(robotDelta: Point, heading_rad: Double): Point {
-        val c = cos(heading_rad)
-        val s = sin(heading_rad)
+    fun pointDelta(robotDelta: Point, heading: Angle): Point {
+        val c = heading.cos
+        val s = heading.sin
         val x = robotDelta.x
         val y = robotDelta.y
         return Point(
@@ -44,6 +44,8 @@ object Geometry {
                 s * y - c * x
         )
     }
+
+    fun atan2(x: Double, y: Double) = Angle.createWrappedRad(Math.atan2(x, y))
 }
 
 data class Point(

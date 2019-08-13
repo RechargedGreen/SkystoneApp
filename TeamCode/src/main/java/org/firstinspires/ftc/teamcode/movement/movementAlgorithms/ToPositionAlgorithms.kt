@@ -54,11 +54,11 @@ object ToPositionAlgorithms {
 
         val distanceToPoint = worldPoint.distanceTo(targetPoint)
         val angleToPoint = worldPoint.angleTo(targetPoint)
-        val deltaAngleToPoint = (angleToPoint - worldHeading).rad
+        val deltaAngleToPoint = (angleToPoint - worldHeading)
 
         // x and y components for moving to point
-        val relative_x_to_point = cos(deltaAngleToPoint) * distanceToPoint
-        val relative_y_to_point = sin(deltaAngleToPoint) * distanceToPoint
+        val relative_x_to_point = deltaAngleToPoint.cos * distanceToPoint
+        val relative_y_to_point = deltaAngleToPoint.sin * distanceToPoint
         val relative_abs_x = relative_x_to_point.absoluteValue
         val relative_abs_y = relative_y_to_point.absoluteValue
 
