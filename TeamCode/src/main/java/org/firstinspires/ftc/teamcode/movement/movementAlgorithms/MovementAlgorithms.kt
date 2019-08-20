@@ -5,6 +5,8 @@ object MovementAlgorithms {
     fun initAll() {
         ToPositionAlgorithms.init()
         PurePursuit.init()
+        PointControllers.init()
+        AngleControllers.init()
     }
 }
 
