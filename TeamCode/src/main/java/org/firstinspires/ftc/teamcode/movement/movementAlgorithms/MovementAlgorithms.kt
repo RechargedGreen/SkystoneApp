@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.movement.movementAlgorithms
 object MovementAlgorithms {
     lateinit var movementProvider: MovementConstantsProvider
     fun initAll() {
-        ToPositionAlgorithms.init()
         PurePursuit.init()
+        ToPositionAlgorithms.init()
         PointControllers.init()
         AngleControllers.init()
     }
@@ -22,28 +22,4 @@ interface MovementConstantsProvider {
 
     fun getMinX(): Double
     fun getMinTurn(): Double
-
-    val slippageGoToPosProvider: SlippageAlgConstantsProvider
-}
-
-interface SlippageAlgConstantsProvider {
-    val movement_speed: Double
-    val turn_speed: Double
-
-    val xProvider: SlippageAxisContantsProvider
-    val yProvider: SlippageAxisContantsProvider
-    val turnProvider: SlippageAxisContantsProvider
-
-    val lateralThreshold: Double
-    val degreesThreshold: Double
-}
-
-interface SlippageAxisContantsProvider {
-    val endGunSlipScale: Double
-    val endGunDistance: Double
-    val endSlipSpeed: Double
-    val switchBackToGunDistance: Double
-
-    val fine_kP: Double
-    val fineMaxSpeed: Double
 }

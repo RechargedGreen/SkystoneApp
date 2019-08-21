@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.lib
 import com.acmerobotics.dashboard.canvas.*
 import com.qualcomm.robotcore.eventloop.opmode.*
 import com.qualcomm.robotcore.util.*
+import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 import org.firstinspires.ftc.teamcode.util.*
 
 abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : LinearOpMode() {
@@ -15,7 +16,11 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : L
     val fieldOverlay: Canvas
         get() = combinedPacket.packet.fieldOverlay()
 
-    fun nextStage(nextStage: Int = stage + 1) {
+    fun initializeStateVariables() {
+        MovementAlgorithms.initAll()
+    }
+
+    fun nextStage(nextStage: Int = stage + 1, initStateVariables: Boolean = true) {
         if (stage != nextStage)
             forceStageChange()
         stage = nextStage
@@ -23,8 +28,10 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : L
 
     fun isTimedOut(seconds: Double) = stageTimer.seconds() > seconds
 
-    fun forceStageChange() {
+    fun forceStageChange(initStateVariables: Boolean = true) {
         forceStageChange()
+        if (initStateVariables)
+            initializeStateVariables()
     }
 
     fun timeoutStage(seconds: Double, nextStage: Int = stage + 1) {

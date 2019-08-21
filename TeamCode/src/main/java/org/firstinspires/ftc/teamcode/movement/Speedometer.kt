@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.movement
 
+import org.firstinspires.ftc.teamcode.field.*
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 import org.firstinspires.ftc.teamcode.util.*
 import kotlin.math.*
@@ -63,4 +65,10 @@ object Speedometer {
             lastUpdateTime = currTime
         }
     }
+
+    val fieldSlipPoint: Point
+        get() = Point(
+                ySlipPrediction * world_angle.cos + xSlipPrediction * world_angle.sin,
+                ySlipPrediction * world_angle.sin + xSlipPrediction * world_angle.cos
+        )
 }

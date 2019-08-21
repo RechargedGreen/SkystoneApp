@@ -45,18 +45,37 @@ object Geometry {
         )
     }
 
-    fun atan2(x: Double, y: Double) = Angle.createWrappedRad(Math.atan2(x, y))
+    fun atan2(x: Double, y: Double) = Angle.createWrappedRad(Math.atan2(y, x))
 }
 
 data class Point(
         @JvmField val x: Double,
         @JvmField val y: Double
 ) {
-    fun distanceTo(other: Point): Double = hypot(x - other.x, y - other.y)
-    fun angleTo(other: Point) = Angle.createWrappedRad(atan2(other.y - y, other.x - x))
+    val atan2 = Geometry.atan2(x, y)
+    val hypot = hypot(x, y)
+
+    fun distanceTo(other: Point): Double = (other - this).hypot
+    fun angleTo(other: Point) = (other - this).atan2
 
     fun closestPoint(firstPoint: Point, vararg additionalPoints: Point) = additionalPoints.fold(firstPoint) { result, next ->
         if (distanceTo(next) < distanceTo(result)) next else result
+    }
+
+    operator fun minus(other: Point) = Point(x - other.x, y - other.x)
+    operator fun plus(other: Point) = Point(x + other.x, y + other.y)
+    operator fun times(scaler: Double) = Point(x * scaler, y * scaler)
+    operator fun div(scaler: Double) = Point(x / scaler, y / scaler)
+    operator fun unaryPlus() = this
+    operator fun unaryMinus() = ORIGIN - this
+
+    fun add(distance: Double, angle: Angle) = Point(
+            angle.sin * distance,
+            angle.cos * distance
+    )
+
+    companion object {
+        val ORIGIN = Point(0.0, 0.0)
     }
 }
 
@@ -78,7 +97,7 @@ data class Line(val p1: Point, val p2: Point) {
         if (strokeWidth > 0)
             Globals.mode.fieldOverlay.setStrokeWidth(strokeWidth)
 
-        Globals.mode.fieldOverlay.strokeLine(p1.x, p1.y, p2.x, p2.y)
+        Globals.mode.fieldOverlay.strokeLine(p1.y, p1.x, p2.y, p2.x)
     }
 }
 
