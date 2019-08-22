@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.leaguebot.opmode
 import org.firstinspires.ftc.teamcode.leaguebot.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
-import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.ToPositionAlgorithms.goToPosition_slippage
 
 class ToPosTest : LeagueBotAutoBase() {
     enum class stages {
@@ -23,17 +22,17 @@ class ToPosTest : LeagueBotAutoBase() {
 
         when (currentStage) {
             stages.s1          -> {
-                if (goToPosition_slippage(0.0, 0.0, 0.0))
+                if (PointControllers.slipAdjustedTarget(0.0, 0.0, 10.0).hypot < 2.0)
                     nextStage()
             }
 
             stages.s2          -> {
-                if (goToPosition_slippage(0.0, 0.0, 0.0))
+                if (PointControllers.slipAdjustedTarget(0.0, 0.0, 10.0).hypot < 2.0)
                     nextStage()
             }
 
             stages.s3          -> {
-                if (goToPosition_slippage(0.0, 0.0, 0.0))
+                if (PointControllers.slipAdjustedTarget(0.0, 0.0, 10.0).hypot < 2.0)
                     nextStage(0)
             }
 

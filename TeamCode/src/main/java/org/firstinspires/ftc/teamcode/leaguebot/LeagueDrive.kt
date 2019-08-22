@@ -51,7 +51,4 @@ object LeagueMovementConstants : MovementConstantsProvider {
     override fun getMinTurn(): Double {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
-
-    override val slippageGoToPosProvider: SlippageAlgConstantsProvider
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 }
