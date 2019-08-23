@@ -29,18 +29,20 @@ class mp1dprotoype : LinearOpMode() {
     var ticksPerInch = motorTicksPerRev / wheelCircumfrence
     var kV = 1.0 / (motorRPM / 60.0 * wheelCircumfrence) // converts to 1.0/maxInchesPerSecond
 
-    // tune this to close to your bot's limits but allow feedback room
-    @JvmField
-    var maxAccel = 40.0 // high is closer to slipping - low accelerates slower
-    @JvmField
-    var maxVel = 48.0 // you can tune this to something even faster, but this should be good
+    companion object {
+        // tune this to close to your bot's limits but allow feedback room
+        @JvmField
+        var maxAccel = 40.0 // high is closer to slipping - low accelerates slower
+        @JvmField
+        var maxVel = 48.0 // you can tune this to something even faster, but this should be good
 
-    // constants for feedback, minimizes any unpredictable error
-    @JvmField
-    var drivePID = PIDCoefficients()
-    @JvmField
-    var turnPID = PIDCoefficients()
+        // constants for feedback, minimizes any unpredictable error
+        @JvmField
+        var drivePID = PIDCoefficients()
+        @JvmField
+        var turnPID = PIDCoefficients()
 
+    }
     override fun runOpMode() {
         lf = hardwareMap.dcMotor.get("lf")
         lb = hardwareMap.dcMotor.get("lb")

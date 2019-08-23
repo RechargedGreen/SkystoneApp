@@ -28,9 +28,10 @@ object LeagueOdometry : ThreeWheelProvider {
 
 @Config
 object LeagueMovementConstants : MovementConstantsProvider {
-    override fun getXSlipFactor(): Double {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    @JvmField
+    var xSlipFactor = 1.0
+
+    override fun getXSlipFactor(): Double = xSlipFactor
 
     override fun getYSlipFactor(): Double {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
