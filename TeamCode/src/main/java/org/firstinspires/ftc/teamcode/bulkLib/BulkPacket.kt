@@ -5,7 +5,7 @@ import com.qualcomm.hardware.lynx.commands.core.*
 
 class BulkInputManager(val module: LynxModule) {
     private var useCache = false
-    var cache: BulkInput = null!!
+    var cache: BulkInput = BulkInput(module)
         private set
         get() {
             if (!useCache) {
