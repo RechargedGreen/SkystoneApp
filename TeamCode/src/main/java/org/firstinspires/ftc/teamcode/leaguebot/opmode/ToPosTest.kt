@@ -41,7 +41,12 @@ class ToPosTest : LeagueBotAutoBase() {
                 timeoutStage(2.0, 0)
             }
         }
-        if (driver.b.justPressed)
-            nextStage(stages.stopForTime.ordinal)
+
+        when{
+            driver.dLeft.currentState -> nextStage(stages.s1.ordinal)
+            driver.dUp.currentState -> nextStage(stages.s2.ordinal)
+            driver.dRight.currentState -> nextStage(stages.s3.ordinal)
+            driver.dDown.currentState -> nextStage(stages.stopForTime.ordinal)
+        }
     }
 }
