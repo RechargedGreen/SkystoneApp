@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.movement
 
 import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.lib.*
+import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.initAll
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.movementProvider
 import org.firstinspires.ftc.teamcode.odometry.*
 
@@ -90,6 +91,11 @@ object DriveMovement {
         if (power < 0 && power > -min)
             return -min
         return power
+    }
+
+    fun resetForOpMode() {
+        stopDrive()
+        initAll()
     }
 }
 

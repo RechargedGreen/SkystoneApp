@@ -3,10 +3,14 @@ package org.firstinspires.ftc.teamcode.lib
 import com.acmerobotics.dashboard.canvas.*
 import com.qualcomm.robotcore.eventloop.opmode.*
 import com.qualcomm.robotcore.util.*
+import org.firstinspires.ftc.teamcode.movement.*
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 import org.firstinspires.ftc.teamcode.util.*
 
 abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : LinearOpMode() {
+
+    val movementAllowed: Boolean get() = isAutonomous || status != Status.INIT
+
     var stage = 0
         private set
     var changedStage = true
@@ -64,6 +68,8 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : L
 
     final override fun runOpMode() {
         Globals.mode = this
+
+        DriveMovement.resetForOpMode()
 
         GamePadMaster.reset()
 
