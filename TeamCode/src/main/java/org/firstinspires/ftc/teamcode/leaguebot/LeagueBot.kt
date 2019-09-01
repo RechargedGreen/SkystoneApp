@@ -5,10 +5,10 @@ import org.firstinspires.ftc.teamcode.lib.*
 import org.firstinspires.ftc.teamcode.sharedhardware.*
 
 object LeagueBot : BaseBot {
-    lateinit var drive: SharedDrive
+    lateinit var drive: Akira
 
     override fun setup() {
-        drive = SharedDrive(LeagueMovementConstants)
+        drive = Akira(LeagueMovementConstants)
     }
 
     override fun update() {
