@@ -3,16 +3,8 @@ package org.firstinspires.ftc.teamcode.lib
 import com.qualcomm.robotcore.hardware.*
 
 class Controller(val gamepad: Gamepad) {
-    companion object {
-        var nextId = 0
-    }
-
-    private val id: Int
-
     init {
-        id = nextId
-        nextId++
-        GamePadMaster.put(this, id)
+        GamePadMaster.add(this)
     }
 
     val rightStick = Joystick({ pad -> pad.right_stick_x.toDouble() }, { pad -> pad.right_stick_y.toDouble() })
@@ -57,7 +49,11 @@ class Button(private val getCurrentState: (gamePad: Gamepad) -> Boolean) : Gamep
         private set
 
     override fun update(gamePad: Gamepad) {
+        val lastState = currentState
         currentState = getCurrentState(gamePad)
+
+        justPressed = currentState && !lastState
+        justReleased = !currentState && lastState
     }
 }
 
@@ -74,19 +70,19 @@ class Joystick(private val xInput: (Gamepad) -> Double, private val yInput: (Gam
 }
 
 object GamePadMaster {
-    private val map = HashMap<Int, Controller>()
+    private val list = ArrayList<Controller>()
 
-    fun put(controller: Controller, id: Int) {
-        if (!map.contains(id))
-            map[id] = controller
-    }
-
-    fun reset() {
-        map.clear()
+    fun add(controller: Controller) {
+        list.add(controller)
     }
 
     fun update() {
-        map.values.forEach { it.update() }
+        for (controller in list)
+            controller.update()
+    }
+
+    fun reset() {
+        list.clear()
     }
 }
 

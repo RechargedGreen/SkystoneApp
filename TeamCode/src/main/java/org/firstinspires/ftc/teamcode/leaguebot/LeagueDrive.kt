@@ -1,55 +1,60 @@
 package org.firstinspires.ftc.teamcode.leaguebot
 
 import com.acmerobotics.dashboard.config.*
+import org.firstinspires.ftc.teamcode.bulkLib.*
+import org.firstinspires.ftc.teamcode.leaguebot.LeagueBot.lynx2
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 import org.firstinspires.ftc.teamcode.odometry.*
+import kotlin.math.*
 
 @Config
-object LeagueOdometry : ThreeWheelProvider {
+object LeagueOdometry {
     @JvmField
     var turnTrackWidth = 1.0
     @JvmField
     var auxTrackWidth = 1.0
-    @JvmField
-    var leftTicksPerInch = 1.0
-    @JvmField
-    var rightTicksPerInch = 1.0
-    @JvmField
-    var auxTicksPerInch = 1.0
 
-    override fun turnTrackWidth(): Double = turnTrackWidth
-    override fun auxTrackWidth(): Double = auxTrackWidth
-    override fun leftTicksPerInch(): Double = leftTicksPerInch
-    override fun rightTicksPerInch(): Double = rightTicksPerInch
-    override fun auxTicksPerInch(): Double = auxTicksPerInch
+    @JvmField
+    var leftD = 72.0
+    @JvmField
+    var rightD = 72.0
+    @JvmField
+    var auxD = 72.0
 
-    fun update() = ThreeWheel.update(0, 0, 0, this)
+    const val CPR = 4000.0
+
+    fun inchesPerTick(radius: Double) = (leftD * PI) / CPR
+
+    val leftTicks: Int get() = lynx2.cachedInput.getEncoder(1)
+    val rightTicks: Int get() = lynx2.cachedInput.getEncoder(2)
+    val auxTicks: Int get() = lynx2.cachedInput.getEncoder(0)
+
+    val leftInches: Double get() = leftTicks * inchesPerTick(leftD)
+    val rightInches: Double get() = rightTicks * inchesPerTick(rightD)
+    val auxInches: Double get() = auxTicks * inchesPerTick(auxD)
+
+    fun update() = ThreeWheel.update(leftTicks, rightTicks, auxTicks, inchesPerTick(leftD), inchesPerTick(rightD), inchesPerTick(auxD), turnTrackWidth, auxTrackWidth)
 }
 
 @Config
 object LeagueMovementConstants : MovementConstantsProvider {
     @JvmField
     var xSlipFactor = 1.0
+    @JvmField
+    var ySlipFactor = 1.0
+    @JvmField
+    var turnSlipFactor = 1.0
+    @JvmField
+    var minY = 0.0
+    @JvmField
+    var minX = 0.0
+    @JvmField
+    var minTurn = 0.0
 
     override fun getXSlipFactor(): Double = xSlipFactor
-
-    override fun getYSlipFactor(): Double {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getTurnSlipFactor(): Double {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getMinY(): Double {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getMinX(): Double {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getMinTurn(): Double {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getYSlipFactor(): Double = ySlipFactor
+    override fun getTurnSlipFactor(): Double = turnSlipFactor
+    override fun getMinY(): Double = minX
+    override fun getMinX(): Double = minY
+    override fun getMinTurn(): Double = minTurn
 }

@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.DcMotorSimple
-import kotlin.math.absoluteValue
+import com.qualcomm.robotcore.eventloop.opmode.*
+import com.qualcomm.robotcore.hardware.*
+import kotlin.math.*
 
 @TeleOp
 class MecanumDriveTest : LinearOpMode() {
@@ -16,6 +15,11 @@ class MecanumDriveTest : LinearOpMode() {
 
         rightFront.direction = DcMotorSimple.Direction.REVERSE
         rightBack.direction = DcMotorSimple.Direction.REVERSE
+
+        leftFront.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        leftBack.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        rightFront.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        rightBack.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         waitForStart()
 
