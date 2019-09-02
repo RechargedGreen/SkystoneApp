@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.bulkLib
 
-class WriteCacher<T>(private val write: (T) -> Unit) {
+class WriteCacher<T>(private val writer: (T) -> Unit) {
     private var cache: T? = null
 
     fun write(value: T?) {
         if (cache != value) {
-            write(value)
+            value?.apply(writer)
             cache = value
         }
     }

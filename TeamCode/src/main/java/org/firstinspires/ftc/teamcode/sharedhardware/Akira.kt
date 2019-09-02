@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.sharedhardware
 
 import com.qualcomm.robotcore.hardware.*
+import org.firstinspires.ftc.teamcode.bulkLib.BlackMagic.hMap
 import org.firstinspires.ftc.teamcode.bulkLib.RevHubMotor
 import org.firstinspires.ftc.teamcode.lib.*
 import org.firstinspires.ftc.teamcode.lib.hardware.*
@@ -12,10 +13,25 @@ class Akira(provider: MovementConstantsProvider) {
     private val motorMode: DcMotor.RunMode
         get() = if (Globals.mode.isAutonomous) DcMotor.RunMode.RUN_USING_ENCODER else DcMotor.RunMode.RUN_WITHOUT_ENCODER
 
-    private val leftFront = RevHubMotor("leftFront", Go_19_2::class).BRAKE().FORWARD().OPEN_LOOP()
+    private val leftFront = hMap.dcMotor.get("leftFront").apply {
+        zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+    }
+    private val leftBack = hMap.dcMotor.get("leftBack").apply {
+        zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+    }
+    private val rightFront = hMap.dcMotor.get("rightFront").apply {
+        zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        direction = DcMotorSimple.Direction.REVERSE
+    }
+    private val rightBack = hMap.dcMotor.get("rightBack").apply {
+        zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        direction = DcMotorSimple.Direction.REVERSE
+    }
+
+    /*private val leftFront = RevHubMotor("leftFront", Go_19_2::class).BRAKE().FORWARD().OPEN_LOOP()
     private val leftBack = RevHubMotor("leftBack", Go_19_2::class).BRAKE().FORWARD().OPEN_LOOP()
     private val rightFront = RevHubMotor("rightFront", Go_19_2::class).BRAKE().REVERSE().OPEN_LOOP()
-    private val rightBack = RevHubMotor("rightBack", Go_19_2::class).BRAKE().REVERSE().OPEN_LOOP()
+    private val rightBack = RevHubMotor("rightBack", Go_19_2::class).BRAKE().REVERSE().OPEN_LOOP()*/
 
     fun update() {
         val x = DriveMovement.movement_x

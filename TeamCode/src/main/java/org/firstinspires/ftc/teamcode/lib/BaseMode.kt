@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.lib
 import com.acmerobotics.dashboard.canvas.*
 import com.qualcomm.robotcore.eventloop.opmode.*
 import com.qualcomm.robotcore.util.*
+import org.firstinspires.ftc.teamcode.bulkLib.BulkDataMaster
 import org.firstinspires.ftc.teamcode.movement.*
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 import org.firstinspires.ftc.teamcode.util.*
@@ -82,6 +83,8 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : L
 
         eventLoop@ while (true) {
             GamePadMaster.update()
+
+            BulkDataMaster.clearAllCaches()
 
             combinedPacket = CombinedPacket(telemetry)
             combinedPacket.put("OpModeStatus", status)

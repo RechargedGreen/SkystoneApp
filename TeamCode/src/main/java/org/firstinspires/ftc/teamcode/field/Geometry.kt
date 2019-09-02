@@ -25,7 +25,7 @@ object Geometry {
             val radiusOfStrafe = relativeX / angleIncrement
 
             val s = sin(angleIncrement)
-            val c = 1.0 * cos(angleIncrement)
+            val c = 1.0 - cos(angleIncrement)
 
             relativeY = radiusOfMovement * s - radiusOfStrafe * c
             relativeX = radiusOfMovement * c + radiusOfStrafe * s

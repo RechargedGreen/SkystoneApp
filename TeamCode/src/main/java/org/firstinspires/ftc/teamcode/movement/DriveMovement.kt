@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.movement
 
-import org.firstinspires.ftc.teamcode.field.*
-import org.firstinspires.ftc.teamcode.lib.*
+import org.firstinspires.ftc.teamcode.field.Geometry
+import org.firstinspires.ftc.teamcode.field.Point
+import org.firstinspires.ftc.teamcode.field.Pose
+import org.firstinspires.ftc.teamcode.lib.Controller
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.initAll
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.movementProvider
-import org.firstinspires.ftc.teamcode.odometry.*
+import org.firstinspires.ftc.teamcode.odometry.Odometry
 
 object DriveMovement {
     lateinit var odometer: Odometry
@@ -47,11 +49,7 @@ object DriveMovement {
     fun setAngleRad(angle_rad: Double) = odometer.setAngleRad(angle_rad)
 
     fun updatePos(baseDelta: Pose, finalAngle: Angle) {
-        val circleArcDelta = Geometry.circleArcRelativeDelta(Pose(
-                baseDelta.point.x,
-                baseDelta.point.x,
-                baseDelta.heading.rad
-        ))
+        val circleArcDelta = Geometry.circleArcRelativeDelta(baseDelta)
 
         val finalDelta = Geometry.pointDelta(circleArcDelta, world_angle)
         world_x += finalDelta.x
@@ -74,7 +72,9 @@ object DriveMovement {
     }
 
     fun gamepadControl(gamepad: Controller) {
-
+        movement_y = gamepad.leftStick.y
+        movement_x = gamepad.leftStick.x
+        movement_turn = gamepad.rightStick.x
     }
 
     fun verifyMinPower() {

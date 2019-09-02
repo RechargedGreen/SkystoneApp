@@ -65,7 +65,7 @@ class Joystick(private val xInput: (Gamepad) -> Double, private val yInput: (Gam
 
     override fun update(gamePad: Gamepad) {
         x = xInput(gamePad)
-        y = yInput(gamePad)
+        y = -yInput(gamePad)
     }
 }
 

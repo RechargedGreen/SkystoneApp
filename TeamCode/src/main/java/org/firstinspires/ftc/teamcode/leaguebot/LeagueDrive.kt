@@ -10,16 +10,16 @@ import kotlin.math.*
 @Config
 object LeagueOdometry {
     @JvmField
-    var turnTrackWidth = 1.0
+    var turnTrackWidth = 14.5
     @JvmField
-    var auxTrackWidth = 1.0
+    var auxTrackWidth = 3.5
 
     @JvmField
-    var leftD = 72.0
+    var leftD = 2.83465
     @JvmField
-    var rightD = 72.0
+    var rightD = 2.83465
     @JvmField
-    var auxD = 72.0
+    var auxD = 2.83465
 
     const val CPR = 4000.0
 

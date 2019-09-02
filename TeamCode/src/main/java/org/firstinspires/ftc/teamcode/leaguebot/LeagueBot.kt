@@ -13,7 +13,7 @@ object LeagueBot : BaseBot {
     lateinit var lynx2: LynxModule
 
     override fun setup() {
-        lynx2 = hMap.get(LynxModule::class.java, "lynx2")
+        lynx2 = hMap.get(LynxModule::class.java, "Expansion Hub 2")
         drive = Akira(LeagueMovementConstants)
     }
 
