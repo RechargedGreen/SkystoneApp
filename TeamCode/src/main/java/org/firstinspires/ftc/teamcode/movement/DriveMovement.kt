@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.movement
 
-import org.firstinspires.ftc.teamcode.field.Geometry
-import org.firstinspires.ftc.teamcode.field.Point
-import org.firstinspires.ftc.teamcode.field.Pose
-import org.firstinspires.ftc.teamcode.lib.Controller
+import org.firstinspires.ftc.teamcode.field.*
+import org.firstinspires.ftc.teamcode.lib.*
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.initAll
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.movementProvider
-import org.firstinspires.ftc.teamcode.odometry.Odometry
+import org.firstinspires.ftc.teamcode.odometry.*
+import org.firstinspires.ftc.teamcode.util.*
+import kotlin.math.*
 
 object DriveMovement {
     lateinit var odometer: Odometry
@@ -49,15 +49,35 @@ object DriveMovement {
     fun setAngleRad(angle_rad: Double) = odometer.setAngleRad(angle_rad)
 
     fun updatePos(baseDelta: Pose, finalAngle: Angle) {
-        val circleArcDelta = Geometry.circleArcRelativeDelta(baseDelta)
+        /*val circleArcDelta = Geometry.circleArcRelativeDelta(baseDelta)
 
-        val finalDelta = Geometry.pointDelta(circleArcDelta, world_angle)
+        val finalDelta = Geometry.pointDelta(circleArcDelta, world_angle)*/
+        //val finalDelta = Geometry.pointDelta(baseDelta.point, world_angle)
+
+        val dtheta = baseDelta.heading.rad
+        val (sineTerm, cosTerm) = if (dtheta epsilonEquals 0.0) {
+            1.0 - dtheta * dtheta / 6.0 to dtheta / 2.0
+        } else {
+            sin(dtheta) / dtheta to (1.0 - cos(dtheta)) / dtheta
+        }
+        val move = sineTerm * baseDelta.point.y - cosTerm * baseDelta.point.x
+        val strafe = cosTerm * baseDelta.point.y + sineTerm * baseDelta.point.x
+
+        val pointDelta = Point(
+                strafe,
+                move
+        )
+
+        val finalDelta = Geometry.pointDelta(pointDelta, world_angle)
+
         world_x += finalDelta.x
         world_y += finalDelta.y
         world_angle_unwrapped = finalAngle
 
-        Speedometer.xInchesTraveled += circleArcDelta.x
-        Speedometer.yInchesTraveled += circleArcDelta.y
+        /*Speedometer.xInchesTraveled += circleArcDelta.x
+        Speedometer.yInchesTraveled += circleArcDelta.y*/
+        Speedometer.xInchesTraveled += pointDelta.x
+        Speedometer.yInchesTraveled += pointDelta.y
         Speedometer.update()
     }
 
@@ -75,6 +95,15 @@ object DriveMovement {
         movement_y = gamepad.leftStick.y
         movement_x = gamepad.leftStick.x
         movement_turn = gamepad.rightStick.x
+
+        if (movement_y.absoluteValue < 0.05)
+            movement_y = 0.0
+
+        if (movement_x.absoluteValue < 0.05)
+            movement_x = 0.0
+
+        if (movement_turn.absoluteValue < 0.05)
+            movement_turn = 0.0
     }
 
     fun verifyMinPower() {

@@ -12,11 +12,16 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
     override fun onMainLoop() {
         DriveMovement.gamepadControl(driver)
 
+        if (driver.b.currentState)
+            DriveMovement.setPosition(0.0, 0.0, 0.0)
+
         combinedPacket.put("ys", driver.leftStick.y)
 
-        combinedPacket.put("leftInches", LeagueOdometry.leftInches)
-        combinedPacket.put("rightInches", LeagueOdometry.rightInches)
-        combinedPacket.put("auxInches", LeagueOdometry.auxInches)
+        combinedPacket.put("y fps", Speedometer.yInchPerSec / 12.0)
+        combinedPacket.put("x fps", Speedometer.xInchPerSec / 12.0)
+        combinedPacket.put("leftInches", LeagueThreeWheelOdometry.leftInches)
+        combinedPacket.put("rightInches", LeagueThreeWheelOdometry.rightInches)
+        combinedPacket.put("auxInches", LeagueThreeWheelOdometry.auxInches)
         combinedPacket.put("y", world_y)
         combinedPacket.put("x", world_x)
         combinedPacket.put("deg", world_angle_unwrapped.deg)

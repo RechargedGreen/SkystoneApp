@@ -39,9 +39,22 @@ object Geometry {
         val s = heading.sin
         val x = robotDelta.x
         val y = robotDelta.y
-        return Point(
-                c * y + s * x,
+        /*return Point(
+                c * y + s * x,// gf's
                 s * y - c * x
+        )*/
+
+        /*return Point(
+                s * y - c * x,// swapped gf's
+                c * y + s * x
+        )*/
+
+        val newY = y * c - x * s// road runner
+        val newX = y * s + x * c
+
+        return Point(
+                newX,
+                newY
         )
     }
 

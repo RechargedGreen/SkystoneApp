@@ -72,6 +72,8 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : L
 
         DriveMovement.resetForOpMode()
 
+        BulkDataMaster.reset()
+
         GamePadMaster.reset()
 
         driver = Controller(gamepad1)

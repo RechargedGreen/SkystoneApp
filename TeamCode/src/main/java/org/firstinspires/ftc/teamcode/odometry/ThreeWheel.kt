@@ -15,6 +15,7 @@ object ThreeWheel : Odometry {
     private var lastRawAngle = 0.0
 
     fun update(curr_l_encoder: Int, curr_r_encoder: Int, curr_a_encoder: Int, leftInchesPerTick: Double, rightInchesPerTick: Double, auxInchesPerTick: Double, turnTrackWidth: Double, auxTrackWidth: Double) {
+        DriveMovement.odometer = this
 
         val lWheelDelta = (curr_l_encoder - last_l_encoder) * leftInchesPerTick
         val rWheelDelta = (curr_r_encoder - last_r_encoder) * rightInchesPerTick
@@ -45,6 +46,10 @@ object ThreeWheel : Odometry {
     }
 
     fun addAngleRad(angle_rad: Double) {
+        angleRadBias += angle_rad
+    }
+
+    override fun addAngleBias(angle_rad:Double){
         angleRadBias += angle_rad
     }
 }

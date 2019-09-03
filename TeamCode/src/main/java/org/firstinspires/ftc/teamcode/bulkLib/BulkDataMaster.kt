@@ -45,6 +45,12 @@ object BulkDataMaster : OpModeManagerNotifier.Notifications {
 
     fun clearAllCaches() {
         clearInputCaches()
+        clearGyroCaches()
+    }
+
+    fun reset() {
+        imuMap.clear()
+        dataMap.clear()
     }
 
     fun putGyro(address: Int, gyro: OptimizedGyro) {

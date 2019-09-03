@@ -13,6 +13,9 @@ class OptimizedGyro(lynxModule: LynxModule, mounting: Mounting) {
 
     init {
         BulkDataMaster.putGyro(lynxModule.moduleAddress, this)
+        val params = BNO055IMU.Parameters()
+        params.angleUnit = BNO055IMU.AngleUnit.RADIANS
+        delegate.initialize(params)
     }
 
     enum class Mounting {
@@ -20,10 +23,10 @@ class OptimizedGyro(lynxModule: LynxModule, mounting: Mounting) {
         FLAT
     }
 
-    private var cache: Orientation = null!!
+    private var cache: Orientation = Orientation()
         get() {
             if (!useCache) {
-                cache = delegate.angularOrientation
+                field = delegate.angularOrientation
                 useCache = true
             }
             return field
@@ -36,7 +39,7 @@ class OptimizedGyro(lynxModule: LynxModule, mounting: Mounting) {
     }
 
     val rawHeading: Angle
-        get() = Angle.createUnwrappedRad(cache.firstAngle.toDouble())
+        get() = Angle.createUnwrappedRad(-cache.firstAngle.toDouble())
 
     var heading: Angle
         get() = rawHeading + headingBias

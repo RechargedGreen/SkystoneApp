@@ -8,11 +8,11 @@ import org.firstinspires.ftc.teamcode.odometry.*
 import kotlin.math.*
 
 @Config
-object LeagueOdometry {
+object LeagueThreeWheelOdometry {
     @JvmField
     var turnTrackWidth = 14.5
     @JvmField
-    var auxTrackWidth = 3.5
+    var auxTrackWidth = -3.5
 
     @JvmField
     var leftD = 2.83465
@@ -25,7 +25,7 @@ object LeagueOdometry {
 
     fun inchesPerTick(radius: Double) = (leftD * PI) / CPR
 
-    val leftTicks: Int get() = lynx2.cachedInput.getEncoder(1)
+    val leftTicks: Int get() = -lynx2.cachedInput.getEncoder(1)
     val rightTicks: Int get() = lynx2.cachedInput.getEncoder(2)
     val auxTicks: Int get() = lynx2.cachedInput.getEncoder(0)
 
@@ -33,7 +33,12 @@ object LeagueOdometry {
     val rightInches: Double get() = rightTicks * inchesPerTick(rightD)
     val auxInches: Double get() = auxTicks * inchesPerTick(auxD)
 
-    fun update() = ThreeWheel.update(leftTicks, rightTicks, auxTicks, inchesPerTick(leftD), inchesPerTick(rightD), inchesPerTick(auxD), turnTrackWidth, auxTrackWidth)
+    fun updateThreeWheel() = ThreeWheel.update(leftTicks, rightTicks, auxTicks, inchesPerTick(leftD), inchesPerTick(rightD), inchesPerTick(auxD), turnTrackWidth, auxTrackWidth)
+
+    @JvmField
+    var yTrackWidth = 7.25
+
+    fun updateTwoWheel() = TwoWheel.update(leftTicks, auxTicks, LeagueBot.gyro.heading_rad, yTrackWidth, auxTrackWidth, inchesPerTick(leftD), inchesPerTick(auxD))
 }
 
 @Config
