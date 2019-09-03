@@ -76,8 +76,8 @@ object DriveMovement {
 
         /*Speedometer.xInchesTraveled += circleArcDelta.x
         Speedometer.yInchesTraveled += circleArcDelta.y*/
-        Speedometer.xInchesTraveled += pointDelta.x
-        Speedometer.yInchesTraveled += pointDelta.y
+        Speedometer.xInchesTraveled += baseDelta.point.x
+        Speedometer.yInchesTraveled += baseDelta.point.y
         Speedometer.update()
     }
 

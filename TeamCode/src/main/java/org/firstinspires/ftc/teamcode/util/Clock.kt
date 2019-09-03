@@ -5,8 +5,8 @@ object Clock {
         get() = System.currentTimeMillis()
 
     val nanoseconds: Long
-        get() = System.currentTimeMillis()
+        get() = System.nanoTime()
 
     val seconds: Double
-        get() = nanoseconds * 1e-9
+        get() = milliseconds / 1000.0
 }

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.leaguebot.opmode
 import com.acmerobotics.dashboard.config.*
 import com.qualcomm.robotcore.eventloop.opmode.*
 import org.firstinspires.ftc.teamcode.leaguebot.*
+import org.firstinspires.ftc.teamcode.movement.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.setPosition
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
@@ -50,8 +51,10 @@ class KPStyleProto : LeagueBotAutoBase() {
         val yLeft = yTarget - world_y
         val xLeft = xTarget - world_x
 
+        val speed = Speedometer.fieldSlipPoint
+
         if (move) {
-            moveFieldCentric(xLeft * xP, yLeft * yP, turnLeft * turnP)
+            moveFieldCentric(xLeft * xP - speed.x * xD, yLeft * yP - speed.y * yD, turnLeft * turnP - Speedometer.degPerSec * turnD)
         } else {
             stopDrive()
         }
