@@ -4,24 +4,17 @@ import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 import org.firstinspires.ftc.teamcode.util.*
-import kotlin.math.*
 
 object Speedometer {
     private var lastUpdateTime = 0.0
-    var xInchPerSec = 0.0
-        private set
-    var yInchPerSec = 0.0
-        private set
-
-    private val obviousHighValue = 12.0 * 8.0 // bot can't go 8'/sec
+    val xInchPerSec: Double get() = robotSlipPoint.x
+    val yInchPerSec: Double get() = robotSlipPoint.y
 
     var xInchesTraveled = 0.0
     var yInchesTraveled = 0.0
 
     private var lastAngle = 0.0
     private var angularVel = 0.0
-
-    private var hz = 25.0
 
     val radPerSec: Double
         get() = angularVel
@@ -47,28 +40,27 @@ object Speedometer {
 
     fun update() {
         val currTime = Clock.seconds
-        val elapsedTime = currTime - lastUpdateTime
-        if (elapsedTime > 1.0 / hz) {
-            val newSpeedX = xInchesTraveled / elapsedTime
-            val newSpeedY = yInchesTraveled / elapsedTime
+        val dt = currTime - lastUpdateTime
+        lastUpdateTime = currTime
 
-            if (newSpeedY.absoluteValue < obviousHighValue && newSpeedX.absoluteValue < obviousHighValue) {
-                xInchPerSec = newSpeedX
-                yInchPerSec = newSpeedY
-            }
+        val xSpeed = xInchesTraveled / dt
+        val ySpeed = xInchesTraveled / dt
 
-            angularVel = (DriveMovement.world_angle_unwrapped.rad - lastAngle) / elapsedTime
-            lastAngle = DriveMovement.world_angle_unwrapped.rad
+        angularVel = (world_angle.rad - lastAngle) / dt
+        lastAngle - world_angle.rad
 
-            xInchesTraveled = 0.0
-            yInchesTraveled = 0.0
-            lastUpdateTime = currTime
-        }
+        xInchesTraveled = 0.0
+        yInchesTraveled = 0.0
+
+        robotSlipPoint = Point(xSpeed, ySpeed)
     }
 
-    val fieldSlipPoint: Point
-        get() = Point(
-                ySlipPrediction * world_angle.cos + xSlipPrediction * world_angle.sin,
-                ySlipPrediction * world_angle.sin + xSlipPrediction * world_angle.cos
-        )
+    var robotSlipPoint = Point(0.0, 0.0)
+        private set(value) {
+            field = value
+            fieldSlipPoint = Geometry.pointDelta(value, world_angle)
+        }
+
+    var fieldSlipPoint: Point = Point(0.0, 0.0)
+        private set
 }

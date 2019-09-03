@@ -473,7 +473,7 @@ public class FtcRobotControllerActivity extends Activity
     if (preferencesHelper != null) preferencesHelper.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(sharedPreferencesListener);
 
     RobotLog.cancelWriteLogcatToDisk();
-    FtcDashboard .stop();
+    FtcDashboard.stop();
   }
 
   protected void bindToService() {

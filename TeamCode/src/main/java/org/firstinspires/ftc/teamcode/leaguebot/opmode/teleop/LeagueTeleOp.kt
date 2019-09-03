@@ -10,7 +10,9 @@ import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y
 @TeleOp
 class LeagueTeleOp : LeagueBotTeleOpBase() {
     override fun onMainLoop() {
-        DriveMovement.gamepadControl(driver)
+        //DriveMovement.gamepadControl(driver)
+
+        DriveMovement.moveFieldCentric(driver.leftStick.x, driver.leftStick.y, driver.rightStick.x)
 
         if (driver.b.currentState)
             DriveMovement.setPosition(0.0, 0.0, 0.0)

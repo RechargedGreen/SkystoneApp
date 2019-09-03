@@ -58,7 +58,7 @@ object Geometry {
         )
     }
 
-    fun atan2(x: Double, y: Double) = Angle.createWrappedRad(Math.atan2(y, x))
+    fun atan2(x: Double, y: Double) = Angle.createWrappedRad(Math.atan2(x, y))
 }
 
 data class Point(

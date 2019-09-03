@@ -22,8 +22,8 @@ object LeagueBot : BaseBot {
     }
 
     override fun update() {
-        /*LeagueThreeWheelOdometry.updateThreeWheel()*/
-        LeagueThreeWheelOdometry.updateTwoWheel()
+        LeagueThreeWheelOdometry.updateThreeWheel()
+        //LeagueThreeWheelOdometry.updateTwoWheel()
         drive.update()
     }
 

@@ -87,8 +87,26 @@ object DriveMovement {
         movement_turn = turn
     }
 
-    fun moveFieldCentric(x: Double, y: Double, turn: Double) {
+    fun moveRobotCentricVector(vel: Double, direction: Angle, turn: Double) {
+        val sin = direction.sin
+        val cos = direction.cos
 
+        movement_x = sin * vel
+        movement_y = cos * vel
+
+        movement_turn = turn
+    }
+
+    fun moveFieldCentric(x: Double, y: Double, turn: Double) {
+        val pointMove = Point(x, y)
+        moveRobotCentricVector(
+                pointMove.hypot,
+                pointMove.atan2 - world_angle,
+                turn)
+    }
+
+    fun moveFieldCentricVector(speed: Double, angle: Angle, turn: Double) {
+        moveRobotCentricVector(speed, angle - world_angle, turn)
     }
 
     fun gamepadControl(gamepad: Controller) {
