@@ -87,6 +87,11 @@ object DriveMovement {
         movement_turn = turn
     }
 
+    fun stopMove(){
+        movement_x = 0.0
+        movement_y = 0.0
+    }
+
     fun moveRobotCentricVector(vel: Double, direction: Angle, turn: Double) {
         val sin = direction.sin
         val cos = direction.cos
