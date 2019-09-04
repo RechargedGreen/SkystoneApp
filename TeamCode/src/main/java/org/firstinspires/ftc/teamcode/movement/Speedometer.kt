@@ -44,7 +44,7 @@ object Speedometer {
         lastUpdateTime = currTime
 
         val xSpeed = xInchesTraveled / dt
-        val ySpeed = xInchesTraveled / dt
+        val ySpeed = yInchesTraveled / dt
 
         angularVel = (world_angle.rad - lastAngle) / dt
         lastAngle - world_angle.rad

@@ -25,22 +25,16 @@ class KPStyleProto : LeagueBotAutoBase() {
         var xTarget = 0.0
 
         @JvmField
-        var turnP = 0.01
+        var turnP = 0.02
 
         @JvmField
-        var yP = 0.1
-
-        @JvmField
-        var xP = 0.1
+        var moveP = 0.2
 
         @JvmField
         var turnD = 0.0
 
         @JvmField
-        var yD = 0.0
-
-        @JvmField
-        var xD = 0.0
+        var moveD = 0.0
 
         @JvmField
         var move = true
@@ -54,7 +48,7 @@ class KPStyleProto : LeagueBotAutoBase() {
         val speed = Speedometer.fieldSlipPoint
 
         if (move) {
-            moveFieldCentric(xLeft * xP - speed.x * xD, yLeft * yP - speed.y * yD, turnLeft * turnP - Speedometer.degPerSec * turnD)
+            moveFieldCentric(xLeft * moveP - speed.x * moveD, yLeft * moveP - speed.y * moveP, turnLeft * turnP - Speedometer.degPerSec * turnD)
         } else {
             stopDrive()
         }
