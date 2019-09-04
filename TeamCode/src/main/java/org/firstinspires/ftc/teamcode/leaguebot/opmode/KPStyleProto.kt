@@ -4,9 +4,9 @@ import com.acmerobotics.dashboard.config.*
 import com.qualcomm.robotcore.eventloop.opmode.*
 import org.firstinspires.ftc.teamcode.leaguebot.*
 import org.firstinspires.ftc.teamcode.movement.*
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.gamepadControl
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.setPosition
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y
@@ -47,15 +47,13 @@ class KPStyleProto : LeagueBotAutoBase() {
 
         val speed = Speedometer.fieldSlipPoint
 
-        if (move) {
-            moveFieldCentric(xLeft * moveP - speed.x * moveD, yLeft * moveP - speed.y * moveP, turnLeft * turnP - Speedometer.degPerSec * turnD)
-        } else {
-            stopDrive()
-        }
+        if (move)
+            moveFieldCentric(xLeft * moveP - speed.x * moveD, yLeft * moveP - speed.y * moveD, turnLeft * turnP - Speedometer.degPerSec * turnD)
+        else
+            gamepadControl(driver)
 
-        if (driver.y.justPressed) {
+        if (driver.y.justPressed)
             move = !move
-        }
 
         if (driver.b.currentState)
             setPosition(0.0, 0.0, 0.0)
