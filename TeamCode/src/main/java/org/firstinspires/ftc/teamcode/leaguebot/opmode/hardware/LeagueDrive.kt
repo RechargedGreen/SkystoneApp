@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.leaguebot
+package org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware
 
 import com.acmerobotics.dashboard.config.*
 import org.firstinspires.ftc.teamcode.bulkLib.*
-import org.firstinspires.ftc.teamcode.leaguebot.LeagueBot.lynx2
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueBot.lynx2
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 import org.firstinspires.ftc.teamcode.odometry.*
 import kotlin.math.*

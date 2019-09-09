@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.movement.*
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 import org.firstinspires.ftc.teamcode.util.*
 
-abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : LinearOpMode() {
+abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean, private val alliance: Alliance?) : LinearOpMode() {
 
     val movementAllowed: Boolean get() = isAutonomous || status != Status.INIT
 
@@ -69,6 +69,9 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean) : L
 
     final override fun runOpMode() {
         Globals.mode = this
+
+        if(alliance != null)
+            RunData.ALLIANCE = alliance
 
         DriveMovement.resetForOpMode()
 

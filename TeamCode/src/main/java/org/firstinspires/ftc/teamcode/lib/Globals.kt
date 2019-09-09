@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.lib
 
 import com.acmerobotics.dashboard.canvas.*
-import com.acmerobotics.dashboard.config.*
 
 object Globals {
     lateinit var mode: BaseMode
@@ -14,4 +13,19 @@ object Globals {
         @JvmField
         var debugging = false // if we are in debugging mode we might make some changes like not going to park
     }
+}
+
+
+/**
+ * contains data about the current match
+ */
+object RunData {
+    var ALLIANCE = Alliance.RED
+}
+
+enum class Alliance {
+    RED,
+    BLUE;
+
+    fun isRed() = this == RED
 }

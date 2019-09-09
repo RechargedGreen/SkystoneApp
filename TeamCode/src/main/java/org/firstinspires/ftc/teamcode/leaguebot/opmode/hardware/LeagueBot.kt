@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.leaguebot
+package org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware
 
 import com.qualcomm.hardware.lynx.*
 import org.firstinspires.ftc.teamcode.bulkLib.*
@@ -15,16 +15,22 @@ object LeagueBot : BaseBot {
 
     lateinit var gyro: OptimizedGyro
 
+    lateinit var foundationGrabber: LeagueFoundationGrabber
+
     override fun setup() {
         lynx2 = hMap.get(LynxModule::class.java, "Expansion Hub 2")
         gyro = OptimizedGyro(lynx2, OptimizedGyro.Mounting.FLAT)
         drive = Akira(LeagueMovementConstants)
+
+        foundationGrabber = LeagueFoundationGrabber()
     }
 
     override fun update() {
         LeagueThreeWheelOdometry.updateThreeWheel()
         //LeagueThreeWheelOdometry.updateTwoWheel()
         drive.update()
+
+        foundationGrabber.update()
     }
 
     override val teleopName: String = LeagueTeleOp::class.java.name
