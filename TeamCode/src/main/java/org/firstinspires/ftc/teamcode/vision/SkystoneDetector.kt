@@ -16,13 +16,13 @@ class SkystoneDetector : Tracker() {
     val place: SkystoneRandomization get() = SkystoneRandomization.getFromInt(placeInt)
 
 
-    lateinit var mat0: Mat
-    lateinit var mat1: Mat
-    lateinit var mat2: Mat
+    private lateinit var mat0: Mat
+    private lateinit var mat1: Mat
+    private lateinit var mat2: Mat
 
-    lateinit var mask0: Mat
-    lateinit var mask1: Mat
-    lateinit var mask2: Mat
+    private lateinit var mask0: Mat
+    private lateinit var mask1: Mat
+    private lateinit var mask2: Mat
 
     private var madeMats = false
 
@@ -33,7 +33,7 @@ class SkystoneDetector : Tracker() {
     }
 
     override fun processFrame(frame: Mat, timestamp: Double) {
-        val (h, w) = (frame.width() to frame.height())
+        val (h, w) = (frame.height() to frame.width())
         if (!madeMats) {
             mask0 = Mat(h, w, CvType.CV_8UC3)
             mask1 = Mat(h, w, CvType.CV_8UC3)
@@ -45,9 +45,9 @@ class SkystoneDetector : Tracker() {
         mask1.setTo(BLACK)
         mask2.setTo(BLACK)
 
-        Imgproc.circle(mask0, Point(cx0, cy0), r, WHITE)
-        Imgproc.circle(mask1, Point(cx1, cy1), r, WHITE)
-        Imgproc.circle(mask2, Point(cx2, cy2), r, WHITE)
+        Imgproc.circle(mask0, Point(cx0, cy0), r, WHITE, Core.FILLED)
+        Imgproc.circle(mask1, Point(cx1, cy1), r, WHITE, Core.FILLED)
+        Imgproc.circle(mask2, Point(cx2, cy2), r, WHITE, Core.FILLED)
 
         Core.bitwise_and(mask0, frame, mat0)
         Core.bitwise_and(mask1, frame, mat1)

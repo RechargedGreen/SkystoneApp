@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.lib
 import com.acmerobotics.dashboard.canvas.*
 import com.qualcomm.robotcore.eventloop.opmode.*
 import com.qualcomm.robotcore.util.*
-import org.firstinspires.ftc.teamcode.bulkLib.BulkDataMaster
+import org.firstinspires.ftc.teamcode.bulkLib.*
 import org.firstinspires.ftc.teamcode.movement.*
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 import org.firstinspires.ftc.teamcode.util.*
@@ -70,7 +70,7 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean, pri
     final override fun runOpMode() {
         Globals.mode = this
 
-        if(alliance != null)
+        if (alliance != null)
             RunData.ALLIANCE = alliance
 
         DriveMovement.resetForOpMode()

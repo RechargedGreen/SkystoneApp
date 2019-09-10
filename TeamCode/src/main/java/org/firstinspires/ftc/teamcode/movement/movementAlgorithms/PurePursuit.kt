@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_point
 
 object PurePursuit {
-    fun init(){
+    fun init() {
 
     }
 

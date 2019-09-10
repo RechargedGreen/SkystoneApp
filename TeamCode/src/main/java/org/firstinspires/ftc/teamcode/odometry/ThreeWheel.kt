@@ -49,7 +49,7 @@ object ThreeWheel : Odometry {
         angleRadBias += angle_rad
     }
 
-    override fun addAngleBias(angle_rad:Double){
+    override fun addAngleBias(angle_rad: Double) {
         angleRadBias += angle_rad
     }
 }

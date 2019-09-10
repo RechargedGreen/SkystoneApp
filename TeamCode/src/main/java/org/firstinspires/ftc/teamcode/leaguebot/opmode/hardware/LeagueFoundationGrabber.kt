@@ -3,15 +3,15 @@ package org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware
 class LeagueFoundationGrabber {
     var grabbing = false
 
-    fun grab(){
+    fun grab() {
         grabbing = true
     }
 
-    fun release(){
+    fun release() {
         grabbing = false
     }
 
-    fun update(){
+    fun update() {
 
     }
 }

@@ -87,7 +87,7 @@ object DriveMovement {
         movement_turn = turn
     }
 
-    fun stopMove(){
+    fun stopMove() {
         movement_x = 0.0
         movement_y = 0.0
     }

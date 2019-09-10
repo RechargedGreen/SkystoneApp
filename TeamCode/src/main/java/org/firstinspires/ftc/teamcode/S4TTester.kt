@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode
 
-import com.qualcomm.hardware.lynx.LynxModule
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.bulkLib.BulkDataMaster
-import org.firstinspires.ftc.teamcode.bulkLib.Encoder
-import org.firstinspires.ftc.teamcode.bulkLib.S4T
+import com.qualcomm.hardware.lynx.*
+import com.qualcomm.robotcore.eventloop.opmode.*
+import org.firstinspires.ftc.teamcode.bulkLib.*
 
 @TeleOp
 class S4TTester : LinearOpMode() {

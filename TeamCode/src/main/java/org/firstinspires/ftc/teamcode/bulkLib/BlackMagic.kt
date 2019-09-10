@@ -4,13 +4,13 @@ import com.qualcomm.hardware.lynx.*
 import com.qualcomm.robotcore.hardware.*
 import org.firstinspires.ftc.robotcore.internal.opmode.*
 import org.firstinspires.ftc.robotcore.internal.system.*
-import org.firstinspires.ftc.teamcode.lib.Globals
+import org.firstinspires.ftc.teamcode.lib.*
 
 object BlackMagic {
     val opModeManager: OpModeManagerImpl
         get() = OpModeManagerImpl.getOpModeManagerOfActivity(AppUtil.getInstance().rootActivity)
 
-    val hMap:HardwareMap get() = Globals.mode.hardwareMap
+    val hMap: HardwareMap get() = Globals.mode.hardwareMap
     /*val hMap: HardwareMap//todo fix
         get() = opModeManager.hardwareMap*/
 

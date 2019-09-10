@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode.sharedhardware
 
 import com.qualcomm.robotcore.hardware.*
 import org.firstinspires.ftc.teamcode.bulkLib.BlackMagic.hMap
-import org.firstinspires.ftc.teamcode.bulkLib.RevHubMotor
 import org.firstinspires.ftc.teamcode.lib.*
-import org.firstinspires.ftc.teamcode.lib.hardware.*
 import org.firstinspires.ftc.teamcode.movement.*
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 import kotlin.math.*

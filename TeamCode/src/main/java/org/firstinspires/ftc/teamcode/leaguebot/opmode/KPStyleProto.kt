@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.leaguebot.opmode
 import com.acmerobotics.dashboard.config.*
 import com.qualcomm.robotcore.eventloop.opmode.*
 import org.firstinspires.ftc.teamcode.leaguebot.*
+import org.firstinspires.ftc.teamcode.lib.*
 import org.firstinspires.ftc.teamcode.movement.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.gamepadControl
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric
@@ -13,7 +14,7 @@ import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y
 
 @Config
 @TeleOp
-class KPStyleProto : LeagueBotAutoBase() {
+class KPStyleProto : LeagueBotAutoBase(Alliance.RED) {
     companion object {
         @JvmField
         var turnTarget = 0.0

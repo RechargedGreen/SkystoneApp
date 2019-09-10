@@ -43,7 +43,7 @@ object TwoWheel : Odometry {
         angleBias = angle_rad - last_raw_angle_rad
     }
 
-    override fun addAngleBias(angle_rad:Double){
+    override fun addAngleBias(angle_rad: Double) {
         angleBias += angle_rad
     }
 }

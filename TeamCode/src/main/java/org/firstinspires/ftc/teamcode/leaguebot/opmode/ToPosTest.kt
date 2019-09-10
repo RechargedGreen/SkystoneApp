@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode
 
 import org.firstinspires.ftc.teamcode.leaguebot.*
+import org.firstinspires.ftc.teamcode.lib.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 
-class ToPosTest : LeagueBotAutoBase() {
+class ToPosTest : LeagueBotAutoBase(Alliance.RED) {
     enum class stages {
         s1,
         s2,
@@ -42,11 +43,11 @@ class ToPosTest : LeagueBotAutoBase() {
             }
         }
 
-        when{
-            driver.dLeft.currentState -> nextStage(stages.s1.ordinal)
-            driver.dUp.currentState -> nextStage(stages.s2.ordinal)
+        when {
+            driver.dLeft.currentState  -> nextStage(stages.s1.ordinal)
+            driver.dUp.currentState    -> nextStage(stages.s2.ordinal)
             driver.dRight.currentState -> nextStage(stages.s3.ordinal)
-            driver.dDown.currentState -> nextStage(stages.stopForTime.ordinal)
+            driver.dDown.currentState  -> nextStage(stages.stopForTime.ordinal)
         }
     }
 }
