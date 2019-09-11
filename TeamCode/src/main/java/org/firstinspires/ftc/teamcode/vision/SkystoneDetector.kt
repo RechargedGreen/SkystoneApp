@@ -72,18 +72,18 @@ class SkystoneDetector : Tracker() {
 
     companion object {
         @JvmField
-        var cx0 = 0.0
+        var cx0 = 50.0
         @JvmField
-        var cx1 = 0.0
+        var cx1 = 150.0
         @JvmField
-        var cx2 = 0.0
+        var cx2 = 250.0
 
         @JvmField
-        var cy0 = 0.0
+        var cy0 = 100.0
         @JvmField
-        var cy1 = 0.0
+        var cy1 = 100.0
         @JvmField
-        var cy2 = 0.0
+        var cy2 = 100.0
 
         @JvmField
         var r = 10
