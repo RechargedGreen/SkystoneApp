@@ -10,7 +10,7 @@ class SkystoneVisionTest : LinearOpMode() {
     override fun runOpMode() {
         ALLIANCE = Alliance.RED
 
-        val vision = VuforiaCamera()
+        val vision = OpenCVCamera()
         val detector = SkystoneDetector()
         vision.addTracker(detector)
 

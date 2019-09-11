@@ -34,10 +34,11 @@ class SkystoneDetector : Tracker() {
 
     override fun processFrame(frame: Mat, timestamp: Double) {
         val (h, w) = (frame.height() to frame.width())
+        val type = frame.type()
         if (!madeMats) {
-            mask0 = Mat(h, w, CvType.CV_8UC3)
-            mask1 = Mat(h, w, CvType.CV_8UC3)
-            mask2 = Mat(h, w, CvType.CV_8UC3)
+            mask0 = Mat(h, w, type)
+            mask1 = Mat(h, w, type)
+            mask2 = Mat(h, w, type)
             madeMats = true
         }
 
