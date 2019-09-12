@@ -3,12 +3,12 @@ package org.firstinspires.ftc.teamcode.sharedhardware
 import org.firstinspires.ftc.teamcode.lib.*
 import org.firstinspires.ftc.teamcode.movement.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.gamepadControl
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveRobotCentric
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveRobotCentric_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_turn
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_x
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_y
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_unwrapped
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_unwrapped_raw
 
 object Calibration {
     object SlipPredictions : StateMachine() {
@@ -55,7 +55,7 @@ object Calibration {
                         nextStage()
                 }
                 Calibration.SlipPredictions.states.accelerateForwards                                                                                 -> {
-                    moveRobotCentric(0.0, GOING_FORWARDS_SPEED, 0.0)
+                    moveRobotCentric_raw(0.0, GOING_FORWARDS_SPEED, 0.0)
 
                     if (isTimedOut(ACCELERATION_TIME)) {
                         saved_speed_y = Speedometer.yInchPerSec
@@ -73,7 +73,7 @@ object Calibration {
                     }
                 }
                 Calibration.SlipPredictions.states.accelerateSideways                                                                                 -> {
-                    moveRobotCentric(GOING_SIDEWAYS_SPEED, 0.0, 0.0)
+                    moveRobotCentric_raw(GOING_SIDEWAYS_SPEED, 0.0, 0.0)
 
                     if (isTimedOut(ACCELERATION_TIME)) {
                         saved_speed_x = Speedometer.yInchPerSec
@@ -91,7 +91,7 @@ object Calibration {
                     }
                 }
                 Calibration.SlipPredictions.states.accelerateTurn                                                                                     -> {
-                    moveRobotCentric(0.0, 0.0, TURNING_SPEED)
+                    moveRobotCentric_raw(0.0, 0.0, TURNING_SPEED)
 
                     if (isTimedOut(ACCELERATION_TIME)) {
                         saved_speed_turn = Speedometer.radPerSec
@@ -101,7 +101,7 @@ object Calibration {
                 Calibration.SlipPredictions.states.slipTurn                                                                                           -> {
                     stopDrive()
 
-                    val radsTurned = (world_angle_unwrapped - stateStartAngle).rad
+                    val radsTurned = (world_angle_unwrapped_raw - stateStartAngle).rad
 
                     if (isTimedOut(SLIP_TIME)) {
                         newSlipTurnFactor = radsTurned / saved_speed_turn
@@ -159,19 +159,19 @@ object Calibration {
                         nextStage()
                 }
                 Calibration.MinPower.states.forwards                                                                                     -> {
-                    moveRobotCentric(0.0, stateSeconds / RAMP_TO_FULL_SPEED_TIME, 0.0)
+                    moveRobotCentric_raw(0.0, stateSeconds / RAMP_TO_FULL_SPEED_TIME, 0.0)
                     newYMin = movement_y
                     if (distanceFromStateStart > DRIVE_INCH)
                         nextStage()
                 }
                 Calibration.MinPower.states.sideways                                                                                     -> {
-                    moveRobotCentric(stateSeconds / RAMP_TO_FULL_SPEED_TIME, 0.0, 0.0)
+                    moveRobotCentric_raw(stateSeconds / RAMP_TO_FULL_SPEED_TIME, 0.0, 0.0)
                     newXMin = movement_x
                     if (distanceFromStateStart > DRIVE_INCH)
                         nextStage()
                 }
                 Calibration.MinPower.states.turn                                                                                         -> {
-                    moveRobotCentric(0.0, 0.0, stateSeconds / RAMP_TO_FULL_SPEED_TIME)
+                    moveRobotCentric_raw(0.0, 0.0, stateSeconds / RAMP_TO_FULL_SPEED_TIME)
                     newTurnMin = movement_turn
                     if (angleFromStateStart.deg > TURN_DEG)
                         nextStage()

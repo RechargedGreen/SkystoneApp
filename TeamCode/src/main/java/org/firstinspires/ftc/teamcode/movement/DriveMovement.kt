@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.movement
 
 import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.lib.*
+import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.initAll
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.movementProvider
 import org.firstinspires.ftc.teamcode.odometry.*
@@ -11,22 +12,34 @@ import kotlin.math.*
 object DriveMovement {
     lateinit var odometer: Odometry
 
-    var world_x = 0.0
-    var world_y = 0.0
-    val world_point: Point
-        get() = Point(world_x, world_y)
+    var world_x_raw = 0.0
+    var world_x_mirror: Double
+        set(value) {
+            world_x_raw = value * ALLIANCE.sign
+        }
+        get() = world_x_raw * ALLIANCE.sign
+    var world_y_raw = 0.0
+    var world_y_mirror: Double
+        get() = world_y_raw * ALLIANCE.sign
+        set(value) {
+            world_y_raw = value
+        }
+    val world_point_raw: Point get() = Point(world_x_raw, world_y_raw)
+    val world_point_mirror: Point get() = Point(world_x_mirror, world_y_mirror)
 
-    val world_pose: Pose
-        get() = Pose(world_point, world_angle)
+    val world_pose_raw: Pose
+        get() = Pose(world_point_mirror, world_angle_mirror)
 
-    var world_angle = Angle.createUnwrappedRad(0.0)
+    var world_angle_raw = Angle.createUnwrappedRad(0.0)
         private set
+    val world_angle_mirror: Angle get() = world_angle_raw * ALLIANCE.sign
 
-    var world_angle_unwrapped = Angle.createUnwrappedRad(0.0)
+    var world_angle_unwrapped_raw = Angle.createUnwrappedRad(0.0)
         private set(value) {
-            world_angle = value.wrapped()
+            world_angle_raw = value.wrapped()
             field = value
         }
+    val world_angle_unwrapped_mirror: Angle get() = world_angle_unwrapped_raw * ALLIANCE.sign
 
     var movement_y = 0.0
     var movement_x = 0.0
@@ -38,15 +51,20 @@ object DriveMovement {
         movement_turn = 0.0
     }
 
-    fun setPosition(x: Double, y: Double, angle_rad: Double) {
-        world_x = x
-        world_y = x
+    fun setPosition_raw(x: Double, y: Double, angle_rad: Double) {
+        world_x_raw = x
+        world_y_raw = x
         odometer.setAngleRad(angle_rad)
     }
 
-    fun setAngle(angle: Angle) = setAngleRad(angle.rad)
-    fun setAngle_deg(angle_deg: Double) = setAngleRad(angle_deg.toRadians)
-    fun setAngleRad(angle_rad: Double) = odometer.setAngleRad(angle_rad)
+    fun setPosition_mirror(x: Double, y: Double, angle_rad: Double) = setPosition_raw(x * ALLIANCE.sign, y, angle_rad * ALLIANCE.sign)
+
+    fun setAngle_raw(angle: Angle) = setAngleRad_raw(angle.rad)
+    fun setAngle_mirror(angle: Angle) = setAngle_raw(angle * ALLIANCE.sign)
+    fun setAngle_deg_raw(angle_deg: Double) = setAngleRad_raw(angle_deg.toRadians)
+    fun setAngle_deg_mirror(angle_deg: Double) = setAngle_deg_raw(angle_deg * ALLIANCE.sign)
+    fun setAngleRad_raw(angle_rad: Double) = odometer.setAngleRad(angle_rad)
+    fun setAngleRad_mirror(angle_rad: Double) = setAngleRad_raw(angle_rad * ALLIANCE.sign)
 
     fun updatePos(baseDelta: Pose, finalAngle: Angle) {
         /*val circleArcDelta = Geometry.circleArcRelativeDelta(baseDelta)
@@ -68,11 +86,11 @@ object DriveMovement {
                 move
         )
 
-        val finalDelta = Geometry.pointDelta(pointDelta, world_angle)
+        val finalDelta = Geometry.pointDelta(pointDelta, world_angle_raw)
 
-        world_x += finalDelta.x
-        world_y += finalDelta.y
-        world_angle_unwrapped = finalAngle
+        world_x_raw += finalDelta.x
+        world_y_raw += finalDelta.y
+        world_angle_raw = finalAngle
 
         /*Speedometer.xInchesTraveled += circleArcDelta.x
         Speedometer.yInchesTraveled += circleArcDelta.y*/
@@ -81,18 +99,20 @@ object DriveMovement {
         Speedometer.update()
     }
 
-    fun moveRobotCentric(x: Double, y: Double, turn: Double) {
+    fun moveRobotCentric_raw(x: Double, y: Double, turn: Double) {
         movement_x = x
         movement_y = y
         movement_turn = turn
     }
+
+    fun moveRobotCentric_mirror(x: Double, y: Double, turn: Double) = moveRobotCentric_raw(x * ALLIANCE.sign, y, turn * ALLIANCE.sign)
 
     fun stopMove() {
         movement_x = 0.0
         movement_y = 0.0
     }
 
-    fun moveRobotCentricVector(vel: Double, direction: Angle, turn: Double) {
+    fun moveRobotCentricVector_raw(vel: Double, direction: Angle, turn: Double) {
         val sin = direction.sin
         val cos = direction.cos
 
@@ -102,17 +122,24 @@ object DriveMovement {
         movement_turn = turn
     }
 
-    fun moveFieldCentric(x: Double, y: Double, turn: Double) {
+    fun moveRobotCentricVector_mirror(vel: Double, direction: Angle, turn: Double) = moveRobotCentricVector_raw(vel, direction * ALLIANCE.sign, turn * ALLIANCE.sign)
+
+    fun moveFieldCentric_raw(x: Double, y: Double, turn: Double) {
         val pointMove = Point(x, y)
-        moveRobotCentricVector(
+        moveRobotCentricVector_raw(
                 pointMove.hypot,
-                pointMove.atan2 - world_angle,
+                pointMove.atan2 - world_angle_raw,
                 turn)
     }
 
-    fun moveFieldCentricVector(speed: Double, angle: Angle, turn: Double) {
-        moveRobotCentricVector(speed, angle - world_angle, turn)
+    fun moveFieldCentric_mirror(x: Double, y: Double, turn: Double) = moveFieldCentric_raw(x * ALLIANCE.sign, y, turn * ALLIANCE.sign)
+
+
+    fun moveFieldCentricVector_raw(speed: Double, angle: Angle, turn: Double) {
+        moveRobotCentricVector_raw(speed, angle - world_angle_raw, turn)
     }
+
+    fun moveFieldCentricVector_mirror(speed: Double, angle: Angle, turn: Double) = moveFieldCentricVector_raw(speed, angle * ALLIANCE.sign, turn * ALLIANCE.sign)
 
     fun gamepadControl(gamepad: Controller) {
         movement_y = gamepad.leftStick.y
@@ -148,12 +175,5 @@ object DriveMovement {
     fun resetForOpMode() {
         stopDrive()
         initAll()
-    }
-}
-
-data class DriveVector(val speed: Double, val angleOnRobot: Angle) {
-    operator fun plus(other: DriveVector) = DriveVector(0.0, Angle.createUnwrappedRad(0.0)) //todo finish implementation
-    fun apply() {
-        // todo apply to x, y velocities
     }
 }

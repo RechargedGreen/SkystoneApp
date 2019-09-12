@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode
 
+import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.leaguebot.*
 import org.firstinspires.ftc.teamcode.lib.*
 
-class StateMachineTest : LeagueBotAutoBase(Alliance.RED) {
+class StateMachineTest : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
     enum class progStates {
         a,
         b,

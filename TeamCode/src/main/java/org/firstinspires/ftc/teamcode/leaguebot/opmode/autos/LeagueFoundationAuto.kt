@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.autos
 
+import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.leaguebot.*
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.*
 import org.firstinspires.ftc.teamcode.lib.*
-import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric_mirror
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
 
-abstract class LeagueFoundationAuto(alliance: Alliance) : LeagueBotAutoBase(alliance) {
+abstract class LeagueFoundationAuto(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(0.0, 0.0, Math.toRadians(-90.0))) {
     enum class progStates {
         grab,
         pull,
@@ -41,7 +41,7 @@ abstract class LeagueFoundationAuto(alliance: Alliance) : LeagueBotAutoBase(alli
                 LeagueBot.foundationGrabber.grab()
                 stopDrive()
                 if (stageTimer.seconds() > 0.25)
-                    moveFieldCentric(if (ALLIANCE.isRed()) pullSpeed else -pullSpeed, 0.0, 0.0)
+                    moveFieldCentric_mirror(pullSpeed, 0.0, 0.0)
 
                 timeoutStage(3.0)
             }

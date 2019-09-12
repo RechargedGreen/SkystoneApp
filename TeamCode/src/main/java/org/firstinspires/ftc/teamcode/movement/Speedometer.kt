@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.movement
 
 import org.firstinspires.ftc.teamcode.field.*
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_raw
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 import org.firstinspires.ftc.teamcode.util.*
 
@@ -46,8 +46,8 @@ object Speedometer {
         val xSpeed = xInchesTraveled / dt
         val ySpeed = yInchesTraveled / dt
 
-        angularVel = (world_angle.rad - lastAngle) / dt
-        lastAngle - world_angle.rad
+        angularVel = (world_angle_raw.rad - lastAngle) / dt
+        lastAngle - world_angle_raw.rad
 
         xInchesTraveled = 0.0
         yInchesTraveled = 0.0
@@ -58,7 +58,7 @@ object Speedometer {
     var robotSlipPoint = Point(0.0, 0.0)
         private set(value) {
             field = value
-            fieldSlipPoint = Geometry.pointDelta(value, world_angle)
+            fieldSlipPoint = Geometry.pointDelta(value, world_angle_raw)
         }
 
     var fieldSlipPoint: Point = Point(0.0, 0.0)

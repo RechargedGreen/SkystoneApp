@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode
 
+import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.leaguebot.*
 import org.firstinspires.ftc.teamcode.lib.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 
-class ToPosTest : LeagueBotAutoBase(Alliance.RED) {
+class ToPosTest : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
     enum class stages {
         s1,
         s2,

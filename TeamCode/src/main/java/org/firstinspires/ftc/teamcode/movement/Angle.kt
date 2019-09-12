@@ -60,6 +60,8 @@ data class Angle(var heading: Double, var unit: Angle.Unit) {
         Unit.DEG -> createUnwrappedDeg(-deg)
     }
 
+    operator fun times(scaler: Double) = Angle(heading * scaler, unit)
+
     val sin = sin(rad)
     val cos = cos(rad)
     val tan = tan(rad)

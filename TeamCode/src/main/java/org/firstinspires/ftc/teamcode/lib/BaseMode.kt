@@ -4,11 +4,19 @@ import com.acmerobotics.dashboard.canvas.*
 import com.qualcomm.robotcore.eventloop.opmode.*
 import com.qualcomm.robotcore.util.*
 import org.firstinspires.ftc.teamcode.bulkLib.*
+import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.movement.*
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.setAngle_mirror
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_mirror
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_mirror
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
+import org.firstinspires.ftc.teamcode.ryanVision.*
 import org.firstinspires.ftc.teamcode.util.*
+import org.firstinspires.ftc.teamcode.vision.*
 
-abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean, private val alliance: Alliance?) : LinearOpMode() {
+abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean, private val alliance: Alliance?, val position_mirror: Pose?) : LinearOpMode() {
+    private val camera = OpenCVCamera()
+
 
     val movementAllowed: Boolean get() = isAutonomous || status != Status.INIT
 
@@ -82,6 +90,11 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean, pri
         driver = Controller(gamepad1)
         operator = Controller(gamepad2)
 
+        if (isAutonomous) {
+            camera.addTracker(SkystoneDetector())
+            camera.initialize()
+        }
+
         bot.setup()
 
         onInit()
@@ -105,6 +118,12 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean, pri
                     } else {
                         if (isAutonomous)
                             AutomaticTeleopInit.transitionOnStop(this, bot.teleopName)
+                        camera.close()
+                        position_mirror?.apply {
+                            world_x_mirror = point.x
+                            world_y_mirror = point.y
+                            setAngle_mirror(heading)
+                        }
                         stageTimer.reset()
                         runTimeTimer.reset()
                         onStart()

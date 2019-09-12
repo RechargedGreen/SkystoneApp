@@ -8,6 +8,9 @@ import org.firstinspires.ftc.teamcode.lib.*
 import org.firstinspires.ftc.teamcode.sharedhardware.*
 
 object LeagueBot : BaseBot {
+    const val placeWidth = 18.0
+    const val placeLength = 18.0
+
     lateinit var drive: Akira
 
     lateinit var lynx1: LynxModule

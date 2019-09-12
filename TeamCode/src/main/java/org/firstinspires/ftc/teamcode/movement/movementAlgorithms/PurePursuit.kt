@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.movement.movementAlgorithms
 
 import org.firstinspires.ftc.teamcode.field.*
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_point
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_raw
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_point_raw
 
 object PurePursuit {
     fun init() {
@@ -12,7 +12,7 @@ object PurePursuit {
     private var curvePoints = ArrayList<CurvePoint>()
 
     fun followCurve() {
-        val followMe = getFollowPointPath(curvePoints, world_point, 1.0)
+        val followMe = getFollowPointPath(curvePoints, world_point_raw, 1.0)
     }
 
     fun getFollowPointPath(pathPoints: ArrayList<CurvePoint>, robotPoint: Point, followRadius: Double): Point {
@@ -23,12 +23,12 @@ object PurePursuit {
             val endLine = pathPoints[i + 1]
 
             val line = Line(startLine.point, endLine.point)
-            val intersections = Circle(world_point, followRadius).intersectingPoints(line)
+            val intersections = Circle(world_point_raw, followRadius).intersectingPoints(line)
 
             var closestAngle = Double.NaN
             for (intersection in intersections) {
                 val angle = robotPoint.angleTo(intersection)
-                val deltaAngle = (angle - world_angle).wrapped().rad
+                val deltaAngle = (angle - world_angle_raw).wrapped().rad
 
                 if (closestAngle.isNaN() || deltaAngle < closestAngle) {
                     closestAngle = deltaAngle

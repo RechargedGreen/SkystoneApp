@@ -23,9 +23,9 @@ object RunData {
     var ALLIANCE = Alliance.RED
 }
 
-enum class Alliance {
-    RED,
-    BLUE;
+enum class Alliance(val sign: Double) {
+    RED(1.0),
+    BLUE(-1.0);
 
     fun isRed() = this == RED
 }

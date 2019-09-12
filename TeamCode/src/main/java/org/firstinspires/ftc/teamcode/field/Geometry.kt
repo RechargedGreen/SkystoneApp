@@ -9,6 +9,8 @@ data class Pose(
         val heading: Angle
 ) {
     constructor(x: Double, y: Double, heading_rad: Double) : this(Point(x, y), Angle.createWrappedRad(heading_rad))
+
+    val mirrored get() = Pose(Point(-point.x, point.y), heading)
 }
 
 object Geometry {

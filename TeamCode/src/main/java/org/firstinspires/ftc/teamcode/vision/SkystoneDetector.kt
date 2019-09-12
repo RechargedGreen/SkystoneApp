@@ -11,11 +11,6 @@ import org.opencv.imgproc.*
 @Config
 class SkystoneDetector : Tracker() {
 
-    var placeInt = 0
-        private set
-    val place: SkystoneRandomization get() = SkystoneRandomization.getFromInt(placeInt)
-
-
     private lateinit var mat0: Mat
     private lateinit var mat1: Mat
     private lateinit var mat2: Mat
@@ -71,6 +66,10 @@ class SkystoneDetector : Tracker() {
     }
 
     companion object {
+        var placeInt = 0
+            private set
+        val place: SkystoneRandomization get() = SkystoneRandomization.getFromInt(placeInt)
+
         @JvmField
         var cx0 = 50.0
         @JvmField

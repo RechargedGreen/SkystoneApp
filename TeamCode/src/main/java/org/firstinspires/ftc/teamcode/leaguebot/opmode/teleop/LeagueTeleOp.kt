@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.*
 import org.firstinspires.ftc.teamcode.leaguebot.*
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.*
 import org.firstinspires.ftc.teamcode.movement.*
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_unwrapped
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_unwrapped_raw
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_raw
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_raw
 
 @TeleOp
 class LeagueTeleOp : LeagueBotTeleOpBase() {
@@ -16,7 +16,7 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
         //DriveMovement.moveFieldCentric(driver.leftStick.x, driver.leftStick.y, driver.rightStick.x)
 
         if (driver.b.currentState)
-            DriveMovement.setPosition(0.0, 0.0, 0.0)
+            DriveMovement.setPosition_raw(0.0, 0.0, 0.0)
 
         combinedPacket.put("ys", driver.leftStick.y)
 
@@ -25,8 +25,8 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
         combinedPacket.put("leftInches", LeagueThreeWheelOdometry.leftInches)
         combinedPacket.put("rightInches", LeagueThreeWheelOdometry.rightInches)
         combinedPacket.put("auxInches", LeagueThreeWheelOdometry.auxInches)
-        combinedPacket.put("y", world_y)
-        combinedPacket.put("x", world_x)
-        combinedPacket.put("deg", world_angle_unwrapped.deg)
+        combinedPacket.put("y", world_y_raw)
+        combinedPacket.put("x", world_x_raw)
+        combinedPacket.put("deg", world_angle_unwrapped_raw.deg)
     }
 }

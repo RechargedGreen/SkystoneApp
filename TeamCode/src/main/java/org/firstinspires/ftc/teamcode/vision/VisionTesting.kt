@@ -17,8 +17,8 @@ class SkystoneVisionTest : LinearOpMode() {
         vision.initialize()
 
         while (!isStopRequested) {
-            telemetry.addData("ordinal", detector.placeInt)
-            telemetry.addData("place", detector.place)
+            telemetry.addData("ordinal", SkystoneDetector.placeInt)
+            telemetry.addData("place", SkystoneDetector.place)
             telemetry.update()
         }
     }

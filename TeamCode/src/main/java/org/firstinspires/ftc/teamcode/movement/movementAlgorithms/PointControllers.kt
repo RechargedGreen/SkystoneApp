@@ -4,8 +4,8 @@ import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.movement.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_x
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_y
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_point
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_raw
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_point_raw
 import kotlin.math.*
 
 object PointControllers {
@@ -14,7 +14,7 @@ object PointControllers {
     }
 
     fun slipAdjustedTarget(x: Double, y: Double, decelDistance: Double): Point {
-        val currentPoint = world_point
+        val currentPoint = world_point_raw
         val target = Point(x, y)
 
         val slipPredict = Speedometer.fieldSlipPoint
@@ -24,7 +24,7 @@ object PointControllers {
         val distanceToAdjustedPoint = currentPoint.distanceTo(adjustedTarget)
         val angleToAdjustedPoint = currentPoint.angleTo(adjustedTarget)
 
-        val deltaAngleToAdjustedPoint = angleToAdjustedPoint - world_angle
+        val deltaAngleToAdjustedPoint = angleToAdjustedPoint - world_angle_raw
 
         val relative_x_to_point = deltaAngleToAdjustedPoint.cos * distanceToAdjustedPoint
         val relative_y_to_point = deltaAngleToAdjustedPoint.sin * distanceToAdjustedPoint
@@ -43,26 +43,5 @@ object PointControllers {
         movement_y = movement_y_power
 
         return target - currentPoint
-    }
-
-    fun pdTo(x: Double, y: Double, kP: Double, kD: Double) {
-        val currentPoint = world_point
-        val target = Point(x, y)
-
-        val distanceToTarget = currentPoint.distanceTo(target)
-        val angleToTarget = currentPoint.angleTo(target)
-        val deltaAngleToTarget = angleToTarget - world_angle
-
-        val x_error = 0.0
-        val y_error = 0.0
-
-        val x_rate = Speedometer.xInchPerSec
-        val y_rate = Speedometer.yInchPerSec
-
-        val movement_x_power = x_error * kP - x_rate * kD
-        val movement_y_power = y_error * kP - y_rate * kD
-
-        movement_x = movement_x_power
-        movement_y = movement_y_power
     }
 }
