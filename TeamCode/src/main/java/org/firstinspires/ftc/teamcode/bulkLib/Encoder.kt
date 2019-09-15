@@ -15,3 +15,8 @@ class Encoder(private val module: LynxModule, private val portNumber: Int, priva
 object S4T {
     const val CPR_1000 = 4000.0
 }
+
+object MotorEncoder {
+    const val G3_7 = 103.6
+    const val G5_2 = 145.6
+}
