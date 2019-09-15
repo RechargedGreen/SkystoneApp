@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.autos
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.*
 import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.leaguebot.*
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.*
@@ -82,6 +82,7 @@ abstract class LeagueFoundationAuto(alliance: Alliance) : LeagueBotAutoBase(alli
 
 @Autonomous
 class RedLeagueFoundation : LeagueFoundationAuto(Alliance.RED)
+
 @Autonomous
 class BlueLeagueFoundation : LeagueFoundationAuto(Alliance.BLUE)
 
