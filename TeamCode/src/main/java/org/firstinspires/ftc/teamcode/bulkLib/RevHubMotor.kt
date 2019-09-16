@@ -1,6 +1,7 @@
 import com.qualcomm.hardware.lynx.*
 import com.qualcomm.robotcore.hardware.*
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.*
+import com.qualcomm.robotcore.util.*
 import org.firstinspires.ftc.robotcore.external.navigation.*
 import org.firstinspires.ftc.teamcode.bulkLib.*
 import org.firstinspires.ftc.teamcode.bulkLib.BlackMagic.hMap
@@ -28,7 +29,8 @@ class RevHubMotor(config: String, motorType: KClass<*>) {
 
     var power: Double = 0.0
         set(value) {
-            if (value != field && (value == 0.0 || value.absoluteValue == 1.0 || value difference field > 0.005)) {
+            val clippedValue = Range.clip(value, -1.0, 1.0)
+            if (clippedValue != field && (clippedValue == 0.0 || clippedValue.absoluteValue == 1.0 || clippedValue difference field > 0.005)) {
                 field = value
                 motor.power = value
             }

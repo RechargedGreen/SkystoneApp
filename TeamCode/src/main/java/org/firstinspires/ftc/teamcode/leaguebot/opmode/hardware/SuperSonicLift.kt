@@ -164,7 +164,7 @@ class SuperSonicLift {
 
     private var internalPower = 0.0
         set(value) {
-            val adjustedPower = if (safeMode) Range.clip(value, 0.25, 0.25) else value
+            val adjustedPower = if (safeMode) Range.clip(value, -0.25, 0.25) else value
             field = adjustedPower
             left.power = adjustedPower
             right.power = adjustedPower
