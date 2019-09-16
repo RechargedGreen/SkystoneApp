@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.leaguebot.opmode.autos
 
 import com.qualcomm.robotcore.eventloop.opmode.*
 import org.firstinspires.ftc.teamcode.field.*
+import org.firstinspires.ftc.teamcode.field.Field.EAST_WALL
 import org.firstinspires.ftc.teamcode.leaguebot.*
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.*
 import org.firstinspires.ftc.teamcode.lib.*
@@ -46,7 +47,7 @@ abstract class LeagueFoundationAuto(alliance: Alliance) : LeagueBotAutoBase(alli
                 LeagueBot.foundationGrabber.grab()
                 stopDrive()
                 if (stageTimer.seconds() > 0.25) {
-                    moveFieldCentric_mirror(if (world_x_mirror > Field.EAST_WALL - 9.0 - 6.0) pullSlowSpeed else 1.0, 0.0, 0.0)
+                    moveFieldCentric_mirror(if (world_x_mirror > EAST_WALL - 9.0 - 6.0) pullSlowSpeed else 1.0, 0.0, 0.0)
                     pointAngle_mirror(-90.0)
                 }
 
@@ -62,9 +63,9 @@ abstract class LeagueFoundationAuto(alliance: Alliance) : LeagueBotAutoBase(alli
             }
 
             progStates.park         -> {
-                goToPosition_mirror(Field.EAST_WALL - 20, Field.NORTH_WALL / 2.0, -90.0)
+                goToPosition_mirror(EAST_WALL - 20, 0.0, -90.0)
 
-                if ((world_y_mirror - Field.NORTH_WALL / 2.0).absoluteValue < 2.0)
+                if (world_y_mirror.absoluteValue < 2.0)
                     nextStage()
             }
 
