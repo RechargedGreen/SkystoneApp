@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.leaguebot.opmode.autos
 import com.qualcomm.robotcore.eventloop.opmode.*
 import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.field.Field.EAST_WALL
+import org.firstinspires.ftc.teamcode.field.Field.NORTH_WALL
 import org.firstinspires.ftc.teamcode.leaguebot.*
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.*
 import org.firstinspires.ftc.teamcode.lib.*
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgori
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.PD.pointAngle_mirror
 import kotlin.math.*
 
-abstract class LeagueFoundationAuto(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(Field.EAST_WALL - LeagueBot.placeLength / 2.0, Field.NORTH_WALL - 24.0 - LeagueBot.placeWidth / 2.0, Math.toRadians(-90.0))) {
+abstract class LeagueFoundationAuto(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(EAST_WALL - LeagueBot.placeLength / 2.0, NORTH_WALL - 24.0 - LeagueBot.placeWidth / 2.0, Math.toRadians(-90.0))) {
     enum class progStates {
         grab,
         pull,
