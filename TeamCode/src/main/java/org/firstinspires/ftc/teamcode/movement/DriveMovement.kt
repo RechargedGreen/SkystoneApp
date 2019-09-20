@@ -20,7 +20,7 @@ object DriveMovement {
         get() = world_x_raw * ALLIANCE.sign
     var world_y_raw = 0.0
     var world_y_mirror: Double
-        get() = world_y_raw * ALLIANCE.sign
+        get() = world_y_raw
         set(value) {
             world_y_raw = value
         }

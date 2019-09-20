@@ -32,7 +32,7 @@ class BulkInput(module: LynxModule) : LynxCommExceptionHandler() {
             response = LynxGetBulkInputDataCommand(module).sendReceive()
             initiatedProperly = true
         } catch (e: Exception) {
-            response = null!!
+            response = null!!//todo fix to not be an NPE
             handleException(e)
         }
     }
