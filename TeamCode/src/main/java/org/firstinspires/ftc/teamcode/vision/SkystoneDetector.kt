@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.vision
 
 import com.acmerobotics.dashboard.config.*
+import org.firstinspires.ftc.teamcode.lib.*
 import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.ryanVision.*
 import org.firstinspires.ftc.teamcode.ryanVision.RGBScalers.BLACK
@@ -20,6 +21,10 @@ class SkystoneDetector : Tracker() {
     private lateinit var mask2: Mat
 
     private var madeMats = false
+
+    val x_0: Double get() = if (ALLIANCE == Alliance.RED) r_x0 else b_x0
+    val x_1: Double get() = if (ALLIANCE == Alliance.RED) r_x1 else b_x1
+    val x_2: Double get() = if (ALLIANCE == Alliance.RED) r_x2 else b_x2
 
     override fun init(camera: VisionCamera) {
         mat0 = Mat()
@@ -41,9 +46,9 @@ class SkystoneDetector : Tracker() {
         mask1.setTo(BLACK)
         mask2.setTo(BLACK)
 
-        Imgproc.circle(mask0, Point(cx0, cy0), r, WHITE, Core.FILLED)
-        Imgproc.circle(mask1, Point(cx1, cy1), r, WHITE, Core.FILLED)
-        Imgproc.circle(mask2, Point(cx2, cy2), r, WHITE, Core.FILLED)
+        Imgproc.circle(mask0, Point(x_0, y), r, WHITE, Core.FILLED)
+        Imgproc.circle(mask1, Point(x_1, y), r, WHITE, Core.FILLED)
+        Imgproc.circle(mask2, Point(x_2, y), r, WHITE, Core.FILLED)
 
         Core.bitwise_and(mask0, frame, mat0)
         Core.bitwise_and(mask1, frame, mat1)
@@ -60,9 +65,9 @@ class SkystoneDetector : Tracker() {
     }
 
     override fun drawOverlay(overlay: Overlay, imageWidth: Int, imageHeight: Int, debug: Boolean) {
-        overlay.strokeCircle(Point(cx0, cy0), r.toDouble(), WHITE, strokeWidth)
-        overlay.strokeCircle(Point(cx1, cy1), r.toDouble(), WHITE, strokeWidth)
-        overlay.strokeCircle(Point(cx2, cy2), r.toDouble(), WHITE, strokeWidth)
+        overlay.strokeCircle(Point(x_0, y), r.toDouble(), WHITE, strokeWidth)
+        overlay.strokeCircle(Point(x_1, y), r.toDouble(), WHITE, strokeWidth)
+        overlay.strokeCircle(Point(x_2, y), r.toDouble(), WHITE, strokeWidth)
     }
 
     companion object {
@@ -70,22 +75,30 @@ class SkystoneDetector : Tracker() {
             private set
         val place: SkystoneRandomization get() = SkystoneRandomization.getFromInt(placeInt)
 
-        @JvmField
-        var cx0 = 50.0
-        @JvmField
-        var cx1 = 150.0
-        @JvmField
-        var cx2 = 250.0
+        /// red
 
         @JvmField
-        var cy0 = 100.0
+        var r_x0 = 50.0
         @JvmField
-        var cy1 = 100.0
+        var r_x1 = 150.0
         @JvmField
-        var cy2 = 100.0
+        var r_x2 = 250.0
+
+        /// blue
+
+        @JvmField
+        var b_x0 = 250.0
+        @JvmField
+        var b_x1 = 150.0
+        @JvmField
+        var b_x2 = 50.0
+        //////////////
 
         @JvmField
         var r = 10
+
+        @JvmField
+        var y = 100.0
 
         @JvmField
         var strokeWidth = 3
@@ -100,9 +113,7 @@ enum class SkystoneRandomization {
 
     companion object {
         fun getFromInt(i: Int): SkystoneRandomization {
-            val list = values()
-            val size = list.size - 1
-            return list[if (ALLIANCE.isRed()) i else size - i]
+            return values()[i]
         }
     }
 }
