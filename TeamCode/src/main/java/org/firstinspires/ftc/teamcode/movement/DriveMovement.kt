@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode.movement
 
-import org.firstinspires.ftc.teamcode.field.*
-import org.firstinspires.ftc.teamcode.lib.*
+import org.firstinspires.ftc.teamcode.field.Geometry
+import org.firstinspires.ftc.teamcode.field.Point
+import org.firstinspires.ftc.teamcode.field.Pose
+import org.firstinspires.ftc.teamcode.lib.Controller
 import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.initAll
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.movementProvider
-import org.firstinspires.ftc.teamcode.odometry.*
-import org.firstinspires.ftc.teamcode.util.*
-import kotlin.math.*
+import org.firstinspires.ftc.teamcode.odometry.Odometry
+import org.firstinspires.ftc.teamcode.util.epsilonEquals
+import kotlin.math.absoluteValue
+import kotlin.math.cos
+import kotlin.math.sin
 
 object DriveMovement {
     lateinit var odometer: Odometry
@@ -170,6 +174,20 @@ object DriveMovement {
         if (power < 0 && power > -min)
             return -min
         return power
+    }
+
+    fun scaleMovement(scaler: Double) {
+        movement_x *= scaler
+        movement_y *= scaler
+    }
+
+    fun maxMovement() {
+        scaleMovement(movement_x.absoluteValue + movement_y.absoluteValue)
+    }
+
+    fun clipMovement() {
+        if (movement_x.absoluteValue + movement_y.absoluteValue > 1.0)
+            maxMovement()
     }
 
     fun resetForOpMode() {
