@@ -1,19 +1,18 @@
 package org.firstinspires.ftc.teamcode.lib
 
-import com.acmerobotics.dashboard.canvas.Canvas
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.util.ElapsedTime
-import org.firstinspires.ftc.teamcode.bulkLib.BulkDataMaster
-import org.firstinspires.ftc.teamcode.field.Pose
-import org.firstinspires.ftc.teamcode.movement.DriveMovement
+import com.acmerobotics.dashboard.canvas.*
+import com.qualcomm.robotcore.eventloop.opmode.*
+import com.qualcomm.robotcore.util.*
+import org.firstinspires.ftc.teamcode.bulkLib.*
+import org.firstinspires.ftc.teamcode.field.*
+import org.firstinspires.ftc.teamcode.movement.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.setAngle_mirror
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_mirror
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_mirror
-import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms
-import org.firstinspires.ftc.teamcode.ryanVision.OpenCVCamera
-import org.firstinspires.ftc.teamcode.util.AutomaticTeleopInit
-import org.firstinspires.ftc.teamcode.util.ChangeValidator
-import org.firstinspires.ftc.teamcode.vision.SkystoneDetector
+import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
+import org.firstinspires.ftc.teamcode.ryanVision.*
+import org.firstinspires.ftc.teamcode.util.*
+import org.firstinspires.ftc.teamcode.vision.*
 
 abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean, private val alliance: Alliance?, val position_mirror: Pose?) : LinearOpMode() {
     private val camera = OpenCVCamera()
@@ -70,8 +69,8 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean, pri
     val status: Status
         get() = when {
             isStopRequested -> Status.STOP
-            isStarted -> Status.PLAY
-            else -> Status.INIT
+            isStarted       -> Status.PLAY
+            else            -> Status.INIT
         }
 
     private var hasStarted = false
@@ -87,6 +86,8 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean, pri
         BulkDataMaster.reset()
 
         GamePadMaster.reset()
+
+        Foundation.reset()
 
         driver = Controller(gamepad1)
         operator = Controller(gamepad2)
@@ -120,6 +121,7 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean, pri
                         if (isAutonomous)
                             AutomaticTeleopInit.transitionOnStop(this, bot.teleopName)
                         camera.close()
+                        Quarry.reset()
                         position_mirror?.apply {
                             world_x_mirror = point.x
                             world_y_mirror = point.y
