@@ -9,7 +9,9 @@ class Stone(val index: Int) { // highest index
     var isEndNearBuildZone = index == 5
     var isEndFarFromBuildZone = index == 2
 
-    val center_x = 24.0 - WIDTH / 2.0
+    val side_x = 24.0
+
+    val center_x = side_x - WIDTH / 2.0
     var center_y = SOUTH_WALL + LENGTH / 2.0 + LENGTH * index
 
     companion object {

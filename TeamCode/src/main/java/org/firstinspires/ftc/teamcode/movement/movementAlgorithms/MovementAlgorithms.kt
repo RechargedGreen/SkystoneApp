@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.movement.movementAlgorithms
 
+import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
+import org.firstinspires.ftc.teamcode.movement.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.clipMovement
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_turn
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_raw
-import org.firstinspires.ftc.teamcode.movement.Speedometer
 
 object MovementAlgorithms {
     lateinit var movementProvider: MovementConstantsProvider
@@ -33,7 +34,7 @@ object MovementAlgorithms {
         @JvmField
         var moveD = 0.0
 
-        fun goToPosition_raw(x: Double, y: Double, deg: Double, clipSpeed: Boolean = true) {
+        fun goToPosition_raw(x: Double, y: Double, deg: Double, clipSpeed: Boolean = true): Pose {
             val turnLeft = deg - world_angle_raw.deg
             val yLeft = y - world_y_raw
             val xLeft = x - world_x_raw
@@ -47,16 +48,23 @@ object MovementAlgorithms {
 
             if (clipSpeed)
                 clipMovement()
+
+            return Pose(xLeft, yLeft, deg.toRadians)
         }
 
-        fun goToPosition_mirror(x: Double, y: Double, deg: Double, clipSpeed: Boolean = true) = goToPosition_raw(x * ALLIANCE.sign, y, deg * ALLIANCE.sign, clipSpeed)
+        fun goToPosition_mirror(x: Double, y: Double, deg: Double, clipSpeed: Boolean = true): Pose {
+            val s = ALLIANCE.sign
+            val r = goToPosition_raw(x * s, y, deg * s, clipSpeed)
+            return Pose(r.x * s, r.y, r.heading.rad * s)
+        }
 
-        fun pointAngle_raw(deg: Double) {
+        fun pointAngle_raw(deg: Double): Double {
             val turnLeft = deg - world_angle_raw.deg
             movement_turn = turnLeft * turnP - Speedometer.degPerSec * turnD
+            return turnLeft
         }
 
-        fun pointAngle_mirror(deg: Double) = pointAngle_raw(deg * ALLIANCE.sign)
+        fun pointAngle_mirror(deg: Double) = pointAngle_raw(deg * ALLIANCE.sign) * ALLIANCE.sign
 
 
     }

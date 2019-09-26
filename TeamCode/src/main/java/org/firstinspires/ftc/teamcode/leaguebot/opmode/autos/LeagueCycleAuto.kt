@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.leaguebot.*
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.*
 import org.firstinspires.ftc.teamcode.lib.*
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
 
 abstract class LeagueCycleAuto(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(0.0, 0.0, Math.toRadians(-90.0))) {
     enum class progStates {
@@ -38,6 +39,13 @@ abstract class LeagueCycleAuto(alliance: Alliance) : LeagueBotAutoBase(alliance,
                     else
                         nextStage(progStates.intake.ordinal)
                 }
+            }
+
+            progStates.startPark    -> {
+                stopDrive()
+            }
+
+            progStates.finishPark   -> {
             }
 
             progStates.endDoNothing -> {
