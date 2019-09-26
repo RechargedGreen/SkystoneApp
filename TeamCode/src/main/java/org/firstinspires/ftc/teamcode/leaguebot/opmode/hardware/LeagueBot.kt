@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.bulkLib.*
 import org.firstinspires.ftc.teamcode.bulkLib.BlackMagic.hMap
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.teleop.*
 import org.firstinspires.ftc.teamcode.lib.*
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
 import org.firstinspires.ftc.teamcode.sharedhardware.*
 
 object LeagueBot : BaseBot {
@@ -34,6 +35,11 @@ object LeagueBot : BaseBot {
         drive.update()
 
         foundationGrabber.update()
+    }
+
+    fun endDoNothing() {
+        stopDrive()
+        foundationGrabber.release()
     }
 
     override val teleopName: String = LeagueTeleOp::class.java.name
