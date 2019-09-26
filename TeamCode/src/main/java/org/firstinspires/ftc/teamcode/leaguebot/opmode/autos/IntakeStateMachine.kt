@@ -19,7 +19,15 @@ object IntakeStateMachine {
 
     var currentStone = Stone(0)
 
-    enum class progStates {
+    enum class Type {
+        skystone,
+        wallSkystone,
+        normal
+    }
+
+    var type = Type.skystone
+
+    enum class skystoneProgStates {
         crossLine,
         driveTo,
         grab,
@@ -43,27 +51,53 @@ object IntakeStateMachine {
     fun start() {
         currentStone = Quarry.popStone()
 
+        type = when {
+            currentStone.isSkystone && currentStone.isEndFarFromBuildZone -> Type.wallSkystone
+            currentStone.isSkystone -> Type.skystone
+            else -> Type.normal
+        }
+
         nextStage()
-        state = if (acrossLine) progStates.driveTo.ordinal else progStates.crossLine.ordinal
+        state = when (type) {
+            IntakeStateMachine.Type.skystone -> if (acrossLine) skystoneProgStates.driveTo.ordinal else skystoneProgStates.crossLine.ordinal
+            IntakeStateMachine.Type.normal -> 0
+            IntakeStateMachine.Type.wallSkystone -> 0
+        }
     }
 
     val acrossLine: Boolean get() = world_y_mirror < 0.0
 
     fun update(): Boolean {
-        Globals.mode.telemetry.addData("Intake state", progStates.values()[state])
+        return when (type) {
+            IntakeStateMachine.Type.skystone -> updateSkystone()
+            IntakeStateMachine.Type.normal -> updateNormal()
+            IntakeStateMachine.Type.wallSkystone -> updateWallSkystone()
+        }
+    }
+
+    private fun updateNormal(): Boolean {
+        return false
+    }
+
+    private fun updateWallSkystone(): Boolean {
+        return false
+    }
+
+    private fun updateSkystone(): Boolean {
+        Globals.mode.telemetry.addData("Intake state", skystoneProgStates.values()[state])
         when (state) {
-            progStates.crossLine.ordinal -> {
+            skystoneProgStates.crossLine.ordinal -> {
                 goToPosition_mirror(48.0, currentStone.center_y, -180.0)
                 if (acrossLine)
                     nextStage()
             }
-            progStates.driveTo.ordinal, progStates.grab.ordinal -> {
+            skystoneProgStates.driveTo.ordinal, skystoneProgStates.grab.ordinal -> {
                 val x = currentStone.side_x + 4.0 + LeagueBot.placeLength / 2.0
                 val y = currentStone.center_y
 
                 val r = goToPosition_mirror(x, y, mainSkystoneIntakeAngle)
 
-                if (state == progStates.driveTo.ordinal) {
+                if (state == skystoneProgStates.driveTo.ordinal) {
                     Globals.mode.telemetry.addData("distance", r.distance)
                     Globals.mode.telemetry.addData("deg", r.deg)
                     if (r.deg.absoluteValue < 2.0 && r.distance < 1.0) {
@@ -76,7 +110,7 @@ object IntakeStateMachine {
                 }
             }
 
-            progStates.pull.ordinal -> {
+            skystoneProgStates.pull.ordinal -> {
                 moveFieldCentric_mirror(pullSpeed, 0.0, 0.0)
                 pointAngle_mirror(mainSkystoneIntakeAngle)
 
@@ -84,7 +118,7 @@ object IntakeStateMachine {
                     nextStage()
             }
 
-            progStates.intake.ordinal -> {
+            skystoneProgStates.intake.ordinal -> {
                 moveFieldCentric_mirror(-intakeSpeed, 0.0, 0.0)
                 pointAngle_mirror(mainSkystoneIntakeAngle)
 

@@ -10,4 +10,7 @@ object Field {
     const val EAST_WALL = WIDTH / 2.0
 
     const val SKYBRIDGE_Y = 0.0
+
+    const val SKYBRIDGE_WIDTH = 18.0
+    const val SKYBRIDGE_LENGTH = 48.0
 }
