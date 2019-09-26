@@ -12,10 +12,10 @@ class Akira(provider: MovementConstantsProvider) {
     private val motorMode: DcMotor.RunMode
         get() = if (Globals.mode.isAutonomous) DcMotor.RunMode.RUN_USING_ENCODER else DcMotor.RunMode.RUN_WITHOUT_ENCODER
 
-    private val leftFront = RevHubMotor("leftFront", Go_19_2::class).openLoopControl
-    private val leftBack = RevHubMotor("leftBack", Go_19_2::class).openLoopControl
-    private val rightFront = RevHubMotor("rightFront", Go_19_2::class).openLoopControl.reverse
-    private val rightBack = RevHubMotor("rightBack", Go_19_2::class).openLoopControl.reverse
+    private val leftFront = RevHubMotor("leftFront", Go_19_2::class).openLoopControl.brake
+    private val leftBack = RevHubMotor("leftBack", Go_19_2::class).openLoopControl.brake
+    private val rightFront = RevHubMotor("rightFront", Go_19_2::class).openLoopControl.reverse.brake
+    private val rightBack = RevHubMotor("rightBack", Go_19_2::class).openLoopControl.reverse.brake
 
     /*private val leftFront = RevHubMotor("leftFront", Go_19_2::class).BRAKE().FORWARD().OPEN_LOOP()
     private val leftBack = RevHubMotor("leftBack", Go_19_2::class).BRAKE().FORWARD().OPEN_LOOP()

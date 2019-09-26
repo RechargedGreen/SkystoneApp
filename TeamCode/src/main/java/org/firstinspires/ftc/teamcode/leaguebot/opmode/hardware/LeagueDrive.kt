@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware
 
-import com.acmerobotics.dashboard.config.*
-import org.firstinspires.ftc.teamcode.bulkLib.*
+import com.acmerobotics.dashboard.config.Config
+import org.firstinspires.ftc.teamcode.bulkLib.cachedInput
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueBot.lynx2
-import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
-import org.firstinspires.ftc.teamcode.odometry.*
-import kotlin.math.*
+import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms
+import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementConstantsProvider
+import org.firstinspires.ftc.teamcode.odometry.ThreeWheel
+import org.firstinspires.ftc.teamcode.odometry.TwoWheel
+import kotlin.math.PI
 
 @Config
 object LeagueThreeWheelOdometry {
@@ -43,6 +45,19 @@ object LeagueThreeWheelOdometry {
 
 @Config
 object LeagueMovementConstants : MovementConstantsProvider {
+    @JvmField
+    var moveP = 0.02
+    @JvmField
+    var moveD = 0.2
+    @JvmField
+    var turnP = 0.02
+    @JvmField
+    var turnD = 0.0
+
+    fun setup() {
+        MovementAlgorithms.PD.setup({ turnP }, { turnD }, { moveP }, { moveD })
+    }
+
     @JvmField
     var xSlipFactor = 1.0
     @JvmField

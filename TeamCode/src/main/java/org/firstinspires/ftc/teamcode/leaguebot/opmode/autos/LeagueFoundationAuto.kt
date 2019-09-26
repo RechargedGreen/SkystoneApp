@@ -84,7 +84,7 @@ abstract class LeagueFoundationAuto(alliance: Alliance) : LeagueBotAutoBase(alli
             }
 
             progStates.completePark -> {
-                moveFieldCentric_mirror(0.3, world_y_mirror * -MovementAlgorithms.PD.moveP, 0.0)
+                moveFieldCentric_mirror(0.3, world_y_mirror * -MovementAlgorithms.PD.moveP(), 0.0)
                 timeoutStage(3.0)
             }
 

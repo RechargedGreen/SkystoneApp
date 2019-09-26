@@ -6,11 +6,13 @@ import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.clipMovement
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_turn
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.scaleMovement
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_raw
 import org.firstinspires.ftc.teamcode.movement.Speedometer
 import org.firstinspires.ftc.teamcode.movement.toRadians
+import kotlin.math.absoluteValue
 
 @Config
 object MovementAlgorithms {
@@ -22,7 +24,7 @@ object MovementAlgorithms {
 
     @Config
     object PD {
-        fun setup(turnP: Double, turnD: Double, moveP: Double, moveD: Double) {
+        fun setup(turnP: ()->Double, turnD: ()->Double, moveP: ()->Double, moveD: ()->Double) {
             this.turnP = turnP
             this.turnD = turnD
             this.moveP = moveP
@@ -30,28 +32,36 @@ object MovementAlgorithms {
         }
 
         @JvmField
-        var turnP = 0.02
+        var turnP = {0.0}
         @JvmField
-        var moveP = 0.2
+        var moveP = {0.0}
         @JvmField
-        var turnD = 0.0
+        var turnD = {0.0}
         @JvmField
-        var moveD = 0.0
+        var moveD = {0.0}
 
-        fun goToPosition_raw(x: Double, y: Double, deg: Double, clipSpeed: Boolean = true): Pose {
+        @JvmField
+        var slowDownDegrees = 15.0
+        @JvmField
+        var slowDownAmount = 8.0
+
+        fun goToPosition_raw(x: Double, y: Double, deg: Double, clipSpeed: Boolean = true, slowDownDegrees: Double = this.slowDownDegrees, slowDownAmount: Double = this.slowDownAmount): Pose {
             val turnLeft = deg - world_angle_raw.deg
             val yLeft = y - world_y_raw
             val xLeft = x - world_x_raw
 
             val speed = Speedometer.fieldSlipPoint
 
-            val xSpeed = xLeft * moveP - speed.x * moveD
-            val ySpeed = yLeft * moveP - speed.y * moveD
-            val turnSpeed = turnLeft * turnP - Speedometer.degPerSec * turnD
+            val xSpeed = xLeft * moveP() - speed.x * moveD()
+            val ySpeed = yLeft * moveP() - speed.y * moveD()
+            val turnSpeed = turnLeft * turnP() - Speedometer.degPerSec * turnD()
             moveFieldCentric_raw(xSpeed, ySpeed, turnSpeed)
 
             if (clipSpeed)
                 clipMovement()
+
+            if (!slowDownDegrees.isNaN() && slowDownDegrees < turnLeft.absoluteValue)
+                scaleMovement(1.0 / slowDownAmount)
 
             return Pose(xLeft, yLeft, turnLeft.toRadians)
         }
@@ -64,7 +74,7 @@ object MovementAlgorithms {
 
         fun pointAngle_raw(deg: Double): Double {
             val turnLeft = deg - world_angle_raw.deg
-            movement_turn = turnLeft * turnP - Speedometer.degPerSec * turnD
+            movement_turn = turnLeft * turnP() - Speedometer.degPerSec * turnD()
             return turnLeft
         }
 

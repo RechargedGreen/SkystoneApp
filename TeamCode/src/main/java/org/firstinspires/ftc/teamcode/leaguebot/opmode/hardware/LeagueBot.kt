@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware
 
-import com.qualcomm.hardware.lynx.*
-import org.firstinspires.ftc.teamcode.bulkLib.*
+import com.qualcomm.hardware.lynx.LynxModule
 import org.firstinspires.ftc.teamcode.bulkLib.BlackMagic.hMap
-import org.firstinspires.ftc.teamcode.leaguebot.opmode.teleop.*
-import org.firstinspires.ftc.teamcode.lib.*
+import org.firstinspires.ftc.teamcode.bulkLib.OptimizedGyro
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.teleop.LeagueTeleOp
+import org.firstinspires.ftc.teamcode.lib.BaseBot
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
-import org.firstinspires.ftc.teamcode.sharedhardware.*
+import org.firstinspires.ftc.teamcode.sharedhardware.Akira
 
 object LeagueBot : BaseBot {
     const val placeWidth = 18.0
@@ -27,6 +27,8 @@ object LeagueBot : BaseBot {
         drive = Akira(LeagueMovementConstants)
 
         foundationGrabber = LeagueFoundationGrabber()
+
+        LeagueMovementConstants.setup()
     }
 
     override fun update() {
