@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.*
 import org.firstinspires.ftc.teamcode.lib.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
 
-abstract class LeagueCycleAuto(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(0.0, 0.0, Math.toRadians(-90.0))) {
+abstract class LeagueCycleAuto(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(Field.EAST_WALL - LeagueBot.placeLength / 2.0, Field.SOUTH_WALL + 48.0 - LeagueBot.placeWidth / 2.0, Math.toRadians(-90.0))) {
     enum class progStates {
         intake,
         score,

@@ -182,7 +182,9 @@ object DriveMovement {
     }
 
     fun maxMovement() {
-        scaleMovement(movement_x.absoluteValue + movement_y.absoluteValue)
+        val total = movement_x.absoluteValue + movement_y.absoluteValue
+        if (total != 0.0)
+            scaleMovement(1.0 / total)
     }
 
     fun clipMovement() {

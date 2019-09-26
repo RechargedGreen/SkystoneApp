@@ -1,15 +1,18 @@
 package org.firstinspires.ftc.teamcode.movement.movementAlgorithms
 
-import org.firstinspires.ftc.teamcode.field.*
+import com.acmerobotics.dashboard.config.Config
+import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
-import org.firstinspires.ftc.teamcode.movement.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.clipMovement
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_turn
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_raw
+import org.firstinspires.ftc.teamcode.movement.Speedometer
+import org.firstinspires.ftc.teamcode.movement.toRadians
 
+@Config
 object MovementAlgorithms {
     lateinit var movementProvider: MovementConstantsProvider
     fun initAll() {
@@ -17,6 +20,7 @@ object MovementAlgorithms {
         PointControllers.init()
     }
 
+    @Config
     object PD {
         fun setup(turnP: Double, turnD: Double, moveP: Double, moveD: Double) {
             this.turnP = turnP
@@ -49,13 +53,13 @@ object MovementAlgorithms {
             if (clipSpeed)
                 clipMovement()
 
-            return Pose(xLeft, yLeft, deg.toRadians)
+            return Pose(xLeft, yLeft, turnLeft.toRadians)
         }
 
         fun goToPosition_mirror(x: Double, y: Double, deg: Double, clipSpeed: Boolean = true): Pose {
             val s = ALLIANCE.sign
             val r = goToPosition_raw(x * s, y, deg * s, clipSpeed)
-            return Pose(r.x * s, r.y, r.heading.rad * s)
+            return Pose(r.x * s, r.y * s, r.heading.rad * s)
         }
 
         fun pointAngle_raw(deg: Double): Double {
