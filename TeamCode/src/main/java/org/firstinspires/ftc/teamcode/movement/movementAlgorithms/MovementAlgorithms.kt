@@ -60,8 +60,8 @@ object MovementAlgorithms {
             if (clipSpeed)
                 clipMovement()
 
-            if (!slowDownDegrees.isNaN() && slowDownDegrees < turnLeft.absoluteValue)
-                scaleMovement(1.0 / slowDownAmount)
+            /*if (!slowDownDegrees.isNaN() && slowDownDegrees < turnLeft.absoluteValue)
+                scaleMovement(1.0 / slowDownAmount)*/
 
             return Pose(xLeft, yLeft, turnLeft.toRadians)
         }

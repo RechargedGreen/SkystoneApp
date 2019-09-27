@@ -48,7 +48,7 @@ object LeagueMovementConstants : MovementConstantsProvider {
     @JvmField
     var moveP = 0.02
     @JvmField
-    var moveD = 0.2
+    var moveD = 0.0
     @JvmField
     var turnP = 0.02
     @JvmField
