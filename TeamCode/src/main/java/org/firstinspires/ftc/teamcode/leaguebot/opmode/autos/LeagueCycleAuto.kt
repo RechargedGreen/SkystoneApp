@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueBot
 import org.firstinspires.ftc.teamcode.lib.Alliance
 import org.firstinspires.ftc.teamcode.lib.Globals
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric_mirror
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_mirror
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_mirror
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.PD.goToPosition_mirror
@@ -50,7 +51,9 @@ abstract class LeagueCycleAuto(alliance: Alliance) : LeagueBotAutoBase(alliance,
                 }
             }
 
-            progStates.startPark -> {
+            progStates.startPark -> stopDrive()
+
+            /*progStates.startPark -> {
                 goToPosition_mirror(48.0, 0.0, -180.0)
                 if (world_y_mirror.absoluteValue < 2.0)
                     nextStage()
@@ -64,7 +67,7 @@ abstract class LeagueCycleAuto(alliance: Alliance) : LeagueBotAutoBase(alliance,
 
                 if (timedOut || world_x_mirror < 24.0 + 3.0 + LeagueBot.placeWidth)
                     nextStage()
-            }
+            }*/
 
             progStates.endDoNothing -> {
                 LeagueBot.endDoNothing()

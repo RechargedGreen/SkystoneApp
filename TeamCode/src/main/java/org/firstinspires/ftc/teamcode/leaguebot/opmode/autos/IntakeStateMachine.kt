@@ -76,11 +76,11 @@ object IntakeStateMachine {
     }
 
     private fun updateNormal(): Boolean {
-        return false
+        return true
     }
 
     private fun updateWallSkystone(): Boolean {
-        return false
+        return true
     }
 
     private fun updateSkystone(): Boolean {
