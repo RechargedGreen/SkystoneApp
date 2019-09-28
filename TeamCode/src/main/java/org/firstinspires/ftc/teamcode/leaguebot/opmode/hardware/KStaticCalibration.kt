@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.leaguebot.LeagueBotAutoBase
 import org.firstinspires.ftc.teamcode.lib.Alliance
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_turn
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_x
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_y
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.setPosition_mirror
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
@@ -17,12 +18,15 @@ import kotlin.math.absoluteValue
 class KStaticCalibration : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)){
     val rampUpTime = 20.0
 
-    var newM = 0.0
+    var newY = 0.0
+    var newX = 0.0
     var newT = 0.0
 
     enum class progStates {
-        rampM,
-        stopM,
+        rampY,
+        stopY,
+        rampX,
+        stopX,
         rampT,
         stop
     }
@@ -32,18 +36,33 @@ class KStaticCalibration : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)){
         telemetry.addData("stage", currentStage)
 
         when(currentStage){
-            progStates.rampM -> {
+            progStates.rampY -> {
                 if(changedStage) {
                     setPosition_mirror(0.0, 0.0, 0.0)
                 }
                 val velocity = stageTimer.seconds() / rampUpTime
                 movement_y = velocity
                 if(world_point_mirror.hypot.absoluteValue > 0.01){
-                    newM = velocity
+                    newY = velocity
                     nextStage()
                 }
             }
-            progStates.stopM -> {
+            progStates.stopY -> {
+                stopDrive()
+                timeoutStage(5.0)
+            }
+            progStates.rampX -> {
+                if(changedStage) {
+                    setPosition_mirror(0.0, 0.0, 0.0)
+                }
+                val velocity = stageTimer.seconds() / rampUpTime
+                movement_x = velocity
+                if(world_point_mirror.hypot.absoluteValue > 0.01){
+                    newX = velocity
+                    nextStage()
+                }
+            }
+            progStates.stopX -> {
                 stopDrive()
                 timeoutStage(5.0)
             }
@@ -60,7 +79,8 @@ class KStaticCalibration : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)){
             }
             progStates.stop -> {
                 stopDrive()
-                telemetry.addData("m", newM)
+                telemetry.addData("y", newY)
+                telemetry.addData("x", newX)
                 telemetry.addData("t", newT)
             }
         }

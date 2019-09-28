@@ -56,10 +56,12 @@ object LeagueMovementConstants : MovementConstantsProvider {
     @JvmField
     var staticT = 0.08
     @JvmField
-    var staticM = 0.052
+    var staticY = 0.052
+    @JvmField
+    var staticX = 0.052
 
     fun setup() {
-        MovementAlgorithms.PD.setup({ turnP }, { turnD }, { moveP }, { moveD }, {staticT}, {staticM})
+        MovementAlgorithms.PD.setup({ turnP }, { turnD }, { moveP }, { moveD }, {staticT}, {staticY}, {staticX})
     }
 
     @JvmField
