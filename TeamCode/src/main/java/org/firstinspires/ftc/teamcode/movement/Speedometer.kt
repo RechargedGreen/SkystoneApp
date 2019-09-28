@@ -47,7 +47,7 @@ object Speedometer {
         val ySpeed = yInchesTraveled / dt
 
         angularVel = (world_angle_raw.rad - lastAngle) / dt
-        lastAngle - world_angle_raw.rad
+        lastAngle = world_angle_raw.rad
 
         xInchesTraveled = 0.0
         yInchesTraveled = 0.0

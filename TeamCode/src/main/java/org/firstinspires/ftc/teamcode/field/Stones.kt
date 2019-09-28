@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.vision.*
 class Stone(val index: Int) { // highest index
     var isSkystone = index % 3 == SkystoneDetector.placeInt
     var isEndNearBuildZone = index == 5
-    var isEndFarFromBuildZone = index == 2
+    var isEndFarFromBuildZone = index == 0
 
     val side_x = 24.0
 

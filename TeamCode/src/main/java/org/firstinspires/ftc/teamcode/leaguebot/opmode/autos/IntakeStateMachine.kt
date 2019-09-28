@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.field.Stone
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueBot
 import org.firstinspires.ftc.teamcode.lib.Globals
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric_mirror
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_mirror
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_mirror
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.PD.goToPosition_mirror
@@ -68,6 +69,7 @@ object IntakeStateMachine {
     val acrossLine: Boolean get() = world_y_mirror < 0.0
 
     fun update(): Boolean {
+        Globals.mode.telemetry.addData("intakeType", type)
         return when (type) {
             IntakeStateMachine.Type.skystone -> updateSkystone()
             IntakeStateMachine.Type.normal -> updateNormal()
@@ -76,11 +78,13 @@ object IntakeStateMachine {
     }
 
     private fun updateNormal(): Boolean {
-        return true
+        stopDrive()
+        return false
     }
 
     private fun updateWallSkystone(): Boolean {
-        return true
+        stopDrive()
+        return false
     }
 
     private fun updateSkystone(): Boolean {

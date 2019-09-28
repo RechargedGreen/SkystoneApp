@@ -6,13 +6,13 @@ import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.clipMovement
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_turn
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.scaleMovement
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_raw
 import org.firstinspires.ftc.teamcode.movement.Speedometer
 import org.firstinspires.ftc.teamcode.movement.toRadians
-import kotlin.math.absoluteValue
+import org.firstinspires.ftc.teamcode.util.epsilonEquals
+import kotlin.math.sign
 
 @Config
 object MovementAlgorithms {
@@ -24,21 +24,27 @@ object MovementAlgorithms {
 
     @Config
     object PD {
-        fun setup(turnP: ()->Double, turnD: ()->Double, moveP: ()->Double, moveD: ()->Double) {
+        fun setup(turnP: () -> Double, turnD: () -> Double, moveP: () -> Double, moveD: () -> Double, staticT: () -> Double, staticM: () -> Double) {
             this.turnP = turnP
             this.turnD = turnD
             this.moveP = moveP
             this.moveD = moveD
+            this.staticT = staticT
+            this.staticM = staticM
         }
 
         @JvmField
-        var turnP = {0.0}
+        var turnP = { 0.0 }
         @JvmField
-        var moveP = {0.0}
+        var moveP = { 0.0 }
         @JvmField
-        var turnD = {0.0}
+        var turnD = { 0.0 }
         @JvmField
-        var moveD = {0.0}
+        var moveD = { 0.0 }
+        @JvmField
+        var staticM = { 0.0 }
+        @JvmField
+        var staticT = { 0.0 }
 
         @JvmField
         var slowDownDegrees = 15.0
@@ -55,7 +61,12 @@ object MovementAlgorithms {
             val xSpeed = xLeft * moveP() - speed.x * moveD()
             val ySpeed = yLeft * moveP() - speed.y * moveD()
             val turnSpeed = turnLeft * turnP() - Speedometer.degPerSec * turnD()
-            moveFieldCentric_raw(xSpeed, ySpeed, turnSpeed)
+
+            var xStatic = if (xSpeed epsilonEquals 0.0) 0.0 else xSpeed.sign * staticM()
+            var yStatic = if (ySpeed epsilonEquals 0.0) 0.0 else ySpeed.sign * staticM()
+            var tStatic = if (turnSpeed epsilonEquals 0.0) 0.0 else turnSpeed.sign * staticT()
+
+            moveFieldCentric_raw(xSpeed + xStatic, ySpeed + yStatic, turnSpeed + tStatic)
 
             if (clipSpeed)
                 clipMovement()
