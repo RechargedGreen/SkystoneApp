@@ -14,7 +14,7 @@ object LeagueThreeWheelOdometry {
     @JvmField
     var turnTrackWidth = 14.5
     @JvmField
-    var auxTrackWidth = -3.5
+    var auxTrackWidth = -0.125// -3.5 was origanal
 
     @JvmField
     var leftD = 2.83465
