@@ -25,7 +25,7 @@ object LeagueThreeWheelOdometry {
 
     const val CPR = 4000.0
 
-    fun inchesPerTick(radius: Double) = (leftD * PI) / CPR
+    fun inchesPerTick(radius: Double) = (radius * PI) / CPR
 
     val leftTicks: Int get() = -lynx2.cachedInput.getEncoder(1)
     val rightTicks: Int get() = lynx2.cachedInput.getEncoder(2)
