@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware
 
+import com.acmerobotics.dashboard.config.Config
 import org.firstinspires.ftc.teamcode.bulkLib.RevHubServo
 import org.firstinspires.ftc.teamcode.lib.Globals
 import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
 
+@Config
 class LeagueFoundationGrabber {
     private val leftServo = RevHubServo("leftFoundation")
     private val rightServo = RevHubServo("rightFoundation")
