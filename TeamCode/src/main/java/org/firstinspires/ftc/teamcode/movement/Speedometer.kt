@@ -7,8 +7,8 @@ import org.firstinspires.ftc.teamcode.util.*
 
 object Speedometer {
     private var lastUpdateTime = 0.0
-    val xInchPerSec: Double get() = robotSlipPoint.x
-    val yInchPerSec: Double get() = robotSlipPoint.y
+    val xInchPerSec: Double get() = robotSpeed.x
+    val yInchPerSec: Double get() = robotSpeed.y
 
     var xInchesTraveled = 0.0
     var yInchesTraveled = 0.0
@@ -52,15 +52,15 @@ object Speedometer {
         xInchesTraveled = 0.0
         yInchesTraveled = 0.0
 
-        robotSlipPoint = Point(xSpeed, ySpeed)
+        robotSpeed = Point(xSpeed, ySpeed)
     }
 
-    var robotSlipPoint = Point(0.0, 0.0)
+    var robotSpeed = Point(0.0, 0.0)
         private set(value) {
             field = value
-            fieldSlipPoint = Geometry.pointDelta(value, world_angle_raw)
+            fieldSpeed = Geometry.pointDelta(value, world_angle_raw)
         }
 
-    var fieldSlipPoint: Point = Point(0.0, 0.0)
+    var fieldSpeed: Point = Point(0.0, 0.0)
         private set
 }

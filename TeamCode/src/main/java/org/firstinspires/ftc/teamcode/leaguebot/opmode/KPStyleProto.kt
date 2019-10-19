@@ -54,7 +54,7 @@ class KPStyleProto : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
         val yLeft = yTarget - world_y_raw
         val xLeft = xTarget - world_x_raw
 
-        val speed = Speedometer.fieldSlipPoint
+        val speed = Speedometer.fieldSpeed
 
         if (move)
             goToPosition_mirror(24.0, 24.0, 0.0)

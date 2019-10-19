@@ -17,7 +17,7 @@ object PointControllers {
         val currentPoint = world_point_raw
         val target = Point(x, y)
 
-        val slipPredict = Speedometer.fieldSlipPoint
+        val slipPredict = Speedometer.fieldSpeed
 
         val adjustedTarget = target - slipPredict
 
