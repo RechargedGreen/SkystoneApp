@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.lib.hardware
 import com.qualcomm.robotcore.hardware.configuration.annotations.*
 import org.firstinspires.ftc.robotcore.external.navigation.*
 
-@MotorType(ticksPerRev = 560.0, gearing = 20.0, maxRPM = 300.0, orientation = Rotation.CW, achieveableMaxRPMFraction = 1.0)
+@MotorType(ticksPerRev = 537.6, gearing = 19.2, maxRPM = 312.0, orientation = Rotation.CW, achieveableMaxRPMFraction = 1.0)
 @DeviceProperties(xmlTag = "ActualRev20", xmlTagAliases = ["ActualRev20"], name = "actual_rev_20", builtIn = false)
 interface ActualRev20
 

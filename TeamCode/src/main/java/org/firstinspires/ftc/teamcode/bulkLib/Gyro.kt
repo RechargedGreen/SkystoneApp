@@ -2,12 +2,13 @@ package org.firstinspires.ftc.teamcode.bulkLib
 
 import com.qualcomm.hardware.bosch.*
 import com.qualcomm.hardware.lynx.*
+import com.qualcomm.robotcore.hardware.*
 import org.firstinspires.ftc.robotcore.external.navigation.*
 import org.firstinspires.ftc.teamcode.movement.*
 
 class OptimizedGyro(lynxModule: LynxModule, mounting: Mounting) {
-    constructor(name: String, mounting: Mounting) : this(BlackMagic.lynxModuleFromIMU(BlackMagic.hMap[BNO055IMU::class.java, name] as LynxEmbeddedIMU), mounting)
-    constructor(mounting: Mounting) : this("imu", mounting)
+    constructor(name: String, mounting: Mounting, hMap: HardwareMap = BlackMagic.hMap) : this(BlackMagic.lynxModuleFromIMU(hMap[BNO055IMU::class.java, name] as LynxEmbeddedIMU), mounting)
+    constructor(mounting: Mounting, hMap:HardwareMap = BlackMagic.hMap) : this("imu", mounting, hMap)
 
     private val delegate: BNO055IMU = LynxOptimizedI2cFactory.createLynxEmbeddedImu(lynxModule)
 

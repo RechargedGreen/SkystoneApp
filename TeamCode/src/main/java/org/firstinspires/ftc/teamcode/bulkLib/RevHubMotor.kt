@@ -4,13 +4,12 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.*
 import com.qualcomm.robotcore.util.*
 import org.firstinspires.ftc.robotcore.external.navigation.*
 import org.firstinspires.ftc.teamcode.bulkLib.*
-import org.firstinspires.ftc.teamcode.bulkLib.BlackMagic.hMap
 import org.firstinspires.ftc.teamcode.bulkLib.BlackMagic.lynxModuleFromController
 import org.firstinspires.ftc.teamcode.util.*
 import kotlin.math.*
 import kotlin.reflect.*
 
-class RevHubMotor(config: String, motorType: KClass<*>) {
+class RevHubMotor(config: String, motorType: KClass<*>, hMap:HardwareMap = BlackMagic.hMap) {
     private val motor = hMap.dcMotor.get(config)
     private val port = motor.portNumber
     private val type = MotorConfigurationType.getMotorType(motorType.java)
