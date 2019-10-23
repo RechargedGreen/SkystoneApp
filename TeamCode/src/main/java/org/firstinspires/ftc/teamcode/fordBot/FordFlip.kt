@@ -7,8 +7,8 @@ import org.firstinspires.ftc.teamcode.bulkLib.*
 class FordFlip {
     var flippedUp = false
 
-    val leftFlip = RevHubServo("flipL", FordBot.instance.hardwareMap)
-    val rightFlip = RevHubServo("flipR", FordBot.instance.hardwareMap)
+    val leftFlip = RevHubServo("intakeFlipL", FordBot.instance.hardwareMap)
+    val rightFlip = RevHubServo("intakeFlipR", FordBot.instance.hardwareMap)
 
     fun update() {
         val pos = if (flippedUp) up else down

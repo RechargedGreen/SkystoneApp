@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.fordBot
 import RevHubMotor
 import com.acmerobotics.roadrunner.control.*
 import com.acmerobotics.roadrunner.profile.*
+import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.*
 import org.firstinspires.ftc.teamcode.bulkLib.*
 import org.firstinspires.ftc.teamcode.lib.hardware.*
@@ -20,12 +21,12 @@ class FordDrive {
 
     private val lf = RevHubMotor("lf", ActualRev20::class, FordBot.instance.hardwareMap).brake.velocityControl
     private val lb = RevHubMotor("lb", ActualRev20::class, FordBot.instance.hardwareMap).brake.velocityControl
-    private val rf = RevHubMotor("rf", ActualRev20::class, FordBot.instance.hardwareMap).brake.velocityControl
-    private val rb = RevHubMotor("rb", ActualRev20::class, FordBot.instance.hardwareMap).brake.velocityControl
+    private val rf = RevHubMotor("rf", ActualRev20::class, FordBot.instance.hardwareMap).brake.velocityControl.reverse
+    private val rb = RevHubMotor("rb", ActualRev20::class, FordBot.instance.hardwareMap).brake.velocityControl.reverse
 
     private val motors = arrayOf(lf, lb, rf, rb)
 
-    private val imu = OptimizedGyro(OptimizedGyro.Mounting.VERTICAL, FordBot.instance.hardwareMap)
+    private val imu = OptimizedGyro(FordBot.instance.hardwareMap.get(BNO055IMU::class.java, "imu"), 0, OptimizedGyro.Mounting.VERTICAL)
 
     var movement_y = 0.0
     var movement_turn = 0.0
@@ -39,7 +40,7 @@ class FordDrive {
 
     fun update() {
         val left = movement_y + movement_turn
-        val right = movement_turn - movement_turn
+        val right = movement_y - movement_turn
 
         val time = Clock.seconds
         val deg = imu.heading_deg
@@ -49,7 +50,10 @@ class FordDrive {
         lastTime = time
 
         lf.power = left
-        lb.power = right
+        lb.power = left
+
+        rf.power = right
+        rb.power = right
     }
 
     val y_pos = ticks.average() / ticksPerRev * C
@@ -107,10 +111,10 @@ class FordDrive {
         var axial_pid = PIDCoefficients()
 
         @JvmField
-        var turnP = 0.0
+        var turnP = 0.005
 
         @JvmField
-        var turnD = 0.0
+        var turnD = 0.001
 
 
         private val motorType = MotorConfigurationType.getMotorType(ActualRev20::class.java)

@@ -1,13 +1,15 @@
 package org.firstinspires.ftc.teamcode.fordBot
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.lib.*
 import org.firstinspires.ftc.teamcode.util.*
 
-class FordTeleop : FordBot(Alliance.RED, 0.0) {
+@TeleOp
+class FordTeleop : FordBot(Alliance.RED, 0.0, isAuto = false) {
     override fun run() {
         Companion.loop {
-            val left = -gamepad1.left_stick_y.toDouble() deadZone 0.05
-            val right = -gamepad1.right_stick_y.toDouble() deadZone 0.05
+            val left = -gamepad1.left_stick_y.toDouble() deadZone 0.1
+            val right = -gamepad1.right_stick_y.toDouble() deadZone 0.1
 
             drive.movement_turn = (left - right) / 2.0
             drive.movement_y = (left + right) / 2.0

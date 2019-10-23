@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.fordBot
 
-import com.acmerobotics.dashboard.*
-import com.acmerobotics.dashboard.telemetry.*
-import com.qualcomm.robotcore.eventloop.opmode.*
-import org.firstinspires.ftc.teamcode.bulkLib.*
-import org.firstinspires.ftc.teamcode.lib.*
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import org.firstinspires.ftc.teamcode.bulkLib.BulkDataMaster
+import org.firstinspires.ftc.teamcode.lib.Alliance
 import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
-import org.firstinspires.ftc.teamcode.util.*
+import org.firstinspires.ftc.teamcode.util.AutomaticTeleopInit
+import org.firstinspires.ftc.teamcode.util.Clock
 
 abstract class FordBot(private val alliance: Alliance, val startingPosition: Double, val isAuto: Boolean = true) : LinearOpMode() {
     final override fun runOpMode() {
@@ -22,6 +23,9 @@ abstract class FordBot(private val alliance: Alliance, val startingPosition: Dou
         packet = TelemetryPacket()
 
         waitForStart()
+
+        if (isAuto)
+            AutomaticTeleopInit.transitionOnStop(this, "FordTeleop")
 
         drive.setAngle(startingPosition * alliance.sign)
 
@@ -51,11 +55,12 @@ abstract class FordBot(private val alliance: Alliance, val startingPosition: Dou
 
         fun loop(isDone: () -> Boolean) {
             while (!instance.isStopRequested) {
+                packet = TelemetryPacket()
+
                 BulkDataMaster.clearAllCaches()
                 val isDone = isDone()
                 instance.telemetry.update()
                 FtcDashboard.getInstance().sendTelemetryPacket(packet)
-                packet = TelemetryPacket()
 
                 if (instance.isAuto || instance.isStarted)
                     instance.update()
