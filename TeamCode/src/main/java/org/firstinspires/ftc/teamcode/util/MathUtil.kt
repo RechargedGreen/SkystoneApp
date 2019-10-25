@@ -13,4 +13,4 @@ infix fun Double.pow(exponent: Double) = Math.pow(this, exponent)
 
 infix fun Double.difference(other: Double) = (this - other).absoluteValue
 
-infix fun Double.deadZone(deadZone: Double) = if (this.absoluteValue > deadZone) this else deadZone
+infix fun Double.deadZone(deadZone: Double) = if (this.absoluteValue > deadZone) this else 0.0

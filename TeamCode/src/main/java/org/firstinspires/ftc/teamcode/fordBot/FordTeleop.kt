@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.fordBot
 
-import com.qualcomm.robotcore.eventloop.opmode.*
-import org.firstinspires.ftc.teamcode.util.*
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.teamcode.util.deadZone
 
 @TeleOp(group = ".1")
 class FordTeleop : FordBot() {
@@ -13,7 +13,13 @@ class FordTeleop : FordBot() {
 
             drive.power(left, right)
 
-            val intakeSpeed = (gamepad1.right_trigger - gamepad1.left_trigger).toDouble() deadZone 0.05
+            val intakeSpeed = when {
+                gamepad1.y -> -1.0
+                gamepad1.b -> -0.75
+                gamepad1.a -> 1.0
+                else -> 0.0
+            }
+
             intake.power = intakeSpeed
 
             when {
@@ -21,14 +27,14 @@ class FordTeleop : FordBot() {
                     flippedUp = false
                 }
 
-                gamepad1.left_bumper  -> {
+                gamepad1.left_bumper -> {
                     flippedUp = true
                 }
             }
 
             flip.flippedUp = flippedUp
 
-            val extensionSpeed = -gamepad2.right_stick_y.toDouble() deadZone 0.05
+            val extensionSpeed = (gamepad1.right_trigger - gamepad1.left_trigger).toDouble() deadZone 0.05
             extension.power = extensionSpeed
 
             telemetry.addLine("running")
