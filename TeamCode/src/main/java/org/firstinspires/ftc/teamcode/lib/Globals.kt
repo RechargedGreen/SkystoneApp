@@ -8,6 +8,8 @@ object Globals {
     val fieldOverlay: Canvas
         get() = mode.fieldOverlay
 
+    val movementAllowed get() = mode.isAutonomous || mode.isStarted
+    
     @com.acmerobotics.dashboard.config.Config
     object Config {
         @JvmField
