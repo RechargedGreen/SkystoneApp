@@ -33,6 +33,8 @@ interface Go_26_9
 
 @MotorType(ticksPerRev = 537.6, gearing = 19.2, maxRPM = 312.0, orientation = Rotation.CW, achieveableMaxRPMFraction = 1.0)
 @DeviceProperties(xmlTag = "Go_19.2:1", xmlTagAliases = ["Go_19.2:1"], name = "Go_19.2:1", builtIn = false)
+@ExpansionHubPIDFVelocityParams(P = 1.17, I = 0.117, F = 11.7)
+@ExpansionHubPIDFPositionParams(P = 5.0)
 interface Go_19_2
 
 @MotorType(ticksPerRev = 383.6, gearing = 13.7, maxRPM = 435.0, orientation = Rotation.CW, achieveableMaxRPMFraction = 1.0)
