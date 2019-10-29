@@ -13,12 +13,7 @@ class FordTeleop : FordBot() {
 
             drive.power(left, right)
 
-            val intakeSpeed = when {
-                gamepad1.y -> -1.0
-                gamepad1.b -> -0.75
-                gamepad1.a -> 1.0
-                else -> 0.0
-            }
+            val intakeSpeed = (gamepad2.right_trigger - gamepad2.left_trigger).toDouble() deadZone  0.1
 
             intake.power = intakeSpeed
 
@@ -33,6 +28,8 @@ class FordTeleop : FordBot() {
             }
 
             flip.flippedUp = flippedUp
+
+            lift = -gamepad2.right_stick_y.toDouble() deadZone 0.1
 
             val extensionSpeed = (gamepad1.right_trigger - gamepad1.left_trigger).toDouble() deadZone 0.05
             extension.power = extensionSpeed

@@ -1,15 +1,19 @@
-import com.qualcomm.hardware.lynx.*
-import com.qualcomm.robotcore.hardware.*
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.*
-import com.qualcomm.robotcore.util.*
-import org.firstinspires.ftc.robotcore.external.navigation.*
-import org.firstinspires.ftc.teamcode.bulkLib.*
-import org.firstinspires.ftc.teamcode.bulkLib.BlackMagic.lynxModuleFromController
-import org.firstinspires.ftc.teamcode.util.*
-import kotlin.math.*
-import kotlin.reflect.*
+package org.firstinspires.ftc.teamcode.bulkLib
 
-class RevHubMotor(config: String, motorType: KClass<*>, hMap:HardwareMap = BlackMagic.hMap) {
+
+import com.qualcomm.hardware.lynx.LynxDcMotorController
+import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType
+import com.qualcomm.robotcore.util.Range
+import org.firstinspires.ftc.robotcore.external.navigation.Rotation
+import org.firstinspires.ftc.teamcode.bulkLib.BlackMagic.lynxModuleFromController
+import org.firstinspires.ftc.teamcode.util.difference
+import kotlin.math.absoluteValue
+import kotlin.reflect.KClass
+
+class RevHubMotor(config: String, motorType: KClass<*>, hMap: HardwareMap = BlackMagic.hMap) {
     private val motor = hMap.dcMotor.get(config)
     private val port = motor.portNumber
     private val type = MotorConfigurationType.getMotorType(motorType.java)
@@ -23,7 +27,7 @@ class RevHubMotor(config: String, motorType: KClass<*>, hMap:HardwareMap = Black
 
     private val orientationSign = when (type.orientation) {
         Rotation.CW, null -> 1
-        Rotation.CCW      -> -1
+        Rotation.CCW -> -1
     }
 
     var power: Double = 0.0

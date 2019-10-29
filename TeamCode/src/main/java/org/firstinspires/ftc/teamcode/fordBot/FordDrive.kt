@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.fordBot
 
-import RevHubMotor
+import org.firstinspires.ftc.teamcode.bulkLib.RevHubMotor
 import org.firstinspires.ftc.teamcode.lib.hardware.*
 
 class FordDrive {

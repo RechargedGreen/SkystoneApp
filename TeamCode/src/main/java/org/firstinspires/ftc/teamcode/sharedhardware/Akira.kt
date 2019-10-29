@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.sharedhardware
 
-import RevHubMotor
 import com.qualcomm.robotcore.hardware.*
+import org.firstinspires.ftc.teamcode.bulkLib.RevHubMotor
 import org.firstinspires.ftc.teamcode.lib.*
 import org.firstinspires.ftc.teamcode.lib.hardware.*
 import org.firstinspires.ftc.teamcode.movement.*

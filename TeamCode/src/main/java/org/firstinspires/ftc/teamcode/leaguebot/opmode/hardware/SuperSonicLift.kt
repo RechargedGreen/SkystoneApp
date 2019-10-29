@@ -1,22 +1,24 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware
 
-import RevHubMotor
-import com.acmerobotics.dashboard.config.*
-import com.qualcomm.robotcore.util.*
-import org.firstinspires.ftc.teamcode.bulkLib.*
+import com.acmerobotics.dashboard.config.Config
+import com.qualcomm.robotcore.util.Range
+import org.firstinspires.ftc.teamcode.bulkLib.Encoder
+import org.firstinspires.ftc.teamcode.bulkLib.MotorEncoder
+import org.firstinspires.ftc.teamcode.bulkLib.RevHubMotor
+import org.firstinspires.ftc.teamcode.bulkLib.RevHubTouchSensor
 import org.firstinspires.ftc.teamcode.lib.Globals.mode
-import org.firstinspires.ftc.teamcode.lib.hardware.*
-import org.firstinspires.ftc.teamcode.util.*
-import kotlin.math.*
+import org.firstinspires.ftc.teamcode.lib.hardware.Go_5_2
+import org.firstinspires.ftc.teamcode.util.Clock
+import kotlin.math.PI
+import kotlin.math.absoluteValue
+import kotlin.math.sign
 
 /**
  * distance is in inches
- * weight is in lbs
  * rail length of 200mm = 7.874"
  * stroke length of 120 mm = 4.724"
- * spool diameter is 50mm = 1.968"
- * slide weight is 0.14 lbs
- */
+ * spool diameter is 1.35"
+ * */
 
 @Config
 class SuperSonicLift {
@@ -31,16 +33,13 @@ class SuperSonicLift {
         var kD: Double = 0.0
 
         @JvmField
-        var kG: Double = 0.0
+        var kSlideG: Double = 0.0
 
         @JvmField
-        var kStone = 0.0
+        var kStoneG = 0.0
 
         @JvmField
-        var kConstantWeight = 0.0
-
-        @JvmField
-        var kSlideWeight = 0.14
+        var kConstantG = 0.0
 
         @JvmField
         var stageStrokeLength = 4.724
@@ -51,6 +50,9 @@ class SuperSonicLift {
         var hasBeenCalibrated = false
 
         var holdingStone = false
+
+        @JvmField
+        var kStatic = 0.0
 
         private const val slides = 8
         private const val maxStages = slides - 1
@@ -90,7 +92,7 @@ class SuperSonicLift {
     }
 
     fun update() {
-        val ff = calculateCurrentWeight * kG
+        val ff = calculateCurrentWeight
 
         var currentExtensionTarget = targetExtension
         var currentState = state
@@ -114,15 +116,17 @@ class SuperSonicLift {
             controlstates.positionControl -> {
                 internalPower = if (currentExtensionTarget == 0.0) {
                     checkCalibration()
-                    -1.0
+                    0.0
                 } else {
-                    extensionLeft * kP - speed * kD
+                    val p = extensionLeft * kP - speed * kD
+                    val s = if (extensionLeft.absoluteValue < 0.2) 0.0 else extensionLeft.sign * kStatic
+                    p + s
                 }
             }
 
-            controlstates.powerControl    -> {
+            controlstates.powerControl -> {
                 checkCalibration()
-                internalPower = power * ff
+                internalPower = power + ff
             }
         }
     }
@@ -142,17 +146,17 @@ class SuperSonicLift {
         get() {
             var weight = 0.0
 
-            weight += kConstantWeight
+            weight += kConstantG
 
             if (holdingStone)
-                weight += kStone
+                weight += kStoneG
 
             var stages = (extension / stageStrokeLength).toInt()
 
             if (stages > maxStages)
                 stages = maxStages
 
-            weight += stages * kSlideWeight
+            weight += stages * kSlideG
 
             return weight
         }
