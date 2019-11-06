@@ -8,6 +8,8 @@ object Globals {
     val fieldOverlay: Canvas
         get() = mode.fieldOverlay
 
+    val packet get() = mode.combinedPacket.packet
+
     val movementAllowed get() = mode.isAutonomous || mode.isStarted
     
     @com.acmerobotics.dashboard.config.Config

@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.bulkLib.OptimizedGyro
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.teleop.LeagueTeleOp
 import org.firstinspires.ftc.teamcode.lib.BaseBot
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
+import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 import org.firstinspires.ftc.teamcode.sharedhardware.Akira
 import org.firstinspires.ftc.teamcode.sharedhardware.OdometryPuller
 
@@ -40,6 +41,8 @@ object LeagueBot : BaseBot {
 
         //odometryPuller = OdometryPuller({0.0}, {1.0})
 
+        RoadRunner.reset()
+
         LeagueMovementConstants.setup()
     }
 
@@ -51,6 +54,7 @@ object LeagueBot : BaseBot {
         lift.updateManualTemp()
         intake.update()
 
+        RoadRunner.update()
         //foundationGrabber.update()
         //odometryPuller.update()
     }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.movement
 
+import com.acmerobotics.roadrunner.geometry.*
 import org.firstinspires.ftc.teamcode.field.Geometry
 import org.firstinspires.ftc.teamcode.field.Point
 import org.firstinspires.ftc.teamcode.field.Pose
@@ -14,6 +15,8 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 object DriveMovement {
+    val roadRunnerPose2dRaw get() = Pose2d(world_y_raw, world_x_raw, world_angle_unwrapped_raw.rad)
+
     lateinit var odometer: Odometry
 
     var world_x_raw = 0.0
