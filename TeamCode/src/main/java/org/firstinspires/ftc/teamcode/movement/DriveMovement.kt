@@ -94,7 +94,7 @@ object DriveMovement {
 
         world_x_raw += finalDelta.x
         world_y_raw += finalDelta.y
-        world_angle_raw = finalAngle
+        world_angle_unwrapped_raw = finalAngle
 
         /*Speedometer.xInchesTraveled += circleArcDelta.x
         Speedometer.yInchesTraveled += circleArcDelta.y*/

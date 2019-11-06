@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware
 
 import com.acmerobotics.dashboard.config.Config
 import org.firstinspires.ftc.teamcode.bulkLib.cachedInput
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueBot.lynx1
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueBot.lynx2
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementConstantsProvider
@@ -27,9 +28,9 @@ object LeagueThreeWheelOdometry {
 
     fun inchesPerTick(radius: Double) = (radius * PI) / CPR
 
-    val leftTicks: Int get() = -lynx2.cachedInput.getEncoder(1)
-    val rightTicks: Int get() = lynx2.cachedInput.getEncoder(2)
-    val auxTicks: Int get() = lynx2.cachedInput.getEncoder(0)
+    val leftTicks: Int get() = -lynx1.cachedInput.getEncoder(3)
+    val rightTicks: Int get() = lynx1.cachedInput.getEncoder(0)
+    val auxTicks: Int get() = -lynx1.cachedInput.getEncoder(2)
 
     val leftInches: Double get() = leftTicks * inchesPerTick(leftD)
     val rightInches: Double get() = rightTicks * inchesPerTick(rightD)

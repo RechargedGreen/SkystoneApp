@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.util
 
+import com.qualcomm.robotcore.util.Range
 import kotlin.math.*
 
 fun Double.threshold(threshold: Double) = if (this.absoluteValue < threshold) 0.0 else this
@@ -14,3 +15,4 @@ infix fun Double.pow(exponent: Double) = Math.pow(this, exponent)
 infix fun Double.difference(other: Double) = (this - other).absoluteValue
 
 infix fun Double.deadZone(deadZone: Double) = if (this.absoluteValue > deadZone) this else 0.0
+infix fun Double.clip(range:Double) = Range.clip(this, -range, range)

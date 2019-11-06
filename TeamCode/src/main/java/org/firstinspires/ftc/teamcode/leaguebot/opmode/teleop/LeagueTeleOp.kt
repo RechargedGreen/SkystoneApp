@@ -7,16 +7,31 @@ import org.firstinspires.ftc.teamcode.movement.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_unwrapped_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_raw
+import org.firstinspires.ftc.teamcode.util.clip
+import org.firstinspires.ftc.teamcode.util.deadZone
 
 @TeleOp
 class LeagueTeleOp : LeagueBotTeleOpBase() {
     override fun onMainLoop() {
         DriveMovement.gamepadControl(driver)
 
+        LeagueBot.intake.state = when {
+            gamepad1.right_bumper -> MainIntake.State.IN
+            gamepad1.left_bumper -> MainIntake.State.OUT
+            else -> MainIntake.State.STOP
+        }
+
+        LeagueBot.lift.manualTemp = (-gamepad2.right_stick_y.toDouble() deadZone 0.05)
+
         //DriveMovement.moveFieldCentric(driver.leftStick.x, driver.leftStick.y, driver.rightStick.x)
 
         if (driver.b.currentState)
             DriveMovement.setPosition_raw(0.0, 0.0, 0.0)
+
+        telemetry.addData("lf pos", LeagueBot.drive.leftFront.encoderTicks)
+        telemetry.addData("lb pos", LeagueBot.drive.leftBack.encoderTicks)
+        telemetry.addData("rf pos", LeagueBot.drive.rightFront.encoderTicks)
+        telemetry.addData("rb pos", LeagueBot.drive.rightBack.encoderTicks)
 
         combinedPacket.put("ys", driver.leftStick.y)
 

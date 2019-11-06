@@ -62,6 +62,12 @@ class SuperSonicLift {
         private var spoolDiameter = 1.968
     }
 
+    var manualTemp = 0.0
+    fun updateManualTemp(){
+        left.power = manualTemp
+        right.power = manualTemp
+    }
+
     var lastTime = Double.NaN
     var lastRawExtension = Double.NaN
 
@@ -132,7 +138,7 @@ class SuperSonicLift {
     }
 
     fun checkCalibration() {
-        if (downSensor.pressed) {
+        if (false/*downSensor.pressed*/) {
             hasBeenCalibrated = true
             resetExtension = rawExtension
         }
@@ -162,9 +168,9 @@ class SuperSonicLift {
         }
 
     val left = RevHubMotor("leftLift", Go_5_2::class)
-    val right = RevHubMotor("rightLift", Go_5_2::class)
-    val encoder = Encoder(LeagueBot.lynx2, 3, MotorEncoder.G5_2)
-    val downSensor = RevHubTouchSensor("liftTouch")
+    val right = RevHubMotor("rightLift", Go_5_2::class).reverse
+    val encoder = Encoder(LeagueBot.lynx2, 3, MotorEncoder.G3_7)
+//    val downSensor = RevHubTouchSensor("liftTouch")
 
     private var internalPower = 0.0
         set(value) {

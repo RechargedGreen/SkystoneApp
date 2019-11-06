@@ -11,7 +11,7 @@ class MainIntake {
     }
 
     private val left = RevHubMotor("leftIntake", Go_3_7::class).openLoopControl.float
-    private val right = RevHubMotor("rightIntake", Go_3_7::class).openLoopControl.float.reverse
+    private val right = RevHubMotor("rightIntake", Go_3_7::class).openLoopControl.float
 
     var state = State.STOP
 

@@ -25,10 +25,14 @@ class RevHubMotor(config: String, motorType: KClass<*>, hMap: HardwareMap = Blac
     val ticksPerRev = type.ticksPerRev
     val maxRPM = type.maxRPM
 
-    private val orientationSign = when (type.orientation) {
-        Rotation.CW, null -> 1
-        Rotation.CCW -> -1
-    }
+    private val orientationSign
+        get() = when (direction) {
+            DcMotorSimple.Direction.FORWARD -> 1
+            DcMotorSimple.Direction.REVERSE -> -1
+        } * when (type.orientation) {
+            Rotation.CW, null -> 1
+            Rotation.CCW -> -1
+        }
 
     var power: Double = 0.0
         set(value) {

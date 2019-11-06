@@ -14,6 +14,8 @@ object LeagueBot : BaseBot {
     const val placeLength = 18.0
 
     lateinit var drive: Akira
+    lateinit var lift: SuperSonicLift
+    lateinit var intake: MainIntake
 
     lateinit var lynx1: LynxModule
     lateinit var lynx2: LynxModule
@@ -24,10 +26,15 @@ object LeagueBot : BaseBot {
 
     private lateinit var odometryPuller: OdometryPuller
 
+
     override fun setup() {
+        lynx1 = hMap.get(LynxModule::class.java, "Expansion Hub 1")
         lynx2 = hMap.get(LynxModule::class.java, "Expansion Hub 2")
         gyro = OptimizedGyro(lynx2, OptimizedGyro.Mounting.FLAT)
         drive = Akira(LeagueMovementConstants)
+
+        lift = SuperSonicLift()
+        intake = MainIntake()
 
         //foundationGrabber = LeagueFoundationGrabber()
 
@@ -40,6 +47,9 @@ object LeagueBot : BaseBot {
         LeagueThreeWheelOdometry.updateThreeWheel()
         //LeagueThreeWheelOdometry.updateTwoWheel()
         drive.update()
+
+        lift.updateManualTemp()
+        intake.update()
 
         //foundationGrabber.update()
         //odometryPuller.update()
