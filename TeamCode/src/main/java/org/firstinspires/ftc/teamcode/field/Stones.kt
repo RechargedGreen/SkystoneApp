@@ -26,6 +26,9 @@ class Stone(val index: Int) { // highest index
 }
 
 object Quarry {
+
+    val allStones = ArrayList<Stone>()
+
     private val stones = ArrayList<Stone>()
     private val skystones = ArrayList<Stone>()
 
@@ -35,6 +38,7 @@ object Quarry {
         for (i in 0 until 6) {
             val newStone = Stone(i)
             (if (newStone.isSkystone) skystones else stones).add(newStone)
+            allStones.add(newStone)
         }
     }
 

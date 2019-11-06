@@ -3,9 +3,12 @@ package org.firstinspires.ftc.teamcode.field
 import org.firstinspires.ftc.teamcode.field.Field.NORTH_WALL
 
 object Foundation {
+    var hasBeenMoved = false
+
     fun reset() {
         center_x = start_center_x
         center_y = start_center_y
+        hasBeenMoved = false
     }
 
     var center_x = 0.0

@@ -10,13 +10,17 @@ import com.acmerobotics.roadrunner.profile.*
 import com.acmerobotics.roadrunner.trajectory.*
 import com.acmerobotics.roadrunner.trajectory.constraints.*
 import org.firstinspires.ftc.teamcode.*
+import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.lib.*
+import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.movement.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_turn
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_x
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_y
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_mirror
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_unwrapped_raw
+import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.Interpolators.tangent
 import org.firstinspires.ftc.teamcode.util.*
 import kotlin.math.*
 
@@ -37,6 +41,7 @@ object RoadRunner {
         TRAJECTORY
     }
 
+    val done get() = state == State.IDLE
     var state = State.IDLE
 
     val lastError
@@ -119,14 +124,17 @@ object RoadRunner {
 
 
 object RoadRunnerPaths {
+    var startAngle = 0.0
     lateinit var trajectoryBuilder: TrajectoryBuilder
 
     fun startFresh(): RoadRunnerPaths {
+        startAngle = world_angle_mirror.deg
         trajectoryBuilder = TrajectoryBuilder(DriveMovement.roadRunnerPose2dRaw, RoadRunnerConstants.constraints)
         return this
     }
 
     fun startInterrupted(): RoadRunnerPaths {
+        startAngle = world_angle_mirror.deg
         trajectoryBuilder = TrajectoryBuilder(
                 RoadRunner.trajectoryFollower.trajectory,
                 RoadRunner.trajectoryFollower.elapsedTime(),
@@ -135,18 +143,49 @@ object RoadRunnerPaths {
         return this
     }
 
-    fun spline(x: Double, y: Double, deg: Double, interpolater: HeadingInterpolator = Interpolators.tangent): RoadRunnerPaths {
-        trajectoryBuilder.splineTo(Pose2d(y, x, deg.toRadians), interpolater)
+    fun spline(x: Double, y: Double, deg: Double, interpolater: HeadingInterpolator = tangent): RoadRunnerPaths {
+        trajectoryBuilder.splineTo(Pose(x, y, deg.toRadians).checkMirror.toRoadRunner, interpolater)
         return this
     }
 
-    fun reverse(): RoadRunnerPaths {
-        trajectoryBuilder.setReversed(true)
+    fun lineTo(x: Double, y: Double, headingInterpolator: HeadingInterpolator = tangent): RoadRunnerPaths {
+        trajectoryBuilder.lineTo(Point(x, y).checkMirror.toRoadRunner, headingInterpolator)
         return this
     }
 
-    fun forward(): RoadRunnerPaths {
-        trajectoryBuilder.setReversed(false)
+    fun lineTo(x: Double, y: Double): RoadRunnerPaths {
+        trajectoryBuilder.strafeTo(Point(x, y).checkMirror.toRoadRunner)
+        return this
+    }
+
+    fun setReversed(reversed: Boolean): RoadRunnerPaths {
+        trajectoryBuilder.setReversed(reversed)
+        return this
+    }
+
+    fun forward(inches: Double): RoadRunnerPaths {
+        trajectoryBuilder.forward(inches)
+        return this
+    }
+
+    fun back(inches: Double): RoadRunnerPaths {
+        trajectoryBuilder.back(inches)
+        return this
+    }
+
+    fun left(inches: Double): RoadRunnerPaths {
+        if (ALLIANCE.isRed())
+            trajectoryBuilder.strafeLeft(inches)
+        else
+            trajectoryBuilder.strafeRight(inches)
+        return this
+    }
+
+    fun strafeRight(inches: Double): RoadRunnerPaths {
+        if (ALLIANCE.isRed())
+            trajectoryBuilder.strafeRight(inches)
+        else
+            trajectoryBuilder.strafeLeft(inches)
         return this
     }
 
@@ -161,7 +200,7 @@ object RoadRunnerPaths {
     }
 
     fun callback(x: Double, y: Double, callback: () -> Unit): RoadRunnerPaths {
-        trajectoryBuilder.addMarker(Vector2d(y, x), callback)
+        trajectoryBuilder.addMarker(Point(x, y).toRoadRunner, callback)
         return this
     }
 
@@ -207,17 +246,17 @@ object RoadRunnerConstants {
     val maxAngAccelRad = maxAngAccelDeg.toRadians
 
     fun applySignal(driveSignal: DriveSignal) {
-        val vel = driveSignal.vel
+        val vel = driveSignal.vel.toNormal
         movement_x = vel.x * kV
         movement_y = vel.y * kV
-        movement_turn = vel.heading * trackWidth * kV
+        movement_turn = vel.rad * trackWidth * kV
     }
 }
 
 object Interpolators {
     val tangent get() = TangentInterpolator()
     fun wiggle(amplitude: Double, desiredPeriod: Double, baseInterpolator: HeadingInterpolator = tangent) = WiggleInterpolator(amplitude, desiredPeriod, baseInterpolator)
-    fun spline(startHeading: Double, endHeading: Double) = SplineInterpolator(startHeading.toRadians * RunData.ALLIANCE.sign, endHeading.toRadians * RunData.ALLIANCE.sign)
-    fun linear(startHeading: Double, angle: Double) = LinearInterpolator(startHeading.toRadians * RunData.ALLIANCE.sign, angle.toRadians * RunData.ALLIANCE.sign)
-    fun constant(heading: Double) = ConstantInterpolator(heading.toRadians * RunData.ALLIANCE.sign)
+    fun spline(startHeading: Double, endHeading: Double) = SplineInterpolator(startHeading.toRadians.checkMirror, endHeading.toRadians.checkMirror)
+    fun linear(startHeading: Double, angle: Double) = LinearInterpolator(startHeading.toRadians.checkMirror, angle.toRadians.checkMirror)
+    fun constant(heading: Double) = ConstantInterpolator(heading.toRadians.checkMirror)
 }

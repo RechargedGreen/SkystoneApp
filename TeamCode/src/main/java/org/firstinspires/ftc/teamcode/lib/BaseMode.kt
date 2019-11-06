@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.lib
 import com.acmerobotics.dashboard.canvas.*
 import com.qualcomm.robotcore.eventloop.opmode.*
 import com.qualcomm.robotcore.util.*
+import org.firstinspires.ftc.robotcore.internal.opmode.*
 import org.firstinspires.ftc.teamcode.bulkLib.*
 import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.movement.*
@@ -78,6 +79,8 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean, pri
     final override fun runOpMode() {
         Globals.mode = this
 
+        RunData.reset()
+
         if (alliance != null)
             RunData.ALLIANCE = alliance
 
@@ -118,8 +121,8 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean, pri
                         changedStage = stateChangeValidator.validate()
                         onMainLoop()
                     } else {
-                        if (isAutonomous)
-                            AutomaticTeleopInit.transitionOnStop(this, bot.teleopName)
+                        /*if (isAutonomous)
+                            AutomaticTeleopInit.transitionOnStop(this, bot.teleopName)*/
                         camera.close()
                         Quarry.reset()
                         position_mirror?.apply {
@@ -142,6 +145,8 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean, pri
         }
 
         onStop()
+        if (isAutonomous)
+            (internalOpModeServices as OpModeManagerImpl).initActiveOpMode(bot.teleopName)
     }
 
     val secondsTillEnd: Double

@@ -25,6 +25,11 @@ object Globals {
  */
 object RunData {
     var ALLIANCE = Alliance.RED
+
+    var tripsStarted = 0
+    fun reset(){
+        tripsStarted = 0
+    }
 }
 
 enum class Alliance(val sign: Double) {

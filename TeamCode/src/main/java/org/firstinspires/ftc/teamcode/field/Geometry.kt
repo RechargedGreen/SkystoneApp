@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.field
 
+import com.acmerobotics.roadrunner.geometry.*
 import org.firstinspires.ftc.teamcode.lib.*
+import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.movement.*
 import kotlin.math.*
 
@@ -10,13 +12,18 @@ data class Pose(
 ) {
     constructor(x: Double, y: Double, heading_rad: Double) : this(Point(x, y), Angle.createWrappedRad(heading_rad))
 
+    val checkMirror get() = if (ALLIANCE.isRed()) this else mirrored
     val mirrored get() = Pose(Point(-point.x, point.y), heading)
     val x = point.x
     val y = point.y
     val deg = heading.deg
     val rad = heading.rad
     val distance = point.hypot
+
+    val toRoadRunner = Pose2d(y, -x, -rad)
 }
+
+val Pose2d.toNormal get() = Pose(-y, x, -heading)
 
 object Geometry {
     const val TAU = Math.PI * 2.0
@@ -89,6 +96,10 @@ data class Point(
     operator fun unaryPlus() = this
     operator fun unaryMinus() = ORIGIN - this
 
+    val checkMirror = if (ALLIANCE.isRed()) this else mirrored
+
+    val mirrored get() = Point(-x, y)
+
     fun add(distance: Double, angle: Angle) = Point(
             angle.sin * distance,
             angle.cos * distance
@@ -97,7 +108,11 @@ data class Point(
     companion object {
         val ORIGIN = Point(0.0, 0.0)
     }
+
+    var toRoadRunner = Vector2d(y, -x)
 }
+
+val Vector2d.toNormal get() = Point(-y, x)
 
 data class Line(val p1: Point, val p2: Point) {
     val slope = (p1.y - p2.y) / (p1.x - p2.x)
@@ -164,3 +179,5 @@ data class Circle(val center: Point, val radius: Double) {
         Globals.mode.fieldOverlay.strokeCircle(center.x, center.y, radius)
     }
 }
+
+val Double.checkMirror get() = this * ALLIANCE.sign
