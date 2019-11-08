@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.lib.Globals
 class Extension {
     var state = State.IN
 
-    private val servo = RevHubServo("extension")
+    private val servo = RevHubServo("grabberExtend")
 
     fun retract(){
         state = State.IN

@@ -6,32 +6,39 @@ import org.firstinspires.ftc.teamcode.lib.Globals.movementAllowed
 class Grabber {
     var state = State.RELEASE
 
-    private val servo = RevHubServo("grabber")
+    private val frontServo = RevHubServo("grabberFront")
+    private val backServo = RevHubServo("grabberBack")
 
-    fun grab(){
+    fun grab() {
         state = State.GRAB
     }
 
-    fun release(){
+    fun release() {
         state = State.RELEASE
     }
 
-    fun update (){
-        if(movementAllowed){
-            val pos = state.position()
-            servo.position = pos
+    fun update() {
+        if (movementAllowed) {
+            val frontPos = state.frontPosition()
+            val backPos = state.backPosition()
+            frontServo.position = frontPos
+            backServo.position = backPos
         }
     }
 
-    enum class State(internal val position:()->Double) {
-        GRAB({grabPosition}),
-        RELEASE({releasePosition})
+    enum class State(internal val frontPosition: () -> Double, internal val backPosition: () -> Double) {
+        GRAB({ frontGrabPosition }, { backGrabPosition }),
+        RELEASE({ frontReleasePosition }, { backReleasePosition })
     }
 
     companion object {
         @JvmField
-        var grabPosition = 0.0
+        var frontGrabPosition = 1.0
         @JvmField
-        var releasePosition = 0.0
+        var frontReleasePosition = 0.0
+        @JvmField
+        var backGrabPosition = 1.0
+        @JvmField
+        var backReleasePosition = 0.0
     }
 }

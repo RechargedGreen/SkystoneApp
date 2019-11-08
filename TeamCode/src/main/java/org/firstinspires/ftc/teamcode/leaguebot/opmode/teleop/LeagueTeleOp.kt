@@ -28,6 +28,17 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
         if (driver.b.currentState)
             DriveMovement.setPosition_raw(0.0, 0.0, 0.0)
 
+        when {
+            gamepad2.right_bumper -> LeagueBot.grabber.state = Grabber.State.GRAB
+            gamepad2.left_bumper -> LeagueBot.grabber.state = Grabber.State.RELEASE
+        }
+
+        when {
+            gamepad2.right_trigger > 0.5 -> LeagueBot.extension.extend()
+            gamepad2.left_trigger > 0.5 -> LeagueBot.extension.retract()
+        }
+
+
         telemetry.addData("lf pos", LeagueBot.drive.leftFront.encoderTicks)
         telemetry.addData("lb pos", LeagueBot.drive.leftBack.encoderTicks)
         telemetry.addData("rf pos", LeagueBot.drive.rightFront.encoderTicks)

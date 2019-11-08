@@ -27,6 +27,8 @@ object LeagueBot : BaseBot {
 
     private lateinit var odometryPuller: OdometryPuller
 
+    lateinit var extension:Extension
+    lateinit var grabber: Grabber
 
     override fun setup() {
         lynx1 = hMap.get(LynxModule::class.java, "Expansion Hub 1")
@@ -36,6 +38,9 @@ object LeagueBot : BaseBot {
 
         lift = SuperSonicLift()
         intake = MainIntake()
+
+        grabber = Grabber()
+        extension = Extension()
 
         //foundationGrabber = LeagueFoundationGrabber()
 
@@ -51,8 +56,11 @@ object LeagueBot : BaseBot {
         //LeagueThreeWheelOdometry.updateTwoWheel()
         drive.update()
 
+        grabber.update()
         lift.updateManualTemp()
         intake.update()
+
+        extension.update()
 
         RoadRunner.update()
         //foundationGrabber.update()

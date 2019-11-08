@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.movement
 
-import com.acmerobotics.roadrunner.geometry.*
 import org.firstinspires.ftc.teamcode.field.Geometry
 import org.firstinspires.ftc.teamcode.field.Point
 import org.firstinspires.ftc.teamcode.field.Pose
