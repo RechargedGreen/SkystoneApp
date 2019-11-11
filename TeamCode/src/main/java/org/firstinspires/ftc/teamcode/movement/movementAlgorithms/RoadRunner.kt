@@ -12,15 +12,13 @@ import com.acmerobotics.roadrunner.trajectory.constraints.*
 import org.firstinspires.ftc.teamcode.*
 import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.lib.*
-import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.movement.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_turn
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_x
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_y
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.roadRunnerPose2dRaw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_mirror
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_unwrapped_raw
-import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.Interpolators.tangent
 import org.firstinspires.ftc.teamcode.util.*
 import kotlin.math.*
 
@@ -67,9 +65,15 @@ object RoadRunner {
             field = value
         }
 
-    fun setTrajectory(trajectory: Trajectory) {
+    var index = -1
+    var trajectories = ArrayList<Trajectory>()
+
+    fun setTrajectory(trajectory: Trajectory) = setTrajectories { arrayListOf(trajectory) }
+
+    fun setTrajectories(trajectories: () -> ArrayList<Trajectory>) {
         state = State.TRAJECTORY
-        trajectoryFollower.followTrajectory(trajectory)
+        this.trajectories = trajectories()
+        index = -1
     }
 
     var stopOnEnd = true
@@ -94,18 +98,26 @@ object RoadRunner {
             }
 
             State.TRAJECTORY -> {
-                val pose = DriveMovement.roadRunnerPose2dRaw
+                if (!trajectoryFollower.isFollowing()) {
+                    index++
+                    if (index >= trajectories.size) {
+                        setIdle()
+                    }
+                    trajectoryFollower.followTrajectory(trajectories[index])
+                }
+
+                val pose = roadRunnerPose2dRaw
                 RoadRunnerConstants.applySignal(trajectoryFollower.update(pose))
 
-                val trajectory = trajectoryFollower.trajectory
-
-                Globals.fieldOverlay.drawSampledPath(trajectory.path)
+                for (trajectory in trajectories)
+                    Globals.fieldOverlay.drawSampledPath(trajectory.path)
 
                 Globals.fieldOverlay.setStroke("#3F51B5")
                 Globals.fieldOverlay.fillCircle(pose.x, pose.y, 3.0)
 
-                if (!trajectoryFollower.isFollowing())
-                    setIdle()
+            }
+
+            State.IDLE       -> {
             }
         }
 
@@ -120,100 +132,17 @@ object RoadRunner {
         if (stopOnEnd)
             stopDrive()
     }
-}
 
-
-object RoadRunnerPaths {
-    var startAngle = 0.0
-    lateinit var trajectoryBuilder: TrajectoryBuilder
-
-    fun startFresh(): RoadRunnerPaths {
-        startAngle = world_angle_mirror.deg
-        trajectoryBuilder = TrajectoryBuilder(DriveMovement.roadRunnerPose2dRaw, RoadRunnerConstants.constraints)
-        return this
+    fun newBuilder(pose: Pose2d = roadRunnerPose2dRaw, constraints: DriveConstraints = RoadRunnerConstants.constraints): AllianceCheckingBuilder {
+        return AllianceCheckingBuilder(TrajectoryBuilder(pose, constraints))
     }
 
-    fun startInterrupted(): RoadRunnerPaths {
-        startAngle = world_angle_mirror.deg
-        trajectoryBuilder = TrajectoryBuilder(
-                RoadRunner.trajectoryFollower.trajectory,
-                RoadRunner.trajectoryFollower.elapsedTime(),
-                RoadRunnerConstants.constraints
-        )
-        return this
-    }
-
-    fun spline(x: Double, y: Double, deg: Double, interpolater: HeadingInterpolator = tangent): RoadRunnerPaths {
-        trajectoryBuilder.splineTo(Pose(x, y, deg.toRadians).checkMirror.toRoadRunner, interpolater)
-        return this
-    }
-
-    fun lineTo(x: Double, y: Double, headingInterpolator: HeadingInterpolator = tangent): RoadRunnerPaths {
-        trajectoryBuilder.lineTo(Point(x, y).checkMirror.toRoadRunner, headingInterpolator)
-        return this
-    }
-
-    fun lineTo(x: Double, y: Double): RoadRunnerPaths {
-        trajectoryBuilder.strafeTo(Point(x, y).checkMirror.toRoadRunner)
-        return this
-    }
-
-    fun setReversed(reversed: Boolean): RoadRunnerPaths {
-        trajectoryBuilder.setReversed(reversed)
-        return this
-    }
-
-    fun forward(inches: Double): RoadRunnerPaths {
-        trajectoryBuilder.forward(inches)
-        return this
-    }
-
-    fun back(inches: Double): RoadRunnerPaths {
-        trajectoryBuilder.back(inches)
-        return this
-    }
-
-    fun left(inches: Double): RoadRunnerPaths {
-        if (ALLIANCE.isRed())
-            trajectoryBuilder.strafeLeft(inches)
-        else
-            trajectoryBuilder.strafeRight(inches)
-        return this
-    }
-
-    fun strafeRight(inches: Double): RoadRunnerPaths {
-        if (ALLIANCE.isRed())
-            trajectoryBuilder.strafeRight(inches)
-        else
-            trajectoryBuilder.strafeLeft(inches)
-        return this
-    }
-
-    fun callback(callback: () -> Unit): RoadRunnerPaths {
-        trajectoryBuilder.addMarker(callback)
-        return this
-    }
-
-    fun callback(time: Double, callback: () -> Unit): RoadRunnerPaths {
-        trajectoryBuilder.addMarker(time, callback)
-        return this
-    }
-
-    fun callback(x: Double, y: Double, callback: () -> Unit): RoadRunnerPaths {
-        trajectoryBuilder.addMarker(Point(x, y).toRoadRunner, callback)
-        return this
-    }
-
-    fun startSmart(): RoadRunnerPaths {
-        if (RoadRunner.trajectoryFollower.isFollowing() && RoadRunner.state == RoadRunner.State.IDLE)
-            startInterrupted()
-        else
-            startFresh()
-        return this
-    }
-
-    fun build() {
-        RoadRunner.setTrajectory(trajectoryBuilder.build())
+    fun interruptedBuilder(constraints: DriveConstraints): AllianceCheckingBuilder {
+        return AllianceCheckingBuilder(TrajectoryBuilder(
+                trajectoryFollower.trajectory,
+                trajectoryFollower.elapsedTime(),
+                constraints
+        ))
     }
 }
 
