@@ -167,8 +167,8 @@ class SuperSonicLift {
             return weight
         }
 
-    val left = RevHubMotor("leftLift", Go_5_2::class).openLoopControl
-    val right = RevHubMotor("rightLift", Go_5_2::class).reverse.openLoopControl
+    val left = RevHubMotor("leftLift", Go_5_2::class).openLoopControl.brake
+    val right = RevHubMotor("rightLift", Go_5_2::class).reverse.openLoopControl.brake
     val encoder = Encoder(LeagueBot.lynx2, 3, MotorEncoder.G3_7)
 //    val downSensor = RevHubTouchSensor("liftTouch")
 

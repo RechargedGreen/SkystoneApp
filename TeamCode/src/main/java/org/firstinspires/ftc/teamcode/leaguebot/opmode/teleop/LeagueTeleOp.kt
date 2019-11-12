@@ -1,13 +1,16 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.teleop
 
-import com.qualcomm.robotcore.eventloop.opmode.*
-import org.firstinspires.ftc.teamcode.leaguebot.*
-import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.*
-import org.firstinspires.ftc.teamcode.movement.*
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.teamcode.leaguebot.LeagueBotTeleOpBase
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.Grabber
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueBot
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueThreeWheelOdometry
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.MainIntake
+import org.firstinspires.ftc.teamcode.movement.DriveMovement
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_unwrapped_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_raw
-import org.firstinspires.ftc.teamcode.util.clip
+import org.firstinspires.ftc.teamcode.movement.Speedometer
 import org.firstinspires.ftc.teamcode.util.deadZone
 
 @TeleOp
@@ -29,8 +32,9 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
             DriveMovement.setPosition_raw(0.0, 0.0, 0.0)
 
         when {
-            gamepad2.right_bumper -> LeagueBot.grabber.state = Grabber.State.GRAB
-            gamepad2.left_bumper -> LeagueBot.grabber.state = Grabber.State.RELEASE
+            gamepad2.dpad_down -> LeagueBot.grabber.state = Grabber.State.GRAB
+            gamepad2.dpad_right -> LeagueBot.grabber.state = Grabber.State.LOAD
+            gamepad2.dpad_up -> LeagueBot.grabber.state = Grabber.State.RELEASE
         }
 
         when {

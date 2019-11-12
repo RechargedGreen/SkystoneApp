@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware
 
+import com.acmerobotics.dashboard.config.Config
 import org.firstinspires.ftc.teamcode.bulkLib.RevHubServo
 import org.firstinspires.ftc.teamcode.lib.Globals.movementAllowed
 
+@Config
 class Grabber {
     var state = State.RELEASE
 
@@ -28,7 +30,8 @@ class Grabber {
 
     enum class State(internal val frontPosition: () -> Double, internal val backPosition: () -> Double) {
         GRAB({ frontGrabPosition }, { backGrabPosition }),
-        RELEASE({ frontReleasePosition }, { backReleasePosition })
+        RELEASE({ frontReleasePosition }, { backReleasePosition }),
+        LOAD({ frontReleasePosition}, { backGrabPosition})
     }
 
     companion object {
