@@ -1,26 +1,35 @@
 package org.firstinspires.ftc.teamcode.movement.movementAlgorithms
 
-import com.acmerobotics.dashboard.config.*
-import com.acmerobotics.roadrunner.control.*
-import com.acmerobotics.roadrunner.drive.*
-import com.acmerobotics.roadrunner.followers.*
-import com.acmerobotics.roadrunner.geometry.*
+import com.acmerobotics.dashboard.config.Config
+import com.acmerobotics.roadrunner.control.PIDCoefficients
+import com.acmerobotics.roadrunner.control.PIDFController
+import com.acmerobotics.roadrunner.drive.DriveSignal
+import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower
+import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.path.heading.*
-import com.acmerobotics.roadrunner.profile.*
-import com.acmerobotics.roadrunner.trajectory.*
-import com.acmerobotics.roadrunner.trajectory.constraints.*
-import org.firstinspires.ftc.teamcode.*
-import org.firstinspires.ftc.teamcode.field.*
-import org.firstinspires.ftc.teamcode.lib.*
-import org.firstinspires.ftc.teamcode.movement.*
+import com.acmerobotics.roadrunner.profile.MotionProfile
+import com.acmerobotics.roadrunner.profile.MotionProfileGenerator
+import com.acmerobotics.roadrunner.profile.MotionState
+import com.acmerobotics.roadrunner.trajectory.Trajectory
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder
+import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints
+import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints
+import org.firstinspires.ftc.teamcode.drawSampledPath
+import org.firstinspires.ftc.teamcode.field.checkMirror
+import org.firstinspires.ftc.teamcode.field.toNormal
+import org.firstinspires.ftc.teamcode.lib.Globals
+import org.firstinspires.ftc.teamcode.lib.RunData
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_turn
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_x
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_y
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.roadRunnerPose2dRaw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_unwrapped_raw
-import org.firstinspires.ftc.teamcode.util.*
-import kotlin.math.*
+import org.firstinspires.ftc.teamcode.movement.toDegrees
+import org.firstinspires.ftc.teamcode.movement.toRadians
+import org.firstinspires.ftc.teamcode.util.Clock
+import kotlin.contracts.contract
+import kotlin.math.PI
 
 object RoadRunner {
     val trajectoryFollower = HolonomicPIDVAFollower(RoadRunnerConstants.TRANSLATIONAL_PID, RoadRunnerConstants.TRANSLATIONAL_PID, RoadRunnerConstants.HEADING_PID)
@@ -45,8 +54,8 @@ object RoadRunner {
     val lastError
         get() = when (state) {
             State.TRAJECTORY -> trajectoryFollower.lastError
-            State.TURN       -> Pose2d(0.0, 0.0, turnController.lastError)
-            State.IDLE       -> Pose2d()
+            State.TURN -> Pose2d(0.0, 0.0, turnController.lastError)
+            State.IDLE -> Pose2d()
         }
 
     var turn_deg: Double = 0.0
@@ -80,7 +89,7 @@ object RoadRunner {
 
     fun update() {
         when (state) {
-            State.TURN       -> {
+            State.TURN -> {
                 val t = Clock.seconds - turnStart
                 val targetState = turnProfile[t]
 
@@ -98,12 +107,13 @@ object RoadRunner {
             }
 
             State.TRAJECTORY -> {
-                if (!trajectoryFollower.isFollowing()) {
+                if (index < 0 || !trajectoryFollower.isFollowing()) {
                     index++
                     if (index >= trajectories.size) {
                         setIdle()
+                    } else {
+                        trajectoryFollower.followTrajectory(trajectories[index])
                     }
-                    trajectoryFollower.followTrajectory(trajectories[index])
                 }
 
                 val pose = roadRunnerPose2dRaw
@@ -117,7 +127,7 @@ object RoadRunner {
 
             }
 
-            State.IDLE       -> {
+            State.IDLE -> {
             }
         }
 
@@ -148,14 +158,14 @@ object RoadRunner {
 
 @Config
 object RoadRunnerConstants {
-    const val WHEEL_DIAMETER = 100.0 / 25.4
+    const val WHEEL_DIAMETER = 3.937
     const val MAX_RPM = 312.0
-    const val kV = (MAX_RPM / 60.0) * WHEEL_DIAMETER * PI
+    const val kV = 1.0 / (MAX_RPM / 60.0 * WHEEL_DIAMETER * PI)
 
     val constraints get() = MecanumConstraints(DriveConstraints(maxVel, maxAccel, 0.0, maxAngVelRad, maxAngAccelRad, 0.0), trackWidth)
 
     @JvmField
-    var trackWidth = 0.0
+    var trackWidth = 17.5
 
     @JvmField
     var TRANSLATIONAL_PID = PIDCoefficients(0.0, 0.0, 0.0)
@@ -164,9 +174,9 @@ object RoadRunnerConstants {
     var HEADING_PID = PIDCoefficients(0.0, 0.0, 0.0)
 
     @JvmField
-    var maxAccel = 30.0
+    var maxAccel = 60.0
     @JvmField
-    var maxVel = 30.0
+    var maxVel = 45.0
     @JvmField
     var maxAngVelDeg = 180.0
     @JvmField

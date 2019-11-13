@@ -50,7 +50,7 @@ class AllianceCheckingBuilder(private val underliningBuilder: TrajectoryBuilder)
 
     }
 
-    fun splineTo(pose: Pose2d, interpolator: HeadingInterpolator = TangentInterpolator()): AllianceCheckingBuilder {
+    fun splineTo(pose: Pose2d, interpolator: HeadingInterpolator = AllianceTangentInterpolator()): AllianceCheckingBuilder {
         verifyCorrectedHeading()
         underliningBuilder.splineTo(pose, interpolator)
         return this
@@ -84,29 +84,29 @@ class AllianceCheckingBuilder(private val underliningBuilder: TrajectoryBuilder)
 
 var correctedHeadingInterpolator = false
 
-fun allianceSplineInterpolator(startHeading_deg: Double, endHeading_deg: Double): SplineInterpolator {
+fun AllianceSplineInterpolator(startHeading_deg: Double, endHeading_deg: Double): SplineInterpolator {
     correctedHeadingInterpolator = true
     return SplineInterpolator(startHeading_deg.toRadians.checkMirror, endHeading_deg.toRadians.checkMirror)
 }
 
-fun allianceConstantInterpolator(heading_deg: Double): ConstantInterpolator {
+fun AllianceConstantInterpolator(heading_deg: Double): ConstantInterpolator {
     correctedHeadingInterpolator = true
     return ConstantInterpolator(heading_deg.toRadians.checkMirror)
 }
 
-fun allianceLinearInterpolator(startHeading_deg: Double, angle_deg: Double): LinearInterpolator {
+fun AllianceLinearInterpolator(startHeading_deg: Double, angle_deg: Double): LinearInterpolator {
     correctedHeadingInterpolator = true
     return LinearInterpolator(startHeading_deg.toRadians.checkMirror, angle_deg.toRadians.checkMirror)
 }
 
-fun allianceWiggleInterpolator(amplitude: Double, desiredPeriod: Double, baseInterpolator: HeadingInterpolator): WiggleInterpolator {
+fun AllianceWiggleInterpolator(amplitude: Double, desiredPeriod: Double, baseInterpolator: HeadingInterpolator): WiggleInterpolator {
     if (!correctedHeadingInterpolator)
         throw IllegalArgumentException("didn't use alliance specific heading for wiggle interpolator")
     correctedHeadingInterpolator = true
     return WiggleInterpolator(amplitude.toRadians, desiredPeriod, baseInterpolator)
 }
 
-fun allianceTangentInterpolator(): TangentInterpolator {
+fun AllianceTangentInterpolator(): TangentInterpolator {
     correctedHeadingInterpolator = true
     return TangentInterpolator()
 }

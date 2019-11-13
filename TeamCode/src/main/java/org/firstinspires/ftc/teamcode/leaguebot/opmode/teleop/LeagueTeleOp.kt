@@ -43,6 +43,7 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
         }
 
 
+        telemetry.addData("drive wheels y pos", LeagueBot.drive.y_drivePos)
         telemetry.addData("lf pos", LeagueBot.drive.leftFront.encoderTicks)
         telemetry.addData("lb pos", LeagueBot.drive.leftBack.encoderTicks)
         telemetry.addData("rf pos", LeagueBot.drive.rightFront.encoderTicks)

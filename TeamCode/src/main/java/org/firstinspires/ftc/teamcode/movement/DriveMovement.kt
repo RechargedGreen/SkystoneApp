@@ -14,7 +14,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 object DriveMovement {
-    val roadRunnerPose2dRaw get() = Pose(world_y_raw, world_x_raw, world_angle_unwrapped_raw.rad).toRoadRunner
+    val roadRunnerPose2dRaw get() = Pose(world_x_raw, world_y_raw, world_angle_unwrapped_raw.rad).toRoadRunner
 
     lateinit var odometer: Odometry
 
