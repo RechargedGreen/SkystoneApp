@@ -1,17 +1,14 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.teleop
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.leaguebot.LeagueBotTeleOpBase
-import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.Grabber
-import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueBot
-import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueThreeWheelOdometry
-import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.MainIntake
-import org.firstinspires.ftc.teamcode.movement.DriveMovement
+import com.qualcomm.robotcore.eventloop.opmode.*
+import org.firstinspires.ftc.teamcode.leaguebot.*
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.*
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.*
+import org.firstinspires.ftc.teamcode.movement.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_unwrapped_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_raw
-import org.firstinspires.ftc.teamcode.movement.Speedometer
-import org.firstinspires.ftc.teamcode.util.deadZone
+import org.firstinspires.ftc.teamcode.util.*
 
 @TeleOp
 class LeagueTeleOp : LeagueBotTeleOpBase() {
@@ -19,9 +16,16 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
         DriveMovement.gamepadControl(driver)
 
         LeagueBot.intake.state = when {
-            gamepad1.right_bumper -> MainIntake.State.IN
-            gamepad1.left_bumper -> MainIntake.State.OUT
-            else -> MainIntake.State.STOP
+            gamepad1.right_bumper -> {
+                ScorerState.triggerLoad()
+                if (ScorerState.clearToIntake) MainIntake.State.IN else MainIntake.State.OUT
+            }
+            gamepad1.left_bumper  -> {
+                MainIntake.State.OUT
+            }
+            else                  -> {
+                MainIntake.State.STOP
+            }
         }
 
         LeagueBot.lift.manualTemp = (-gamepad2.right_stick_y.toDouble() deadZone 0.05)
@@ -32,15 +36,22 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
             DriveMovement.setPosition_raw(0.0, 0.0, 0.0)
 
         when {
-            gamepad2.dpad_down -> LeagueBot.grabber.state = Grabber.State.GRAB
+            gamepad2.dpad_up    -> ScorerState.triggerLoad()
+            gamepad2.dpad_right -> ScorerState.triggerGrab()
+            gamepad2.dpad_down  -> ScorerState.triggerExtend()
+            gamepad2.dpad_left  -> ScorerState.triggerRelease()
+        }
+
+        /*when {
+            gamepad2.dpad_down  -> LeagueBot.grabber.state = Grabber.State.GRAB
             gamepad2.dpad_right -> LeagueBot.grabber.state = Grabber.State.LOAD
-            gamepad2.dpad_up -> LeagueBot.grabber.state = Grabber.State.RELEASE
+            gamepad2.dpad_up    -> LeagueBot.grabber.state = Grabber.State.RELEASE
         }
 
         when {
             gamepad2.right_trigger > 0.5 -> LeagueBot.extension.extend()
-            gamepad2.left_trigger > 0.5 -> LeagueBot.extension.retract()
-        }
+            gamepad2.left_trigger > 0.5  -> LeagueBot.extension.retract()
+        }*/
 
 
         telemetry.addData("drive wheels y pos", LeagueBot.drive.y_drivePos)

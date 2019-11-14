@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware
 
-import com.qualcomm.hardware.lynx.LynxModule
+import com.qualcomm.hardware.lynx.*
+import org.firstinspires.ftc.teamcode.bulkLib.*
 import org.firstinspires.ftc.teamcode.bulkLib.BlackMagic.hMap
-import org.firstinspires.ftc.teamcode.bulkLib.OptimizedGyro
-import org.firstinspires.ftc.teamcode.leaguebot.opmode.teleop.LeagueTeleOp
-import org.firstinspires.ftc.teamcode.lib.BaseBot
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.*
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.teleop.*
+import org.firstinspires.ftc.teamcode.lib.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
-import org.firstinspires.ftc.teamcode.sharedhardware.Akira
-import org.firstinspires.ftc.teamcode.sharedhardware.OdometryPuller
+import org.firstinspires.ftc.teamcode.sharedhardware.*
 
 object LeagueBot : BaseBot {
     const val placeWidth = 18.0
@@ -27,7 +27,7 @@ object LeagueBot : BaseBot {
 
     private lateinit var odometryPuller: OdometryPuller
 
-    lateinit var extension:Extension
+    lateinit var extension: Extension
     lateinit var grabber: Grabber
 
     override fun setup() {
@@ -49,6 +49,8 @@ object LeagueBot : BaseBot {
         RoadRunner.reset()
 
         LeagueMovementConstants.setup()
+
+        ScorerState.update()
     }
 
     override fun update() {
