@@ -13,7 +13,7 @@ import kotlin.math.PI
 @Config
 object LeagueThreeWheelOdometry {
     @JvmField
-    var turnTrackWidth = 14.5
+    var turnTrackWidth = 14.574// was 14.5
     @JvmField
     var auxTrackWidth = -0.125// -3.5 was origanal
 

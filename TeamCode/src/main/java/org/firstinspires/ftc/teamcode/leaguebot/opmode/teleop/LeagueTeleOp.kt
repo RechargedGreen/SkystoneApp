@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.leaguebot.*
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.*
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.*
 import org.firstinspires.ftc.teamcode.movement.*
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.roadRunnerPose2dRaw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_unwrapped_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_raw
@@ -70,5 +71,6 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
         combinedPacket.put("y", world_y_raw)
         combinedPacket.put("x", world_x_raw)
         combinedPacket.put("deg", world_angle_unwrapped_raw.deg)
+        combinedPacket.put("rr deg", roadRunnerPose2dRaw.heading.toDegrees)
     }
 }

@@ -28,12 +28,10 @@ import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_unwrapp
 import org.firstinspires.ftc.teamcode.movement.toDegrees
 import org.firstinspires.ftc.teamcode.movement.toRadians
 import org.firstinspires.ftc.teamcode.util.Clock
-import kotlin.contracts.contract
-import kotlin.math.PI
 
 object RoadRunner {
     val trajectoryFollower = HolonomicPIDVAFollower(RoadRunnerConstants.TRANSLATIONAL_PID, RoadRunnerConstants.TRANSLATIONAL_PID, RoadRunnerConstants.HEADING_PID)
-    val turnController = PIDFController(RoadRunnerConstants.HEADING_PID)
+    val turnController = PIDFController(RoadRunnerConstants.HEADING_PID, 1.0)
 
     private lateinit var turnProfile: MotionProfile
     private var turnStart = 0.0
@@ -61,7 +59,7 @@ object RoadRunner {
     var turn_deg: Double = 0.0
         set(value) {
             val t_rad = turn_deg.toRadians * RunData.ALLIANCE.sign
-            val c_rad = world_angle_unwrapped_raw.rad
+            val c_rad = -world_angle_unwrapped_raw.rad
             turnProfile = MotionProfileGenerator.generateSimpleMotionProfile(
                     MotionState(c_rad, 0.0),
                     MotionState(t_rad, 0.0),
@@ -92,21 +90,20 @@ object RoadRunner {
             State.TURN -> {
                 val t = Clock.seconds - turnStart
                 val targetState = turnProfile[t]
-
                 val targetOmega = targetState.v
-
-                turnController.targetPosition = targetState.x
-                val correction = turnController.update(world_angle_unwrapped_raw.rad, targetOmega)
-
                 RoadRunnerConstants.applySignal(DriveSignal(
-                        Pose2d(0.0, 0.0, targetOmega + correction)
+                        Pose2d(0.0, 0.0, targetOmega)
                 ))
 
-                if (t >= turnProfile.duration())
+                if (t > turnProfile.duration())
                     setIdle()
             }
 
             State.TRAJECTORY -> {
+                val pose = roadRunnerPose2dRaw
+                if (index >= 0)
+                    RoadRunnerConstants.applySignal(trajectoryFollower.update(pose))
+
                 if (index < 0 || !trajectoryFollower.isFollowing()) {
                     index++
                     if (index >= trajectories.size) {
@@ -116,15 +113,11 @@ object RoadRunner {
                     }
                 }
 
-                val pose = roadRunnerPose2dRaw
-                RoadRunnerConstants.applySignal(trajectoryFollower.update(pose))
-
                 for (trajectory in trajectories)
                     Globals.fieldOverlay.drawSampledPath(trajectory.path)
 
                 Globals.fieldOverlay.setStroke("#3F51B5")
                 Globals.fieldOverlay.fillCircle(pose.x, pose.y, 3.0)
-
             }
 
             State.IDLE -> {
@@ -134,6 +127,7 @@ object RoadRunner {
         val error = lastError
         Globals.packet.put("xError", error.x)
         Globals.packet.put("yError", error.y)
+        Globals.packet.put("radError", error.heading)
         Globals.packet.put("degError", error.heading.toDegrees)
     }
 
@@ -160,12 +154,12 @@ object RoadRunner {
 object RoadRunnerConstants {
     const val WHEEL_DIAMETER = 3.937
     const val MAX_RPM = 312.0
-    const val kV = 1.0 / (MAX_RPM / 60.0 * WHEEL_DIAMETER * PI)
+    const val kV = 1.0 / 64.0 /// (MAX_RPM / 60.0 * WHEEL_DIAMETER * PI)
 
     val constraints get() = MecanumConstraints(DriveConstraints(maxVel, maxAccel, 0.0, maxAngVelRad, maxAngAccelRad, 0.0), trackWidth)
 
     @JvmField
-    var trackWidth = 17.5
+    var trackWidth = 19.65
 
     @JvmField
     var TRANSLATIONAL_PID = PIDCoefficients(0.0, 0.0, 0.0)
@@ -174,13 +168,13 @@ object RoadRunnerConstants {
     var HEADING_PID = PIDCoefficients(0.0, 0.0, 0.0)
 
     @JvmField
-    var maxAccel = 60.0
+    var maxAccel = 60.0 // was 60.0
     @JvmField
-    var maxVel = 45.0
+    var maxVel = 50.0
     @JvmField
-    var maxAngVelDeg = 180.0
+    var maxAngVelDeg = 200.0 // measured was just under 215
     @JvmField
-    var maxAngAccelDeg = 180.0
+    var maxAngAccelDeg = 180.0 // was 180.0
     val maxAngVelRad get() = maxAngVelDeg.toRadians
     val maxAngAccelRad = maxAngAccelDeg.toRadians
 

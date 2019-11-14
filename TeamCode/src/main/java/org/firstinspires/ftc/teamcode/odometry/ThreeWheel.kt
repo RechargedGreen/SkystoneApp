@@ -4,6 +4,10 @@ import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.movement.*
 
 object ThreeWheel : Odometry {
+    var yTraveled = 0.0
+    var xTraveled = 0.0
+    var degTraveled = 0.0
+
     // last encoder positions
     private var last_l_encoder = 0
     private var last_r_encoder = 0
@@ -34,7 +38,14 @@ object ThreeWheel : Odometry {
         // the aux wheel moves when we rotate, so cancel this out with a prediction
         val aux_prediction = angleIncrement * auxTrackWidth
 
-        DriveMovement.updatePos(Pose(aWheelDelta - aux_prediction, (lWheelDelta + rWheelDelta) / 2.0, angleIncrement), Angle.createUnwrappedRad(finalAngleRad))
+        val yDelta = (lWheelDelta + rWheelDelta) / 2.0
+        val xDelta = aWheelDelta - aux_prediction
+
+        yTraveled += yDelta
+        xTraveled += xDelta
+        degTraveled += angleIncrement.toDegrees
+
+        DriveMovement.updatePos(Pose(xDelta, yDelta, angleIncrement), Angle.createUnwrappedRad(finalAngleRad))
 
         last_l_encoder = curr_l_encoder
         last_r_encoder = curr_r_encoder

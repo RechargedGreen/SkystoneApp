@@ -65,6 +65,8 @@ object LeagueBot : BaseBot {
         extension.update()
 
         RoadRunner.update()
+
+        ScorerState.update()
         //foundationGrabber.update()
         //odometryPuller.update()
     }

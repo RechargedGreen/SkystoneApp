@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode
 
-import com.acmerobotics.dashboard.config.*
-import com.qualcomm.robotcore.util.*
-import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.*
+import com.acmerobotics.dashboard.config.Config
+import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.Extension
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.Grabber
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueBot
 
 @Config
 object ScorerState {
@@ -14,15 +16,15 @@ object ScorerState {
     }
 
     fun triggerGrab() {
-
+        state = State.GRAB
     }
 
     fun triggerRelease() {
-
+        state = State.RELEASE
     }
 
     fun triggerLoad() {
-
+        state = State.INTAKING
     }
 
     enum class State {
@@ -52,21 +54,21 @@ object ScorerState {
                 LeagueBot.extension.state = Extension.State.IN
             }
 
-            State.GRAB     -> {
+            State.GRAB -> {
                 intakeTimer.reset()
 
                 LeagueBot.grabber.state = Grabber.State.GRAB
                 LeagueBot.extension.state = Extension.State.IN
             }
 
-            State.EXTEND   -> {
+            State.EXTEND -> {
                 intakeTimer.reset()
 
                 LeagueBot.grabber.state = Grabber.State.GRAB
                 LeagueBot.extension.state = if (timeSpentGrabbing < grabTime) Extension.State.IN else Extension.State.OUT
             }
 
-            State.RELEASE  -> {
+            State.RELEASE -> {
                 grabberTimer.reset()
                 intakeTimer.reset()
 

@@ -33,6 +33,7 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean, pri
     fun initializeStateVariables() {
         MovementAlgorithms.initAll()
         stageTimer.reset()
+        changedStage = true
     }
 
     fun nextStage(nextStage: Int = stage + 1, initStateVariables: Boolean = true) {
