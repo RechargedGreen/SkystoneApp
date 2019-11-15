@@ -1,14 +1,13 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware
 
 import com.acmerobotics.dashboard.config.Config
-import org.firstinspires.ftc.teamcode.bulkLib.RevHubServo
 import org.firstinspires.ftc.teamcode.lib.Globals
 import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
 
 @Config
 class LeagueFoundationGrabber {
-    private val leftServo = RevHubServo("leftFoundation")
-    private val rightServo = RevHubServo("rightFoundation")
+    //private val leftServo = RevHubServo("leftFoundation")
+    //private val rightServo = RevHubServo("rightFoundation")
 
 
     enum class State(val leftDown: Boolean, val rightDown: Boolean) {
@@ -50,12 +49,16 @@ class LeagueFoundationGrabber {
         state = State.right
     }
 
+    fun prepForGrab(){
+
+    }
+
     fun update() {
         val l = if (state.leftDown) lDown else lUp
         val r = if (state.rightDown) rDown else rUp
         if (Globals.mode.movementAllowed) {
-            leftServo.position = l
-            rightServo.position = r
+            //      leftServo.position = l
+            //    rightServo.position = r
         }
     }
 

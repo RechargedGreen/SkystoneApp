@@ -42,7 +42,7 @@ object LeagueBot : BaseBot {
         grabber = Grabber()
         extension = Extension()
 
-        //foundationGrabber = LeagueFoundationGrabber()
+        foundationGrabber = LeagueFoundationGrabber()
 
         //odometryPuller = OdometryPuller({0.0}, {1.0})
 
