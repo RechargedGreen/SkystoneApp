@@ -5,13 +5,11 @@ import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.teamcode.bulkLib.Encoder
 import org.firstinspires.ftc.teamcode.bulkLib.MotorEncoder
 import org.firstinspires.ftc.teamcode.bulkLib.RevHubMotor
-import org.firstinspires.ftc.teamcode.bulkLib.RevHubTouchSensor
+import org.firstinspires.ftc.teamcode.bulkLib.cachedInput
 import org.firstinspires.ftc.teamcode.lib.Globals.mode
 import org.firstinspires.ftc.teamcode.lib.hardware.Go_5_2
 import org.firstinspires.ftc.teamcode.util.Clock
-import kotlin.math.PI
 import kotlin.math.absoluteValue
-import kotlin.math.sign
 
 /**
  * distance is in inches
@@ -20,163 +18,161 @@ import kotlin.math.sign
  * spool diameter is 1.35"
  * */
 
+/**
+ * up a =
+ * down a =
+ *
+ * up b =
+ * down b =
+ *
+ * constantG =
+ * slideG =
+ * friction =
+ */
+
 @Config
 class SuperSonicLift {
     companion object {
         @JvmField
-        var safeMode = true // this limits the speed to make it safer for testing
+        var kP: Double = 0.1
+        @JvmField
+        var kI = 0.4
+        @JvmField
+        var kD: Double = 0.01
+        @JvmField
+        var speedStartInegrating = 0.4
+        @JvmField
+        var integralCap = 1.0
+
+        private var hasBeenCalibrated = false
+        private var resetSpoolRadians = 0.0
+        private const val SPOOL_RADIUS = 1.968 / 2.0
 
         @JvmField
-        var kP: Double = 0.0
-
-        @JvmField
-        var kD: Double = 0.0
-
-        @JvmField
-        var kSlideG: Double = 0.0
-
-        @JvmField
-        var kStoneG = 0.0
-
-        @JvmField
-        var kConstantG = 0.0
-
-        @JvmField
-        var stageStrokeLength = 4.724
-
-        @JvmField
-        var staticHeight = 0.0
-
-        var hasBeenCalibrated = false
-
-        var holdingStone = false
-
-        @JvmField
-        var kStatic = 0.0
-
-        private const val slides = 8
-        private const val maxStages = slides - 1
-
-        private var resetExtension = 0.0
-
-        private var spoolDiameter = 1.968
-    }
-
-    var manualTemp = 0.0
-    fun updateManualTemp(){
-        left.power = manualTemp
-        right.power = manualTemp
-    }
-
-    var lastTime = Double.NaN
-    var lastRawExtension = Double.NaN
-
-    var power = 0.0
-        set(value) {
-            field = value
-            state = controlstates.powerControl
-        }
-
-    private var targetExtension = 0.0
-        set(value) {
-            field = value
-            state = controlstates.positionControl
-        }
-
-    private var state = controlstates.positionControl
-
-    enum class controlstates {
-        positionControl,
-        powerControl
+        var fudgeFactor = 1.0
     }
 
     init {
-        if (mode.isAutonomous) {
+        if (mode.isAutonomous)
             hasBeenCalibrated = false
-            holdingStone = false
-        }
     }
 
+    var ultraManual: Double = 0.0
+        set(value) {
+            desiredControlState = ControlStates.ULTRA_MANUAL
+            field = value
+        }
+
+    var heightTarget = 0.0
+        set(value) {
+            if (value != field || desiredControlState != ControlStates.HEIGHT)
+                resetIntegral()
+            desiredControlState = ControlStates.HEIGHT
+            field = value
+
+            if (height <= 0.0)
+                lower()
+        }
+
+    var errorSum = 0.0
+
+    fun resetIntegral() {
+        errorSum = 0.0
+    }
+
+    fun lower() {
+        desiredControlState = ControlStates.LOWER
+    }
+
+    private var desiredControlState = ControlStates.LOWER
+
+    enum class ControlStates {
+        HEIGHT,
+        LOWER,
+        ULTRA_MANUAL,
+        FF_MANUAL
+
+    }
+
+    var lastRawHeight = Double.NaN
+    var lastTime = Double.NaN
+
     fun update() {
-        val ff = calculateCurrentWeight
-
-        var currentExtensionTarget = targetExtension
-        var currentState = state
-
-        val extensionLeft = currentExtensionTarget - extension
+        val currRawHeight = rawHeight
         val currTime = Clock.seconds
-        val speed = if (lastTime.isNaN()) 0.0 else {
-            val dt = currTime - lastTime
-            val change = rawExtension - lastRawExtension
-            change / dt
-        }
+        val dt = if (lastTime.isNaN()) 0.0 else (currTime - lastTime)
+        val speed = if (lastRawHeight.isNaN()) 0.0 else ((rawHeight - lastRawHeight) / dt)
+        lastRawHeight = currRawHeight
         lastTime = currTime
-        lastRawExtension = rawExtension
 
-        if (!hasBeenCalibrated) {
-            currentState = controlstates.positionControl
-            currentExtensionTarget = 0.0
-        }
+        var power = 0.0
 
-        when (currentState) {
-            controlstates.positionControl -> {
-                internalPower = if (currentExtensionTarget == 0.0) {
-                    checkCalibration()
-                    0.0
-                } else {
-                    val p = extensionLeft * kP - speed * kD
-                    val s = if (extensionLeft.absoluteValue < 0.2) 0.0 else extensionLeft.sign * kStatic
-                    p + s
-                }
-            }
+        var controlState = desiredControlState
 
-            controlstates.powerControl -> {
+        /*checkCalibration()*/
+
+        /*if (!hasBeenCalibrated)
+            controlState = ControlStates.LOWER*/
+
+        val heightLeft = heightTarget - height
+
+        when (controlState) {
+            ControlStates.LOWER -> {
+                power = if (height > 10.0) -1.0 else -0.25
                 checkCalibration()
-                internalPower = power + ff
+                if (bottomPressed)
+                    power = 0.0
+            }
+            ControlStates.HEIGHT -> {
+                power += heightLeft * kP
+                power -= speed * kD
+
+                if (power.absoluteValue > speedStartInegrating) {
+                    resetIntegral()
+                } else {
+                    errorSum += (heightLeft * dt)
+                    if (kI != 0.0) {
+                        val maxRange = integralCap / kI
+                        val minRange = -integralCap / kI
+                        errorSum = Range.clip(errorSum, minRange, maxRange)
+                    } else {
+                        resetIntegral()
+                    }
+                }
+
+                power += errorSum * kI
+
+                mode.combinedPacket.put("liftError", heightLeft)
+            }
+
+            ControlStates.ULTRA_MANUAL -> {
+                power += ultraManual
             }
         }
+
+
+        /*if(bottomPressed){
+            power = Range.clip(power, 0.0, 1.0)
+        }*/
+
+        left.power = power
+        right.power = power
     }
 
     fun checkCalibration() {
-        if (false/*downSensor.pressed*/) {
+        if (bottomPressed) {
             hasBeenCalibrated = true
-            resetExtension = rawExtension
+            resetSpoolRadians = rawRadians
         }
     }
 
-    val rawExtension: Double get() = encoder.rotations * PI * spoolDiameter
-    val extension: Double get() = rawExtension - resetExtension
-    val height: Double get() = extension + staticHeight
+    val rawRadians get() = -encoder.radians
+    val rawHeight get() = rawRadians * SPOOL_RADIUS * fudgeFactor
+    val radians get() = (rawRadians - resetSpoolRadians)
+    val height get() = radians * SPOOL_RADIUS * fudgeFactor
 
-    val calculateCurrentWeight: Double
-        get() {
-            var weight = 0.0
-
-            weight += kConstantG
-
-            if (holdingStone)
-                weight += kStoneG
-
-            var stages = (extension / stageStrokeLength).toInt()
-
-            if (stages > maxStages)
-                stages = maxStages
-
-            weight += stages * kSlideG
-
-            return weight
-        }
-
-    val left = RevHubMotor("leftLift", Go_5_2::class).openLoopControl.brake
-    val right = RevHubMotor("rightLift", Go_5_2::class).reverse.openLoopControl.brake
-    val encoder = Encoder(LeagueBot.lynx2, 3, MotorEncoder.G3_7)
-//    val downSensor = RevHubTouchSensor("liftTouch")
-
-    private var internalPower = 0.0
-        set(value) {
-            val adjustedPower = if (safeMode) Range.clip(value, -0.25, 0.25) else value
-            field = adjustedPower
-            left.power = adjustedPower
-            right.power = adjustedPower
-        }
+    val left = RevHubMotor("leftLift", Go_5_2::class).openLoopControl.float
+    val right = RevHubMotor("rightLift", Go_5_2::class).reverse.openLoopControl.float
+    val encoder = Encoder(LeagueBot.lynx1, 1, MotorEncoder.G3_7)
+    val bottomPressed get() = !LeagueBot.lynx1.cachedInput.getDigitalInput(1)
 }

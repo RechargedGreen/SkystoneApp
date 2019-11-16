@@ -59,7 +59,7 @@ object LeagueBot : BaseBot {
         drive.update()
 
         grabber.update()
-        lift.updateManualTemp()
+        lift.update()
         intake.update()
 
         extension.update()

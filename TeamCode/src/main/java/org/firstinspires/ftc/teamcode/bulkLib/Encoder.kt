@@ -7,7 +7,7 @@ class Encoder(private val module: LynxModule, private val portNumber: Int, priva
     val ticks: Int
         get() = module.cachedInput.getEncoder(portNumber)
     val rotations: Double
-        get() = ticks / ticks_per_revolution
+        get() = ticks.toDouble() / ticks_per_revolution
     val radians: Double
         get() = rotations * TAU
 }

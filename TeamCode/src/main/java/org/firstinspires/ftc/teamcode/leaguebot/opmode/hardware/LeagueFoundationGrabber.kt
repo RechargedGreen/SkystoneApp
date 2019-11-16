@@ -68,8 +68,8 @@ class LeagueFoundationGrabber {
         @JvmField
         var rDown = 0.0
         @JvmField
-        var lUp = 0.0
+        var lUp = 1.0
         @JvmField
-        var rUp = 0.0
+        var rUp = 1.0
     }
 }

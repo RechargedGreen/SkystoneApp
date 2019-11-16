@@ -10,6 +10,9 @@ class Controller(val gamepad: Gamepad) {
     val rightStick = Joystick({ pad -> pad.right_stick_x.toDouble() }, { pad -> pad.right_stick_y.toDouble() })
     val leftStick = Joystick({ pad -> pad.left_stick_x.toDouble() }, { pad -> pad.left_stick_y.toDouble() })
 
+    val leftTriggerB = Button{ pad -> pad.left_trigger > 0.5}
+    val rightTriggerB = Button{ pad -> pad.right_trigger > 0.5}
+
     val leftTrigger: Double
         get() = gamepad.left_trigger.toDouble()
     val rightTrigger: Double
@@ -31,7 +34,7 @@ class Controller(val gamepad: Gamepad) {
     private val allParts = arrayOf(rightBumper, leftBumper,
                                    a, b, x, y,
                                    dLeft, dRight, dUp, dDown,
-                                   leftStick, rightStick)
+                                   leftStick, rightStick, leftTriggerB, rightTriggerB)
 
     fun update() {
         allParts.forEach { part ->

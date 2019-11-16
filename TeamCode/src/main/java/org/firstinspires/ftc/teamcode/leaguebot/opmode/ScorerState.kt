@@ -37,6 +37,7 @@ object ScorerState {
     var state = State.INTAKING
 
     val clearToIntake get() = timeSpentLoading > 0.5
+    val clearToLift get() = timeSpentGrabbing > 0.5 || state == State.RELEASE
 
     val timeSpentGrabbing get() = grabberTimer.seconds()
     val timeSpentLoading get() = intakeTimer.seconds()
