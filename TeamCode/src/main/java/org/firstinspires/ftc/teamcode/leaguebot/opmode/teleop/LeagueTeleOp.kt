@@ -1,23 +1,21 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.teleop
 
-import com.acmerobotics.dashboard.config.Config
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.leaguebot.LeagueBotTeleOpBase
-import org.firstinspires.ftc.teamcode.leaguebot.opmode.ScorerState
-import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueBot
-import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueThreeWheelOdometry
-import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.MainIntake
-import org.firstinspires.ftc.teamcode.movement.DriveMovement
+import com.acmerobotics.dashboard.config.*
+import com.qualcomm.robotcore.eventloop.opmode.*
+import org.firstinspires.ftc.teamcode.leaguebot.*
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.*
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.*
+import org.firstinspires.ftc.teamcode.movement.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.roadRunnerPose2dRaw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_unwrapped_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_raw
-import org.firstinspires.ftc.teamcode.movement.Speedometer
-import org.firstinspires.ftc.teamcode.movement.toDegrees
 
 @TeleOp
 @Config
 class LeagueTeleOp : LeagueBotTeleOpBase() {
+    var grabbingFoundationToggle = false
+
     private var highestTower = 0
     private var towerHeight = 0
     private var hasReleased = false
@@ -48,9 +46,9 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
         DriveMovement.gamepadControl(driver)
 
         when {
-            operator.dRight.justPressed -> towerHeight = highestTower
-            operator.dLeft.justPressed -> towerHeight = 0
-            operator.dUp.justPressed || driver.y.justPressed -> towerHeight++
+            operator.dRight.justPressed                        -> towerHeight = highestTower
+            operator.dLeft.justPressed                         -> towerHeight = 0
+            operator.dUp.justPressed || driver.y.justPressed   -> towerHeight++
             operator.dDown.justPressed || driver.b.justPressed -> towerHeight--
         }
 
@@ -68,25 +66,25 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
                 hasReleased = false
                 if (ScorerState.clearToIntake) MainIntake.State.IN else MainIntake.State.OUT
             }
-            gamepad1.left_bumper -> {
+            gamepad1.left_bumper  -> {
                 MainIntake.State.OUT
             }
-            else -> {
+            else                  -> {
                 MainIntake.State.STOP
             }
         }
 
         if (driver.leftTriggerB.justPressed) {
             extensionRoutineState = when (extensionRoutineState) {
-                ExtensionRoutineState.OFF -> ExtensionRoutineState.GRAB
-                ExtensionRoutineState.GRAB -> ExtensionRoutineState.EXTEND
+                ExtensionRoutineState.OFF    -> ExtensionRoutineState.GRAB
+                ExtensionRoutineState.GRAB   -> ExtensionRoutineState.EXTEND
                 ExtensionRoutineState.EXTEND -> ExtensionRoutineState.GRAB
             }
         }
 
         if (driver.rightTriggerB.justPressed) {
             when (liftState) {
-                LiftState.GOING_DOWN -> {
+                LiftState.GOING_DOWN            -> {
                     if (extensionRoutineState == ExtensionRoutineState.OFF)
                         extensionRoutineState = ExtensionRoutineState.GRAB
                     liftState = LiftState.GOING_TO_STONE_HEIGHT
@@ -103,13 +101,13 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
             hasReleased = true
 
         ScorerState.state = if (hasReleased || (driver.leftBumper.currentState && extensionRoutineState == ExtensionRoutineState.EXTEND)) ScorerState.State.RELEASE else when (extensionRoutineState) {
-            ExtensionRoutineState.OFF -> ScorerState.State.INTAKING
-            ExtensionRoutineState.GRAB -> ScorerState.State.GRAB
+            ExtensionRoutineState.OFF    -> ScorerState.State.INTAKING
+            ExtensionRoutineState.GRAB   -> ScorerState.State.GRAB
             ExtensionRoutineState.EXTEND -> ScorerState.State.EXTEND
         }
 
         when (liftState) {
-            LiftState.GOING_DOWN -> LeagueBot.lift.lower()
+            LiftState.GOING_DOWN            -> LeagueBot.lift.lower()
             LiftState.GOING_TO_STONE_HEIGHT -> {
                 if (towerHeight == 0 || !ScorerState.clearToLift)
                     LeagueBot.lift.lower()
@@ -118,9 +116,16 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
             }
         }
 
+        if (driver.dUp.justPressed)
+            grabbingFoundationToggle = !grabbingFoundationToggle
+        if (grabbingFoundationToggle)
+            LeagueBot.foundationGrabber.grab()
+        else
+            LeagueBot.foundationGrabber.release()
+
         //DriveMovement.moveFieldCentric(driver.leftStick.x, driver.leftStick.y, driver.rightStick.x)
 
-        if (driver.b.currentState)
+        if (operator.b.currentState)
             DriveMovement.setPosition_raw(0.0, 0.0, 0.0)
 
         telemetry.addData("current tower height, ", towerHeight)

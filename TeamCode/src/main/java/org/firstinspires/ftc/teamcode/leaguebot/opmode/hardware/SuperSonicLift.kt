@@ -1,15 +1,12 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware
 
-import com.acmerobotics.dashboard.config.Config
-import com.qualcomm.robotcore.util.Range
-import org.firstinspires.ftc.teamcode.bulkLib.Encoder
-import org.firstinspires.ftc.teamcode.bulkLib.MotorEncoder
-import org.firstinspires.ftc.teamcode.bulkLib.RevHubMotor
-import org.firstinspires.ftc.teamcode.bulkLib.cachedInput
+import com.acmerobotics.dashboard.config.*
+import com.qualcomm.robotcore.util.*
+import org.firstinspires.ftc.teamcode.bulkLib.*
 import org.firstinspires.ftc.teamcode.lib.Globals.mode
-import org.firstinspires.ftc.teamcode.lib.hardware.Go_5_2
-import org.firstinspires.ftc.teamcode.util.Clock
-import kotlin.math.absoluteValue
+import org.firstinspires.ftc.teamcode.lib.hardware.*
+import org.firstinspires.ftc.teamcode.util.*
+import kotlin.math.*
 
 /**
  * distance is in inches
@@ -46,7 +43,7 @@ class SuperSonicLift {
 
         private var hasBeenCalibrated = false
         private var resetSpoolRadians = 0.0
-        private const val SPOOL_RADIUS = 1.968 / 2.0
+        private const val SPOOL_RADIUS = 1.4 / 2.0
 
         @JvmField
         var fudgeFactor = 1.0
@@ -70,7 +67,7 @@ class SuperSonicLift {
             desiredControlState = ControlStates.HEIGHT
             field = value
 
-            if (height <= 0.0)
+            if (value <= 0.0)
                 lower()
         }
 
@@ -89,9 +86,7 @@ class SuperSonicLift {
     enum class ControlStates {
         HEIGHT,
         LOWER,
-        ULTRA_MANUAL,
-        FF_MANUAL
-
+        ULTRA_MANUAL
     }
 
     var lastRawHeight = Double.NaN
@@ -109,21 +104,18 @@ class SuperSonicLift {
 
         var controlState = desiredControlState
 
-        /*checkCalibration()*/
+        checkCalibration()
 
-        /*if (!hasBeenCalibrated)
-            controlState = ControlStates.LOWER*/
+        if (!hasBeenCalibrated)
+            controlState = ControlStates.LOWER
 
         val heightLeft = heightTarget - height
 
         when (controlState) {
-            ControlStates.LOWER -> {
+            ControlStates.LOWER        -> {
                 power = if (height > 10.0) -1.0 else -0.25
-                checkCalibration()
-                if (bottomPressed)
-                    power = 0.0
             }
-            ControlStates.HEIGHT -> {
+            ControlStates.HEIGHT       -> {
                 power += heightLeft * kP
                 power -= speed * kD
 
@@ -151,9 +143,8 @@ class SuperSonicLift {
         }
 
 
-        /*if(bottomPressed){
-            power = Range.clip(power, 0.0, 1.0)
-        }*/
+        if (bottomPressed && power < 0.0)
+            power = 0.0
 
         left.power = power
         right.power = power
