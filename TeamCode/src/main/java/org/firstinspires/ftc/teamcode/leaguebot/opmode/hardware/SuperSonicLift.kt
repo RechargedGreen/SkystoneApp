@@ -72,7 +72,7 @@ class SuperSonicLift {
             if(newValue > targetCap)
                 newValue = targetCap
 
-            if (newValue != field || desiredControlState != ControlStates.HEIGHT)
+            if (desiredControlState != ControlStates.HEIGHT)
                 resetIntegral()
             desiredControlState = ControlStates.HEIGHT
             field = newValue

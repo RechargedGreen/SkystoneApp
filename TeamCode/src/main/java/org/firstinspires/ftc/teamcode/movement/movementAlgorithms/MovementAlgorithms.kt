@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.movement.movementAlgorithms
 import com.acmerobotics.dashboard.config.Config
 import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
+import org.firstinspires.ftc.teamcode.movement.Angle
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.clipMovement
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_turn
@@ -53,7 +54,7 @@ object MovementAlgorithms {
         var slowDownAmount = 8.0
 
         fun goToPosition_raw(x: Double, y: Double, deg: Double, clipSpeed: Boolean = true, slowDownDegrees: Double = this.slowDownDegrees, slowDownAmount: Double = this.slowDownAmount): Pose {
-            val turnLeft = deg - world_angle_raw.deg
+            val turnLeft = Angle.createWrappedDeg(deg - world_angle_raw.deg).deg
             val yLeft = y - world_y_raw
             val xLeft = x - world_x_raw
 
@@ -77,7 +78,7 @@ object MovementAlgorithms {
         fun goToPosition_mirror(x: Double, y: Double, deg: Double, clipSpeed: Boolean = true): Pose {
             val s = ALLIANCE.sign
             val r = goToPosition_raw(x * s, y, deg * s, clipSpeed)
-            return Pose(r.x * s, r.y * s, r.heading.rad * s)
+            return Pose(r.x * s, r.y, r.heading.rad * s)
         }
 
         fun pointAngle_raw(deg: Double): Double {

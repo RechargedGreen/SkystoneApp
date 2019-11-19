@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.field
 
-import com.acmerobotics.roadrunner.geometry.*
-import org.firstinspires.ftc.teamcode.lib.*
+import com.acmerobotics.roadrunner.geometry.Pose2d
+import com.acmerobotics.roadrunner.geometry.Vector2d
+import org.firstinspires.ftc.teamcode.lib.Globals
 import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
-import org.firstinspires.ftc.teamcode.movement.*
-import kotlin.math.*
+import org.firstinspires.ftc.teamcode.movement.Angle
+import kotlin.math.cos
+import kotlin.math.hypot
+import kotlin.math.sin
 
 data class Pose(
         val point: Point,
@@ -96,9 +99,15 @@ data class Point(
     operator fun unaryPlus() = this
     operator fun unaryMinus() = ORIGIN - this
 
-    val checkMirror = if (ALLIANCE.isRed()) this else mirrored
+    val checkMirror: Point
+        get() {
+            return if (ALLIANCE.isRed()) this else mirrored
+        }
 
-    val mirrored get() = Point(-x, y)
+    val mirrored: Point
+        get() {
+            return Point(-x, y)
+        }
 
     fun add(distance: Double, angle: Angle) = Point(
             angle.sin * distance,

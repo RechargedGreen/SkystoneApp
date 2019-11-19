@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.autos
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import org.firstinspires.ftc.teamcode.field.Field
 import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.leaguebot.LeagueBotAutoBase
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueBot
@@ -10,8 +9,9 @@ import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric_mi
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_mirror
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_mirror
+import org.firstinspires.ftc.teamcode.movement.toRadians
 
-abstract class NoFanciesFoundation(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(Field.EAST_WALL - 9.0, Field.NORTH_WALL - 24.0 - 9.0, 90.0)) {
+abstract class NoFanciesFoundation(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(72.0 - 9.0, 48.0 - 9.0, 90.0.toRadians)) {
     enum class progStates {
         grab,
         pull,
@@ -30,8 +30,8 @@ abstract class NoFanciesFoundation(alliance: Alliance) : LeagueBotAutoBase(allia
         when (currentState) {
             progStates.grab -> {
                 LeagueBot.foundationGrabber.prepForGrab()
-                moveFieldCentric_mirror(-0.5, 0.5, 0.0)
-                if (world_y_mirror > 60.0)
+                moveFieldCentric_mirror(-0.25, 0.5, 0.0)
+                if (world_y_mirror > 48.0)
                     hasCrossedY = true
                 if (hasCrossedY)
                     moveFieldCentric_mirror(-1.0, 0.0, 0.0)
@@ -43,14 +43,14 @@ abstract class NoFanciesFoundation(alliance: Alliance) : LeagueBotAutoBase(allia
 
             progStates.pull -> {
                 stopDrive()
-                if(isTimedOut(0.5))
-                moveFieldCentric_mirror(1.0, 0.0, 0.0)
+                if (isTimedOut(0.5))
+                    moveFieldCentric_mirror(1.0, 0.0, 0.0)
                 timeoutStage(2.0)
             }
 
             progStates.wait -> {
                 LeagueBot.foundationGrabber.release()
-                if (secondsTillEnd < 15.0)
+                if (secondsTillEnd < 4.0)
                     nextStage()
             }
 
@@ -71,7 +71,7 @@ abstract class NoFanciesFoundation(alliance: Alliance) : LeagueBotAutoBase(allia
 }
 
 @Autonomous
-class RedNoFanciesFoundatione : NoFanciesFoundation(Alliance.RED)
+class Red_NoFanciesFoundatione : NoFanciesFoundation(Alliance.RED)
 
 @Autonomous
-class BlueNoFanciesFoundation : NoFanciesFoundation(Alliance.BLUE)
+class Blue_NoFanciesFoundation : NoFanciesFoundation(Alliance.BLUE)

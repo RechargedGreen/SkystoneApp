@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware
 
-import com.acmerobotics.dashboard.config.*
-import org.firstinspires.ftc.teamcode.bulkLib.*
-import org.firstinspires.ftc.teamcode.lib.*
-import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
+import com.acmerobotics.dashboard.config.Config
+import org.firstinspires.ftc.teamcode.bulkLib.RevHubServo
+import org.firstinspires.ftc.teamcode.lib.Globals
 
 @Config
 class LeagueFoundationGrabber {
@@ -11,52 +10,29 @@ class LeagueFoundationGrabber {
     private val rightServo = RevHubServo("rightFoundation")
 
 
-    enum class State(val leftDown: Boolean, val rightDown: Boolean) {
-        left(true, false),
-        right(false, true),
-        both(true, true),
-        none(false, false)
+    enum class State(val leftPos: () -> Double, val rightPos: () -> Double) {
+        up({ lUp }, { rUp }),
+        down({ lDown }, { rDown }),
+        prep({ lPrep }, { rPrep })
     }
 
-    var state = State.none
+    var state = State.up
 
     fun grab() {
-        state = State.both
+        state = State.down
     }
 
     fun release() {
-        state = State.none
-    }
-
-    fun grabWest() {
-        if (ALLIANCE.isRed())
-            grabLeft()
-        else
-            grabRight()
-    }
-
-    fun grabEast() {
-        if (ALLIANCE.isRed())
-            grabRight()
-        else
-            grabLeft()
-    }
-
-    fun grabLeft() {
-        state = State.left
-    }
-
-    fun grabRight() {
-        state = State.right
+        state = State.up
     }
 
     fun prepForGrab() {
-
+        state = State.prep
     }
 
     fun update() {
-        val l = if (state.leftDown) lDown else lUp
-        val r = if (state.rightDown) rDown else rUp
+        val l = state.leftPos()
+        val r = state.rightPos()
         if (Globals.mode.movementAllowed) {
             leftServo.position = l
             rightServo.position = r
@@ -72,5 +48,10 @@ class LeagueFoundationGrabber {
         var lUp = 0.0
         @JvmField
         var rUp = 1.0
+
+        @JvmField
+        var lPrep = 0.67
+        @JvmField
+        var rPrep = 0.2
     }
 }
