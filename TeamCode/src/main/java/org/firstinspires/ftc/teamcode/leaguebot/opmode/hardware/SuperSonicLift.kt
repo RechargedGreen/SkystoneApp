@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware
 
-import com.acmerobotics.dashboard.config.*
-import com.qualcomm.robotcore.util.*
-import org.firstinspires.ftc.teamcode.bulkLib.*
+import com.acmerobotics.dashboard.config.Config
+import com.qualcomm.robotcore.util.Range
+import org.firstinspires.ftc.teamcode.bulkLib.Encoder
+import org.firstinspires.ftc.teamcode.bulkLib.MotorEncoder
+import org.firstinspires.ftc.teamcode.bulkLib.RevHubMotor
+import org.firstinspires.ftc.teamcode.bulkLib.cachedInput
 import org.firstinspires.ftc.teamcode.lib.Globals.mode
-import org.firstinspires.ftc.teamcode.lib.hardware.*
-import org.firstinspires.ftc.teamcode.util.*
-import kotlin.math.*
+import org.firstinspires.ftc.teamcode.lib.hardware.Go_5_2
+import org.firstinspires.ftc.teamcode.util.Clock
+import kotlin.math.absoluteValue
 
 /**
  * distance is in inches
@@ -37,9 +40,12 @@ class SuperSonicLift {
         @JvmField
         var kD: Double = 0.01
         @JvmField
-        var speedStartInegrating = 0.4
+        var speedStartIntegrating = 1.0
         @JvmField
         var integralCap = 1.0
+
+        @JvmField
+        var targetCap = 37.0
 
         private var hasBeenCalibrated = false
         private var resetSpoolRadians = 0.0
@@ -62,12 +68,16 @@ class SuperSonicLift {
 
     var heightTarget = 0.0
         set(value) {
-            if (value != field || desiredControlState != ControlStates.HEIGHT)
+            var newValue = value
+            if(newValue > targetCap)
+                newValue = targetCap
+
+            if (newValue != field || desiredControlState != ControlStates.HEIGHT)
                 resetIntegral()
             desiredControlState = ControlStates.HEIGHT
-            field = value
+            field = newValue
 
-            if (value <= 0.0)
+            if (newValue <= 0.0)
                 lower()
         }
 
@@ -112,14 +122,14 @@ class SuperSonicLift {
         val heightLeft = heightTarget - height
 
         when (controlState) {
-            ControlStates.LOWER        -> {
+            ControlStates.LOWER -> {
                 power = if (height > 10.0) -1.0 else -0.25
             }
-            ControlStates.HEIGHT       -> {
+            ControlStates.HEIGHT -> {
                 power += heightLeft * kP
                 power -= speed * kD
 
-                if (power.absoluteValue > speedStartInegrating) {
+                if (power.absoluteValue > speedStartIntegrating) {
                     resetIntegral()
                 } else {
                     errorSum += (heightLeft * dt)

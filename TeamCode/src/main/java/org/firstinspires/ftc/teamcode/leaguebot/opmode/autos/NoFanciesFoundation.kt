@@ -31,7 +31,7 @@ abstract class NoFanciesFoundation(alliance: Alliance) : LeagueBotAutoBase(allia
             progStates.grab -> {
                 LeagueBot.foundationGrabber.prepForGrab()
                 moveFieldCentric_mirror(-0.5, 0.5, 0.0)
-                if (world_y_mirror > 48.0)
+                if (world_y_mirror > 60.0)
                     hasCrossedY = true
                 if (hasCrossedY)
                     moveFieldCentric_mirror(-1.0, 0.0, 0.0)
@@ -42,18 +42,20 @@ abstract class NoFanciesFoundation(alliance: Alliance) : LeagueBotAutoBase(allia
             }
 
             progStates.pull -> {
+                stopDrive()
+                if(isTimedOut(0.5))
                 moveFieldCentric_mirror(1.0, 0.0, 0.0)
                 timeoutStage(2.0)
             }
 
             progStates.wait -> {
                 LeagueBot.foundationGrabber.release()
-                if (secondsTillEnd < 3.0)
+                if (secondsTillEnd < 15.0)
                     nextStage()
             }
 
             progStates.park -> {
-                val x = if (world_x_mirror > 72.0 - 1.5) -0.2 else 0.0
+                val x = if (world_x_mirror > 72.0 - 5.0) -0.2 else 0.0
                 moveFieldCentric_mirror(x, -1.0, 0.0)
                 if (world_y_mirror < 5.0)
                     nextStage()

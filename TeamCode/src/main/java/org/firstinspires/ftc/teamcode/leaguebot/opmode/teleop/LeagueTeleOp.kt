@@ -22,11 +22,13 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
 
     companion object {
         @JvmField
-        var liftBias = 0.0
+        var liftBias = -0.3 //-0.4
 
         @JvmField
         var stoneH = 4.0
     }
+
+    var inputBias = 0.0
 
     enum class LiftState {
         GOING_TO_STONE_HEIGHT,
@@ -46,10 +48,16 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
         DriveMovement.gamepadControl(driver)
 
         when {
-            operator.dRight.justPressed                        -> towerHeight = highestTower
-            operator.dLeft.justPressed                         -> towerHeight = 0
+            operator.rightTriggerB.justPressed                        -> towerHeight = highestTower
+            operator.leftTriggerB.justPressed                         -> towerHeight = 0
             operator.dUp.justPressed || driver.y.justPressed   -> towerHeight++
-            operator.dDown.justPressed || driver.b.justPressed -> towerHeight--
+            operator.dDown.justPressed || driver.x.justPressed -> towerHeight--
+        }
+
+        when {
+            operator.y.justPressed -> inputBias += 0.25
+            operator.a.justPressed -> inputBias -= 0.25
+            operator.x.justPressed -> inputBias = 0.0
         }
 
         if (towerHeight < 0)
@@ -112,7 +120,7 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
                 if (towerHeight == 0 || !ScorerState.clearToLift)
                     LeagueBot.lift.lower()
                 else
-                    LeagueBot.lift.heightTarget = towerHeight.toDouble() * stoneH + liftBias
+                    LeagueBot.lift.heightTarget = towerHeight.toDouble() * stoneH + liftBias + inputBias
             }
         }
 
@@ -130,7 +138,9 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
 
         telemetry.addData("current tower height, ", towerHeight)
         telemetry.addData("highest tower, ", highestTower)
+        telemetry.addData("input bias", inputBias)
         telemetry.addLine()
+        telemetry.addData("grabbingFoundation", grabbingFoundationToggle)
         telemetry.addData("extension routine", extensionRoutineState)
         telemetry.addData("lift state", liftState)
         telemetry.addData("hasReleased", hasReleased)

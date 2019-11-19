@@ -65,11 +65,11 @@ class LeagueFoundationGrabber {
 
     companion object {
         @JvmField
-        var lDown = 0.0
+        var lDown = 0.77 // 1.0
         @JvmField
-        var rDown = 0.0
+        var rDown = 0.09 // 0.0
         @JvmField
-        var lUp = 1.0
+        var lUp = 0.0
         @JvmField
         var rUp = 1.0
     }
