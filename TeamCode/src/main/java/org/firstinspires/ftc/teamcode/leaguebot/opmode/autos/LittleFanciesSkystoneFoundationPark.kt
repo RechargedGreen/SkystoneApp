@@ -6,11 +6,15 @@ import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.field.Quarry
 import org.firstinspires.ftc.teamcode.field.Stone
 import org.firstinspires.ftc.teamcode.leaguebot.LeagueBotAutoBase
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.ScorerState
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueBot
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.MainIntake
 import org.firstinspires.ftc.teamcode.lib.Alliance
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric_mirror
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_turn
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_mirror
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_mirror
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_mirror
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.PD.goToPosition_mirror
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.PD.pointAngle_mirror
@@ -18,7 +22,7 @@ import org.firstinspires.ftc.teamcode.movement.toRadians
 import org.firstinspires.ftc.teamcode.vision.SkystoneDetector
 import kotlin.math.absoluteValue
 
-abstract class LittleFanciesSkystoneFoundationPark(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(Field.EAST_WALL - 9.0, -24.0 - 9.0, (-90.0).toRadians)) {
+abstract class LittleFanciesSkystoneFoundationPark(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(72.0 - 9.0, -24.0 - 9.0, (-90.0).toRadians)) {
     enum class progStages {
         lineUpParrallel,
         driveIntoQuarry,
@@ -26,11 +30,17 @@ abstract class LittleFanciesSkystoneFoundationPark(alliance: Alliance) : LeagueB
 
         pullOutOfQuarry,
 
+        crossField,
+
+        grab,
+        pull,
+        wait,
+
         doNothing
     }
 
     var stoneY = 0.0
-    var distanceFromStone = 3.0
+    var distanceFromStone = 5.0
     var distanceFromNextStone = 3.0
 
     val halfStoneWidth = Stone.LENGTH / 2.0
@@ -52,7 +62,6 @@ abstract class LittleFanciesSkystoneFoundationPark(alliance: Alliance) : LeagueB
         telemetry.addData("currentStage", currentStage)
 
         stopDrive()
-        LeagueBot.foundationGrabber.release()
         LeagueBot.intake.state = MainIntake.State.STOP
 
         when (currentStage) {
@@ -62,7 +71,7 @@ abstract class LittleFanciesSkystoneFoundationPark(alliance: Alliance) : LeagueB
                     nextStage()
             }
             progStages.driveIntoQuarry -> {
-                val r = goToPosition_mirror(23.0, stoneY + halfStoneWidth + distanceFromStone + 9.0, 180.0)
+                val r = goToPosition_mirror(22.0, stoneY + halfStoneWidth + distanceFromStone + 9.0, 180.0)
                 if (r.point.hypot < 2.0 && r.deg.absoluteValue < 2.0)
                     nextStage()
             }
@@ -79,8 +88,46 @@ abstract class LittleFanciesSkystoneFoundationPark(alliance: Alliance) : LeagueB
             }
 
             progStages.pullOutOfQuarry -> {
-                val r = goToPosition_mirror(needleX, stoneY + 5.0, -90.0)
+                val r = goToPosition_mirror(needleX, stoneY + 5.0, 90.0)
                 if (r.point.x.absoluteValue < 2.0 && r.deg.absoluteValue < 3.0)
+                    nextStage()
+            }
+
+            progStages.crossField -> {
+                val r = goToPosition_mirror(needleX, 48.0, 90.0)
+                ScorerState.triggerGrab()
+                if(world_y_mirror > 24.0) {
+                    ScorerState.triggerExtend()
+                    LeagueBot.foundationGrabber.prepForGrab()
+                }
+                if(r.point.hypot < 3.0)
+                    nextStage()
+            }
+
+            progStages.grab -> {
+                ScorerState.triggerExtend()
+                moveFieldCentric_mirror(-0.2, 0.0, 0.0)
+                pointAngle_mirror(90.0)
+                if(world_x_mirror < 21 + 9.0)
+                    nextStage()
+            }
+
+            progStages.pull -> {
+                ScorerState.triggerRelease()
+                LeagueBot.foundationGrabber.grab()
+                if(isTimedOut(.25)) {
+                    moveFieldCentric_mirror(1.0, 0.1, 0.0)
+                    pointAngle_mirror(90.0)
+                }
+                if(isTimedOut(.75))
+                    ScorerState.triggerPullBack()
+                if(isTimedOut(2.0))
+                    nextStage()
+            }
+
+            progStages.wait -> {
+                ScorerState.triggerLoad()
+                if(isTimedOut(0.5))
                     nextStage()
             }
 

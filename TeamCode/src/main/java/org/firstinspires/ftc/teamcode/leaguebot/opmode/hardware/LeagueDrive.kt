@@ -39,19 +39,19 @@ object LeagueThreeWheelOdometry {
     fun updateThreeWheel() = ThreeWheel.update(leftTicks, rightTicks, auxTicks, inchesPerTick(leftD), inchesPerTick(rightD), inchesPerTick(auxD), turnTrackWidth, auxTrackWidth)
 
     @JvmField
-    var yTrackWidth = 7.25
+    var yTrackWidth = -7.25
 
-    fun updateTwoWheel() = TwoWheel.update(leftTicks, auxTicks, LeagueBot.gyro.heading_rad, yTrackWidth, auxTrackWidth, inchesPerTick(leftD), inchesPerTick(auxD))
+    fun updateTwoWheel() = TwoWheel.update(rightTicks, auxTicks, -LeagueBot.gyro.angle1_rad, yTrackWidth, auxTrackWidth, inchesPerTick(rightD), inchesPerTick(auxD))
 }
 
 @Config
 object LeagueMovementConstants : MovementConstantsProvider {
     @JvmField
-    var moveP = 0.04
+    var moveP = 0.06
     @JvmField
     var moveD = 0.0
     @JvmField
-    var turnP = 0.06
+    var turnP = 0.025
     @JvmField
     var turnD = 0.0
     @JvmField

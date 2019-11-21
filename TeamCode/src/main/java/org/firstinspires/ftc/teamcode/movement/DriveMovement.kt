@@ -119,8 +119,9 @@ object DriveMovement {
     }
 
     fun moveRobotCentricVector_raw(vel: Double, direction: Angle, turn: Double) {
-        val sin = direction.sin
-        val cos = direction.cos
+        val d = direction.wrapped()
+        val sin = d.sin
+        val cos = d.cos
 
         movement_x = sin * vel
         movement_y = cos * vel

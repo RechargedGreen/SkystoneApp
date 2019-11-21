@@ -1,14 +1,16 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware
 
-import com.qualcomm.hardware.lynx.*
-import org.firstinspires.ftc.teamcode.bulkLib.*
+import com.qualcomm.hardware.lynx.LynxModule
 import org.firstinspires.ftc.teamcode.bulkLib.BlackMagic.hMap
-import org.firstinspires.ftc.teamcode.leaguebot.opmode.*
-import org.firstinspires.ftc.teamcode.leaguebot.opmode.teleop.*
-import org.firstinspires.ftc.teamcode.lib.*
+import org.firstinspires.ftc.teamcode.bulkLib.OptimizedGyro
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.ScorerState
+import org.firstinspires.ftc.teamcode.leaguebot.opmode.teleop.LeagueTeleOp
+import org.firstinspires.ftc.teamcode.lib.BaseBot
+import org.firstinspires.ftc.teamcode.lib.Globals.mode
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
-import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
-import org.firstinspires.ftc.teamcode.sharedhardware.*
+import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.RoadRunner
+import org.firstinspires.ftc.teamcode.sharedhardware.Akira
+import org.firstinspires.ftc.teamcode.sharedhardware.OdometryPuller
 
 object LeagueBot : BaseBot {
     const val placeWidth = 18.0
@@ -33,7 +35,7 @@ object LeagueBot : BaseBot {
     override fun setup() {
         lynx1 = hMap.get(LynxModule::class.java, "Expansion Hub 1")
         lynx2 = hMap.get(LynxModule::class.java, "Expansion Hub 2")
-        gyro = OptimizedGyro(lynx2, OptimizedGyro.Mounting.FLAT)
+        gyro = OptimizedGyro(lynx2)
         drive = Akira(LeagueMovementConstants)
 
         lift = SuperSonicLift()
@@ -50,12 +52,13 @@ object LeagueBot : BaseBot {
 
         LeagueMovementConstants.setup()
 
-        ScorerState.update()
+        ScorerState.triggerLoad()
     }
 
     override fun update() {
-        LeagueThreeWheelOdometry.updateThreeWheel()
-        //LeagueThreeWheelOdometry.updateTwoWheel()
+//        LeagueThreeWheelOdometry.updateThreeWheel()
+        if (mode.isAutonomous)
+            LeagueThreeWheelOdometry.updateTwoWheel()
         drive.update()
 
         grabber.update()
