@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.movement.movementAlgorithms
 
 import com.acmerobotics.dashboard.config.Config
 import org.firstinspires.ftc.teamcode.field.Pose
+import org.firstinspires.ftc.teamcode.field.angleWrapDeg
 import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.movement.Angle
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.clipMovement
@@ -54,7 +55,7 @@ object MovementAlgorithms {
         var slowDownAmount = 8.0
 
         fun goToPosition_raw(x: Double, y: Double, deg: Double, clipSpeed: Boolean = true, slowDownDegrees: Double = this.slowDownDegrees, slowDownAmount: Double = this.slowDownAmount): Pose {
-            val turnLeft = Angle.createWrappedDeg(deg - world_angle_raw.deg).deg
+            val turnLeft = (deg - world_angle_raw.deg).angleWrapDeg
             val yLeft = y - world_y_raw
             val xLeft = x - world_x_raw
 
@@ -82,7 +83,7 @@ object MovementAlgorithms {
         }
 
         fun pointAngle_raw(deg: Double): Double {
-            val turnLeft = deg - world_angle_raw.deg
+            val turnLeft = (deg - world_angle_raw.deg).angleWrapDeg
             movement_turn = turnLeft * turnP() - Speedometer.degPerSec * turnD()
             return turnLeft
         }

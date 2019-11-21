@@ -31,7 +31,12 @@ object ScorerState {
         INTAKING,
         GRAB,
         EXTEND,
-        RELEASE
+        RELEASE,
+        PULL_BACK_WHILE_RELEASED
+    }
+
+    fun triggerPullBack() {
+        state = ScorerState.State.PULL_BACK_WHILE_RELEASED
     }
 
     var state = State.INTAKING
@@ -42,10 +47,13 @@ object ScorerState {
     val timeSpentGrabbing get() = grabberTimer.seconds()
     val timeSpentLoading get() = intakeTimer.seconds()
 
+    private val pullBackTimer = ElapsedTime()
     private val grabberTimer = ElapsedTime()
     private val intakeTimer = ElapsedTime()
 
     fun update() {
+        if (state != ScorerState.State.PULL_BACK_WHILE_RELEASED)
+            pullBackTimer.reset()
 
         when (state) {
             State.INTAKING -> {
@@ -75,6 +83,14 @@ object ScorerState {
 
                 LeagueBot.grabber.state = Grabber.State.RELEASE
                 LeagueBot.extension.state = Extension.State.OUT
+            }
+
+            State.PULL_BACK_WHILE_RELEASED -> {
+                grabberTimer.reset()
+                intakeTimer.reset()
+
+                LeagueBot.extension.state = Extension.State.IN
+                LeagueBot.grabber.state = if (pullBackTimer.seconds() > 1.0) Grabber.State.LOAD else Grabber.State.RELEASE
             }
         }
     }

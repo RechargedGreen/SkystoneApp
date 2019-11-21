@@ -114,8 +114,6 @@ class SuperSonicLift {
 
         var controlState = desiredControlState
 
-        checkCalibration()
-
         if (!hasBeenCalibrated)
             controlState = ControlStates.LOWER
 
@@ -123,6 +121,7 @@ class SuperSonicLift {
 
         when (controlState) {
             ControlStates.LOWER -> {
+                checkCalibration()
                 power = if (height > 10.0) -1.0 else -0.25
             }
             ControlStates.HEIGHT -> {
@@ -163,8 +162,12 @@ class SuperSonicLift {
     fun checkCalibration() {
         if (bottomPressed) {
             hasBeenCalibrated = true
-            resetSpoolRadians = rawRadians
+            forceCalibration()
         }
+    }
+
+    fun forceCalibration(){
+        resetSpoolRadians = rawRadians
     }
 
     val rawRadians get() = -encoder.radians

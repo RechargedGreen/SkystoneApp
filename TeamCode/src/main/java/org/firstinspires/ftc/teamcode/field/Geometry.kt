@@ -190,3 +190,13 @@ data class Circle(val center: Point, val radius: Double) {
 }
 
 val Double.checkMirror get() = this * ALLIANCE.sign
+
+val Double.angleWrapDeg:Double get(){
+    var angle = this
+    while(angle > 180.0)
+        angle -= 360.0
+    while(angle < -180.0)
+        angle += 360.0
+    return angle
+
+}

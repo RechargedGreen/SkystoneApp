@@ -47,11 +47,11 @@ object LeagueThreeWheelOdometry {
 @Config
 object LeagueMovementConstants : MovementConstantsProvider {
     @JvmField
-    var moveP = 0.02
+    var moveP = 0.04
     @JvmField
     var moveD = 0.0
     @JvmField
-    var turnP = 0.02
+    var turnP = 0.06
     @JvmField
     var turnD = 0.0
     @JvmField
