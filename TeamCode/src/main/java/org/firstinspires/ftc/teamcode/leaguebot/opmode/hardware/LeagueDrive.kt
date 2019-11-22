@@ -39,7 +39,7 @@ object LeagueThreeWheelOdometry {
     fun updateThreeWheel() = ThreeWheel.update(leftTicks, rightTicks, auxTicks, inchesPerTick(leftD), inchesPerTick(rightD), inchesPerTick(auxD), turnTrackWidth, auxTrackWidth)
 
     @JvmField
-    var yTrackWidth = -7.25
+    var yTrackWidth = -7.274
 
     fun updateTwoWheel() = TwoWheel.update(rightTicks, auxTicks, -LeagueBot.gyro.angle1_rad, yTrackWidth, auxTrackWidth, inchesPerTick(rightD), inchesPerTick(auxD))
 }

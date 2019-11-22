@@ -25,7 +25,7 @@ class SkystoneDetector : Tracker() {
     val x_0: Double get() = if (ALLIANCE == Alliance.RED) r_x0 else b_x0
     val x_1: Double get() = if (ALLIANCE == Alliance.RED) r_x1 else b_x1
     val x_2: Double get() = if (ALLIANCE == Alliance.RED) r_x2 else b_x2
-
+    val y:Double get() = if(ALLIANCE == Alliance.RED) r_y else b_y
     override fun init(camera: VisionCamera) {
         mat0 = Mat()
         mat1 = Mat()
@@ -77,28 +77,28 @@ class SkystoneDetector : Tracker() {
 
         /// red
 
+        @JvmField var r_y = 75.0
+        @JvmField var b_y = 75.0
+
         @JvmField
-        var r_x0 = 50.0
+        var r_x0 = 25.0
         @JvmField
-        var r_x1 = 150.0
+        var r_x1 = 95.0
         @JvmField
-        var r_x2 = 250.0
+        var r_x2 = 170.0
 
         /// blue
 
         @JvmField
-        var b_x0 = 250.0
+        var b_x0 = 220.0
         @JvmField
         var b_x1 = 150.0
         @JvmField
-        var b_x2 = 50.0
+        var b_x2 = 70.0
         //////////////
 
         @JvmField
         var r = 10
-
-        @JvmField
-        var y = 100.0
 
         @JvmField
         var strokeWidth = 3

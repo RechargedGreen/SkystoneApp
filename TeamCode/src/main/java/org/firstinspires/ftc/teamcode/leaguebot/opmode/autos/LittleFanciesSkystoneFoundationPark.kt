@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueBot
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.MainIntake
 import org.firstinspires.ftc.teamcode.lib.Alliance
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric_mirror
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_turn
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_x
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_y
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
@@ -51,7 +50,7 @@ abstract class LittleFanciesSkystoneFoundationPark(alliance: Alliance) : LeagueB
 
     val halfStoneWidth = Stone.LENGTH / 2.0
 
-    val needleX = 39.0 // needle allows 6" on either side
+    val needleX = 42.0 // needle allows 6" on either side // 39.0 was tested
 
     override fun onStart() {
         stoneY = Quarry.popStone().center_y
@@ -81,8 +80,8 @@ abstract class LittleFanciesSkystoneFoundationPark(alliance: Alliance) : LeagueB
                     nextStage()
             }
             progStages.driveIntoQuarry -> {
-                val r = goToPosition_mirror(22.0, stoneY + halfStoneWidth + distanceFromStone + 9.0, 180.0)
-                if (r.point.hypot < 2.0 && r.deg.absoluteValue < 2.0)
+                val r = goToPosition_mirror(23.0, stoneY + halfStoneWidth + distanceFromStone + 9.0, 180.0)
+                if (r.point.hypot < 2.0 && r.deg.absoluteValue < 2.0 && isTimedOut(3.0))
                     nextStage()
             }
 
@@ -143,7 +142,7 @@ abstract class LittleFanciesSkystoneFoundationPark(alliance: Alliance) : LeagueB
             }
 
             progStages.moveOutFromFoundation -> {
-                moveFieldCentric_mirror(if(world_x_mirror > 72.0 - 9.0 - 2.0) -0.1 else 0.0, -0.5, 0.0)
+                moveFieldCentric_mirror(0.0, -0.5, 0.0)
                 pointAngle_mirror(90.0)
                 if(world_y_mirror < 14.0)
                     nextStage()
