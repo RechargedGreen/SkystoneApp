@@ -20,7 +20,7 @@ object TwoWheel : Odometry {
         val yWheelDelta = yEncoderDelta * yInchesPerTick
 
         // determine angle increment for circle arc and wheel predictions
-        val angleIncrement = curr_raw_angle_rad - last_raw_angle_rad
+        val angleIncrement = (curr_raw_angle_rad - last_raw_angle_rad).angleWrapRad
 
         // angle we set world_angle to
         val final_angle_rad = curr_raw_angle_rad + angleBias

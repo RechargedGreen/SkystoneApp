@@ -12,6 +12,8 @@ import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.MainIntake
 import org.firstinspires.ftc.teamcode.lib.Alliance
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric_mirror
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_turn
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_x
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_y
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_mirror
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_mirror
@@ -36,6 +38,10 @@ abstract class LittleFanciesSkystoneFoundationPark(alliance: Alliance) : LeagueB
         pull,
         wait,
 
+        moveOutFromFoundation,
+        moveUp,
+        park,
+
         doNothing
     }
 
@@ -57,6 +63,10 @@ abstract class LittleFanciesSkystoneFoundationPark(alliance: Alliance) : LeagueB
 
     override fun onMainLoop() {
         val currentStage = progStages.values()[stage]
+
+        telemetry.addData("x", world_x_mirror)
+        telemetry.addData("y", world_y_mirror)
+        telemetry.addData("deg", world_angle_mirror.deg)
 
         telemetry.addData("skystoneIndex", SkystoneDetector.placeInt)
         telemetry.addData("currentStage", currentStage)
@@ -127,7 +137,31 @@ abstract class LittleFanciesSkystoneFoundationPark(alliance: Alliance) : LeagueB
 
             progStages.wait -> {
                 ScorerState.triggerLoad()
+                LeagueBot.foundationGrabber.release()
                 if(isTimedOut(0.5))
+                    nextStage()
+            }
+
+            progStages.moveOutFromFoundation -> {
+                moveFieldCentric_mirror(if(world_x_mirror > 72.0 - 9.0 - 2.0) -0.1 else 0.0, -0.5, 0.0)
+                pointAngle_mirror(90.0)
+                if(world_y_mirror < 14.0)
+                    nextStage()
+            }
+
+            progStages.moveUp -> {
+                val r = goToPosition_mirror(36.0, 14.0, 90.0)
+                if(r.point.hypot > 3.0)
+                    nextStage()
+            }
+
+            progStages.park -> {
+                val r = goToPosition_mirror(36.0, 0.0, 180.0)
+                if(r.deg > 5.0){
+                    movement_y = 0.0
+                    movement_x = 0.0
+                }
+                if(r.point.hypot < 3.0 && r.deg < 3.0)
                     nextStage()
             }
 

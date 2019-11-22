@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode.field
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
+import org.firstinspires.ftc.teamcode.field.Geometry.TAU
 import org.firstinspires.ftc.teamcode.lib.Globals
 import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.movement.Angle
+import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.sin
@@ -191,12 +193,22 @@ data class Circle(val center: Point, val radius: Double) {
 
 val Double.checkMirror get() = this * ALLIANCE.sign
 
-val Double.angleWrapDeg:Double get(){
-    var angle = this
-    while(angle > 180.0)
-        angle -= 360.0
-    while(angle < -180.0)
-        angle += 360.0
-    return angle
+val Double.angleWrapDeg: Double
+    get() {
+        var angle = this
+        while (angle > 180.0)
+            angle -= 360.0
+        while (angle < -180.0)
+            angle += 360.0
+        return angle
+    }
 
-}
+val Double.angleWrapRad: Double
+    get() {
+        var angle = this
+        while (angle > PI)
+            angle -= TAU
+        while (angle < -PI)
+            angle += TAU
+        return angle
+    }
