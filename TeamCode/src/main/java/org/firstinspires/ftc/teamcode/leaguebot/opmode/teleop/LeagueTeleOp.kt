@@ -22,10 +22,10 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
 
     companion object {
         @JvmField
-        var liftBias = -0.3 //-0.4
+        var liftBias = -0.0 //-0.4 // -0.3
 
         @JvmField
-        var stoneH = 4.0
+        var stoneH = 4.1
     }
 
     var inputBias = 0.0
@@ -133,8 +133,8 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
 
         //DriveMovement.moveFieldCentric(driver.leftStick.x, driver.leftStick.y, driver.rightStick.x)
 
-        if (operator.b.currentState)
-            DriveMovement.setPosition_raw(0.0, 0.0, 0.0)
+        /*if (operator.b.currentState)
+            DriveMovement.setPosition_raw(0.0, 0.0, 0.0)*/
 
         telemetry.addData("current tower height, ", towerHeight)
         telemetry.addData("highest tower, ", highestTower)
