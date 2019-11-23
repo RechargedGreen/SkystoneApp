@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.leaguebot.opmode.ScorerState
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueBot
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.MainIntake
 import org.firstinspires.ftc.teamcode.lib.Alliance
+import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric_mirror
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_x
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_y
@@ -80,7 +81,7 @@ abstract class LittleFanciesSkystoneFoundationPark(alliance: Alliance) : LeagueB
                     nextStage()
             }
             progStages.driveIntoQuarry -> {
-                val r = goToPosition_mirror(23.0, stoneY + halfStoneWidth + distanceFromStone + 9.0, 180.0)
+                val r = goToPosition_mirror(23.0 + if(ALLIANCE.isRed()) 0.0 else 2.0, stoneY + halfStoneWidth + distanceFromStone + 9.0, 180.0)
                 if (r.point.hypot < 2.0 && r.deg.absoluteValue < 2.0 && isTimedOut(3.0))
                     nextStage()
             }
@@ -103,7 +104,7 @@ abstract class LittleFanciesSkystoneFoundationPark(alliance: Alliance) : LeagueB
             }
 
             progStages.crossField -> {
-                val r = goToPosition_mirror(needleX, 48.0, 90.0)
+                val r = goToPosition_mirror(needleX, if(ALLIANCE.isRed()) 48.0 else 42.0, 90.0)
                 ScorerState.triggerGrab()
                 if(world_y_mirror > 24.0) {
                     ScorerState.triggerExtend()
@@ -125,12 +126,12 @@ abstract class LittleFanciesSkystoneFoundationPark(alliance: Alliance) : LeagueB
                 ScorerState.triggerRelease()
                 LeagueBot.foundationGrabber.grab()
                 if(isTimedOut(.25)) {
-                    moveFieldCentric_mirror(1.0, 0.1, 0.0)
+                    moveFieldCentric_mirror(0.5, 0.1, 0.0)
                     pointAngle_mirror(90.0)
                 }
                 if(isTimedOut(.75))
                     ScorerState.triggerPullBack()
-                if(isTimedOut(2.0))
+                if(isTimedOut(3.0))
                     nextStage()
             }
 
@@ -160,7 +161,7 @@ abstract class LittleFanciesSkystoneFoundationPark(alliance: Alliance) : LeagueB
                     movement_y = 0.0
                     movement_x = 0.0
                 }
-                if(r.point.hypot < 3.0 && r.deg < 3.0)
+                if((r.point.hypot < 3.0 && r.deg < 3.0) || isTimedOut(2.0))
                     nextStage()
             }
 
