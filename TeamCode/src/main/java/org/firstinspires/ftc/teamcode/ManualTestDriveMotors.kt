@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 
 @TeleOp
+@Disabled
 class ManualTestDriveMotors : LinearOpMode(){
     override fun runOpMode() {
         val lf = hardwareMap.dcMotor.get("leftFront")

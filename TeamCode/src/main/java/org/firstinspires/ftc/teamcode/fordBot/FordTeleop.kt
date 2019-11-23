@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.fordBot
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.util.deadZone
 
-@TeleOp(group = ".1")
+@TeleOp(group = "b")
 class FordTeleop : FordBot() {
     var flippedUp = false
     override fun run() {

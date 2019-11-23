@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.leaguebot.LeagueBotAutoBase
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_mirror
 import kotlin.math.absoluteValue
 
 @TeleOp
+@Disabled
 class KStaticCalibration : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)){
     val rampUpTime = 20.0
 

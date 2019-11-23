@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.leaguebot.LeagueBotTeleOpBase
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueBot.lift
 
-@TeleOp
+@TeleOp(group = "b")
 @Config
 class LiftFeedForwardCalibration : LeagueBotTeleOpBase(){
     companion object {

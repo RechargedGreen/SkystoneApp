@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.*
 import kotlin.math.*
 
 @TeleOp
+@Disabled
 class MecanumDriveTest : LinearOpMode() {
     override fun runOpMode() {
         val leftFront = hardwareMap.dcMotor.get("leftFront")

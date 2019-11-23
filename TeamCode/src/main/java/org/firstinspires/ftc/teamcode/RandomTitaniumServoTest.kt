@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 
-@TeleOp
+@TeleOp(group = "b")
+@Disabled
 class RandomTitaniumServoTest : LinearOpMode() {
     override fun runOpMode() {
         val s = hardwareMap.servo.get("s")

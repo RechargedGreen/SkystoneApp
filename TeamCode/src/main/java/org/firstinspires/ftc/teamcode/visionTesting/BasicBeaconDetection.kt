@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.*
 import org.firstinspires.ftc.teamcode.ryanVision.*
 import org.opencv.core.*
 
-@TeleOp
+@TeleOp(group = "b")
 class BasicBeaconDetectionTest : LinearOpMode() {
     override fun runOpMode() {
         val camera = VuforiaCamera()

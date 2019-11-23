@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.leaguebot.LeagueBotAutoBase
 import org.firstinspires.ftc.teamcode.leaguebot.opmode.hardware.LeagueBot.gyro
 import org.firstinspires.ftc.teamcode.lib.Alliance
 
-@TeleOp
+@TeleOp(group = "b")
 class GyroTest : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)){
     override fun onMainLoop() {
         telemetry.addData("firstAngle", gyro.angle1_deg)

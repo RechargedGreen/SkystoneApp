@@ -4,7 +4,8 @@ import com.qualcomm.hardware.lynx.*
 import com.qualcomm.robotcore.eventloop.opmode.*
 import org.firstinspires.ftc.teamcode.bulkLib.*
 
-@TeleOp
+@TeleOp(group = "b")
+@Disabled
 class S4TTester : LinearOpMode() {
     override fun runOpMode() {
         val module = hardwareMap.get(LynxModule::class.java, "lynx")

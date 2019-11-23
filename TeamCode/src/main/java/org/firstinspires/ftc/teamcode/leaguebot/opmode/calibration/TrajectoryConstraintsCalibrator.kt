@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.odometry.ThreeWheel.degTraveled
 import org.firstinspires.ftc.teamcode.odometry.ThreeWheel.yTraveled
 import org.firstinspires.ftc.teamcode.util.pow
 
-@TeleOp
+@TeleOp(group = "b")
 class TrajectoryConstraintsCalibrator : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
     enum class progStates {
         accelerateTurn,

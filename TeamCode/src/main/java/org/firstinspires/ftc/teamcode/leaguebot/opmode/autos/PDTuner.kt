@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.leaguebot.opmode.autos
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.leaguebot.LeagueBotTeleOpBase
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.gamepadControl
@@ -9,7 +10,8 @@ import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_raw
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.PD.goToPosition_raw
 
-@TeleOp
+@TeleOp(group = "b")
+@Disabled
 class PDTuner : LeagueBotTeleOpBase() {
     var pd = false
 

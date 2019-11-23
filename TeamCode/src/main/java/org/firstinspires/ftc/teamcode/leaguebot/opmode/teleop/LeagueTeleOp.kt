@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_unwrapp
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_raw
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_raw
 
-@TeleOp
+@TeleOp(group = "a")
 @Config
 class LeagueTeleOp : LeagueBotTeleOpBase() {
     var grabbingFoundationToggle = false

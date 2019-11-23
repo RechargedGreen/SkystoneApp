@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.lib.Alliance
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.RoadRunner
 import org.firstinspires.ftc.teamcode.odometry.ThreeWheel.yTraveled
 
-@TeleOp
+@TeleOp(group = "b")
 class MotionProfileStraightTest : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
     override fun onMainLoop() {
         var d = 0.0
@@ -23,7 +23,7 @@ class MotionProfileStraightTest : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0,
     }
 }
 
-@TeleOp
+@TeleOp(group = "b")
 class MotionProfileTurnTest : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
     override fun onMainLoop() {
         if (changedStage)
@@ -31,7 +31,7 @@ class MotionProfileTurnTest : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0
     }
 }
 
-@TeleOp
+@TeleOp(group = "b")
 class MotionProfileSplineTest : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
     override fun onMainLoop() {
         if (changedStage)
@@ -42,7 +42,7 @@ class MotionProfileSplineTest : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0
     }
 }
 
-@TeleOp
+@TeleOp(group = "b")
 class MultiTrajectoryTest : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
     override fun onMainLoop() {
         if (changedStage)

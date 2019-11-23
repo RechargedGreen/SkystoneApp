@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgori
 
 @Config
 @TeleOp
+@Disabled
 class KPStyleProto : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
     companion object {
         @JvmField

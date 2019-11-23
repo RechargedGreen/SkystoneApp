@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_mirror
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_mirror
 import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.PD.goToPosition_mirror
 
-@TeleOp
+@TeleOp(group = "b")
 class DriveToPositionPIDCalibration : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
     var runningToPos = false
     override fun onMainLoop() {

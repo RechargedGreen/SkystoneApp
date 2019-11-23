@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.lib.*
 import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.ryanVision.*
 
-@TeleOp
+@TeleOp(group = "b")
 class SkystoneVisionTest : LinearOpMode() {
     override fun runOpMode() {
         ALLIANCE = Alliance.RED

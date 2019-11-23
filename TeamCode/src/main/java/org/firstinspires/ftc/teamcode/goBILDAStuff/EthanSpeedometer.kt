@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.*
 import com.qualcomm.robotcore.hardware.*
 import com.qualcomm.robotcore.util.*
 
-@TeleOp(group = "GoBILDA")
+@TeleOp(group = "b")
 class EthanSpeedometer : LinearOpMode() {
     val distanceScaler = 1.0 // if there is an imperfection in your wheel radius or anything, this can fine tune it
 
