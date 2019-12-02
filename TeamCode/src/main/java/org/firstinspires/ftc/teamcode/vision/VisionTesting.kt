@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.vision
 
 import com.qualcomm.robotcore.eventloop.opmode.*
-import org.firstinspires.ftc.teamcode.lib.*
-import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
+import org.firstinspires.ftc.teamcode.opmodeLib.*
+import org.firstinspires.ftc.teamcode.opmodeLib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.ryanVision.*
 
 @TeleOp(group = "b")

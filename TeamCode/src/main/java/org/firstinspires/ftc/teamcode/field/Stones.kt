@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.field
 
 import org.firstinspires.ftc.teamcode.field.Field.SOUTH_WALL
-import org.firstinspires.ftc.teamcode.lib.*
+import org.firstinspires.ftc.teamcode.opmodeLib.*
 import org.firstinspires.ftc.teamcode.vision.*
 
 class Stone(val index: Int) { // highest index

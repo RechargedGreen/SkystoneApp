@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.movement
 
 import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_raw
-import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.*
 import org.firstinspires.ftc.teamcode.util.*
 
 object Speedometer {
@@ -21,22 +20,6 @@ object Speedometer {
     val degPerSec: Double
         get() = Math.toDegrees(angularVel)
 
-
-    val xSlipPrediction: Double
-        get() = xInchPerSec * xSlipFactor
-    val ySlipPrediction: Double
-        get() = yInchPerSec * ySlipFactor
-    val turnRadSlipPrediction: Double
-        get() = radPerSec * turnSlipFactor
-    val turnDegSlipPrediction: Double
-        get() = degPerSec * turnSlipFactor
-
-    val xSlipFactor: Double
-        get() = MovementAlgorithms.movementProvider.getXSlipFactor()
-    val ySlipFactor: Double
-        get() = MovementAlgorithms.movementProvider.getYSlipFactor()
-    val turnSlipFactor: Double
-        get() = MovementAlgorithms.movementProvider.getTurnSlipFactor()
 
     fun update() {
         val currTime = Clock.seconds

@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.vision
 
 import com.acmerobotics.dashboard.config.*
-import org.firstinspires.ftc.teamcode.lib.*
-import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
+import org.firstinspires.ftc.teamcode.opmodeLib.*
+import org.firstinspires.ftc.teamcode.opmodeLib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.ryanVision.*
 import org.firstinspires.ftc.teamcode.ryanVision.RGBScalers.BLACK
 import org.firstinspires.ftc.teamcode.ryanVision.RGBScalers.WHITE

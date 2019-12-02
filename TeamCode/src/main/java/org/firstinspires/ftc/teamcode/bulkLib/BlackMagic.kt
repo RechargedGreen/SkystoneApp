@@ -4,7 +4,7 @@ import com.qualcomm.hardware.lynx.*
 import com.qualcomm.robotcore.hardware.*
 import org.firstinspires.ftc.robotcore.internal.opmode.*
 import org.firstinspires.ftc.robotcore.internal.system.*
-import org.firstinspires.ftc.teamcode.lib.*
+import org.firstinspires.ftc.teamcode.opmodeLib.*
 
 object BlackMagic {
     val opModeManager: OpModeManagerImpl

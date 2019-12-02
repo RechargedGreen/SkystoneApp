@@ -3,10 +3,8 @@ package org.firstinspires.ftc.teamcode.movement
 import org.firstinspires.ftc.teamcode.field.Geometry
 import org.firstinspires.ftc.teamcode.field.Point
 import org.firstinspires.ftc.teamcode.field.Pose
-import org.firstinspires.ftc.teamcode.lib.Controller
-import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
-import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.initAll
-import org.firstinspires.ftc.teamcode.movement.movementAlgorithms.MovementAlgorithms.movementProvider
+import org.firstinspires.ftc.teamcode.opmodeLib.Controller
+import org.firstinspires.ftc.teamcode.opmodeLib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.odometry.Odometry
 import org.firstinspires.ftc.teamcode.util.epsilonEquals
 import kotlin.math.absoluteValue
@@ -162,22 +160,6 @@ object DriveMovement {
             movement_turn = 0.0
     }
 
-    fun verifyMinPower() {
-        when {
-            movement_x < movement_y && movement_y < movement_turn -> movement_turn = minPower(movement_turn, movementProvider.getMinTurn())
-            movement_x < movement_y && movement_turn < movement_y -> movement_turn = minPower(movement_y, movementProvider.getMinY())
-            movement_y < movement_x && movement_turn < movement_x -> movement_x = minPower(movement_x, movementProvider.getMinX())
-        }
-    }
-
-    fun minPower(power: Double, min: Double): Double {
-        if (power >= 0 && power <= min)
-            return min
-        if (power < 0 && power > -min)
-            return -min
-        return power
-    }
-
     fun scaleMovement(scaler: Double) {
         movement_x *= scaler
         movement_y *= scaler
@@ -196,6 +178,5 @@ object DriveMovement {
 
     fun resetForOpMode() {
         stopDrive()
-        initAll()
     }
 }

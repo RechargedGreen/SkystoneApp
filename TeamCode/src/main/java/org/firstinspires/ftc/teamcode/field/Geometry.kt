@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.field
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
 import org.firstinspires.ftc.teamcode.field.Geometry.TAU
-import org.firstinspires.ftc.teamcode.lib.Globals
-import org.firstinspires.ftc.teamcode.lib.RunData.ALLIANCE
+import org.firstinspires.ftc.teamcode.opmodeLib.Globals
+import org.firstinspires.ftc.teamcode.opmodeLib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.movement.Angle
 import kotlin.math.PI
 import kotlin.math.cos
