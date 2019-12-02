@@ -45,6 +45,10 @@ class LeagueTeleOp : LeagueBotTeleOpBase() {
     var liftState = LiftState.GOING_DOWN
 
     override fun onMainLoop() {
+
+        if(driver.b.justPressed)
+            LeagueBot.cap.deployed = !LeagueBot.cap.deployed
+
         DriveMovement.gamepadControl(driver)
 
         when {

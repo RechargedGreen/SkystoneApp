@@ -32,6 +32,8 @@ object LeagueBot : BaseBot {
     lateinit var extension: Extension
     lateinit var grabber: Grabber
 
+    lateinit var cap: Capstone
+
     override fun setup() {
         lynx1 = hMap.get(LynxModule::class.java, "Expansion Hub 1")
         lynx2 = hMap.get(LynxModule::class.java, "Expansion Hub 2")
@@ -46,7 +48,9 @@ object LeagueBot : BaseBot {
 
         foundationGrabber = LeagueFoundationGrabber()
 
-        //odometryPuller = OdometryPuller({0.0}, {1.0})
+        odometryPuller = OdometryPuller()
+
+        cap = Capstone()
 
         RoadRunner.reset()
 
@@ -72,8 +76,8 @@ object LeagueBot : BaseBot {
         RoadRunner.update()
 
         ScorerState.update()
-        //foundationGrabber.update()
-        //odometryPuller.update()
+        odometryPuller.update()
+        cap.update()
     }
 
     fun endDoNothing() {
