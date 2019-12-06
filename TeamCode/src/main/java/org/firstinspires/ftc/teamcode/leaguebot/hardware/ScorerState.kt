@@ -24,12 +24,17 @@ object ScorerState {
         state = State.INTAKING
     }
 
+    fun triggerBackRelease(){
+        state = ScorerState.State.BACK_RELEASE
+    }
+
     enum class State {
         INTAKING,
         GRAB,
         EXTEND,
         RELEASE,
-        PULL_BACK_WHILE_RELEASED
+        PULL_BACK_WHILE_RELEASED,
+        BACK_RELEASE
     }
 
     fun triggerPullBack() {
@@ -88,6 +93,13 @@ object ScorerState {
 
                 Robot.extension.state = Extension.State.IN
                 Robot.grabber.state = if (pullBackTimer.seconds() > 1.0) Grabber.State.LOAD else Grabber.State.RELEASE
+            }
+            State.BACK_RELEASE -> {
+                intakeTimer.reset()
+                grabberTimer.reset()
+
+                Robot.extension.state = Extension.State.IN
+                Robot.grabber.state = Grabber.State.RELEASE
             }
         }
     }

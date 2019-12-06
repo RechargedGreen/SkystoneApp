@@ -123,7 +123,7 @@ abstract class SingleSkystone_Foundation_Rotation(alliance: Alliance) : LeagueBo
                 ScorerState.triggerRelease()
                 Robot.foundationGrabber.grab()
                 if(isTimedOut(.25)) {
-                    moveFieldCentric_mirror(if(world_x_mirror < 45.0) 1.0 else 0.0, if(world_y_mirror > 45.0) -1.0 else 0.0, 0.0)
+                    moveFieldCentric_mirror(if(world_x_mirror < 45.0) 1.0 else 0.0, if(world_y_mirror > 35.0) -1.0 else 0.0, 0.0)
                     pointAngle_mirror(90.0)
                 }
                 if(isTimedOut(.75))

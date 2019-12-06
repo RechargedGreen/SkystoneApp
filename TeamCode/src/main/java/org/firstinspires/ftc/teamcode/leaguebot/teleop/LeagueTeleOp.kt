@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.leaguebot.teleop
 
-import com.acmerobotics.dashboard.config.*
-import com.qualcomm.robotcore.eventloop.opmode.*
-import org.firstinspires.ftc.teamcode.leaguebot.hardware.*
-import org.firstinspires.ftc.teamcode.leaguebot.misc.*
-import org.firstinspires.ftc.teamcode.movement.*
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.roadRunnerPose2dRaw
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_unwrapped_raw
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_raw
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_raw
+import com.acmerobotics.dashboard.config.Config
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.MainIntake
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.ScorerState
+import org.firstinspires.ftc.teamcode.leaguebot.misc.LeagueBotTeleOpBase
+import org.firstinspires.ftc.teamcode.movement.DriveMovement
+import org.firstinspires.ftc.teamcode.opmodeLib.Globals
 
 @TeleOp(group = "a")
 @Config
@@ -43,17 +43,19 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
     var extensionRoutineState = ExtensionRoutineState.OFF
     var liftState = LiftState.GOING_DOWN
 
-    override fun onMainLoop() {
+    override fun onStart() {
+        super.onStart()
+        AutoCap.reset()
+    }
 
-        if(driver.b.justPressed)
-            Robot.cap.deployed = !Robot.cap.deployed
+    override fun onMainLoop() {
 
         DriveMovement.gamepadControl(driver)
 
         when {
-            operator.rightTriggerB.justPressed                        -> towerHeight = highestTower
-            operator.leftTriggerB.justPressed                         -> towerHeight = 0
-            operator.dUp.justPressed || driver.y.justPressed   -> towerHeight++
+            operator.rightTriggerB.justPressed -> towerHeight = highestTower
+            operator.leftTriggerB.justPressed -> towerHeight = 0
+            operator.dUp.justPressed || driver.y.justPressed -> towerHeight++
             operator.dDown.justPressed || driver.x.justPressed -> towerHeight--
         }
 
@@ -77,25 +79,25 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
                 hasReleased = false
                 if (ScorerState.clearToIntake) MainIntake.State.IN else MainIntake.State.OUT
             }
-            gamepad1.left_bumper  -> {
+            gamepad1.left_bumper -> {
                 MainIntake.State.OUT
             }
-            else                  -> {
+            else -> {
                 MainIntake.State.STOP
             }
         }
 
         if (driver.leftTriggerB.justPressed) {
             extensionRoutineState = when (extensionRoutineState) {
-                ExtensionRoutineState.OFF    -> ExtensionRoutineState.GRAB
-                ExtensionRoutineState.GRAB   -> ExtensionRoutineState.EXTEND
+                ExtensionRoutineState.OFF -> ExtensionRoutineState.GRAB
+                ExtensionRoutineState.GRAB -> ExtensionRoutineState.EXTEND
                 ExtensionRoutineState.EXTEND -> ExtensionRoutineState.GRAB
             }
         }
 
         if (driver.rightTriggerB.justPressed) {
             when (liftState) {
-                LiftState.GOING_DOWN            -> {
+                LiftState.GOING_DOWN -> {
                     if (extensionRoutineState == ExtensionRoutineState.OFF)
                         extensionRoutineState = ExtensionRoutineState.GRAB
                     liftState = LiftState.GOING_TO_STONE_HEIGHT
@@ -112,13 +114,13 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
             hasReleased = true
 
         ScorerState.state = if (hasReleased || (driver.leftBumper.currentState && extensionRoutineState == ExtensionRoutineState.EXTEND)) ScorerState.State.RELEASE else when (extensionRoutineState) {
-            ExtensionRoutineState.OFF    -> ScorerState.State.INTAKING
-            ExtensionRoutineState.GRAB   -> ScorerState.State.GRAB
+            ExtensionRoutineState.OFF -> ScorerState.State.INTAKING
+            ExtensionRoutineState.GRAB -> ScorerState.State.GRAB
             ExtensionRoutineState.EXTEND -> ScorerState.State.EXTEND
         }
 
         when (liftState) {
-            LiftState.GOING_DOWN            -> Robot.lift.lower()
+            LiftState.GOING_DOWN -> Robot.lift.lower()
             LiftState.GOING_TO_STONE_HEIGHT -> {
                 if (towerHeight == 0 || !ScorerState.clearToLift)
                     Robot.lift.lower()
@@ -134,6 +136,13 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
         else
             Robot.foundationGrabber.release()
 
+
+        if (driver.b.justPressed)
+            AutoCap.toggle()
+
+        if ((!AutoCap.isActive) && Robot.lift.height > 5.0)
+            Robot.cap.deployed = false
+
         //DriveMovement.moveFieldCentric(driver.leftStick.x, driver.leftStick.y, driver.rightStick.x)
 
         /*if (operator.b.currentState)
@@ -143,10 +152,105 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
         telemetry.addData("highest tower, ", highestTower)
         telemetry.addData("input bias", inputBias)
         telemetry.addLine()
+        AutoCap.update()
+        telemetry.addLine()
         telemetry.addData("grabbingFoundation", grabbingFoundationToggle)
         telemetry.addData("extension routine", extensionRoutineState)
         telemetry.addData("lift state", liftState)
         telemetry.addData("hasReleased", hasReleased)
         telemetry.addLine()
     }
+}
+
+
+object AutoCap {
+    enum class progStates {
+        waiting,
+        centerStone,
+        release,
+        lift,
+        cap,
+        lower,
+        grabStone,
+        finished
+    }
+
+    val timer = ElapsedTime()
+
+    var progState = 0
+
+    fun trigger() {
+        nextStage(1)
+    }
+
+    fun abort() {
+        nextStage(0)
+    }
+
+    fun toggle() {
+        if (progState > 0)
+            abort()
+        else
+            trigger()
+    }
+
+    fun reset() {
+        abort()
+    }
+
+    fun nextStage(stage: Int = progState + 1) {
+        progState = stage
+        timer.reset()
+    }
+
+    fun update() {
+        val currentStage = progStates.values()[progState]
+        Globals.mode.telemetry.addData("cap stage", currentStage)
+        when (currentStage) {
+            AutoCap.progStates.waiting -> {
+            }
+            AutoCap.progStates.centerStone -> {
+                Robot.lift.lower()
+                if (Robot.lift.bottomPressed)
+                    ScorerState.triggerGrab()
+                if (ScorerState.clearToLift)
+                    nextStage()
+            }
+            AutoCap.progStates.release -> {
+                Robot.lift.lower()
+                ScorerState.triggerBackRelease()
+                if (timer.seconds() > 0.2)
+                    nextStage()
+            }
+            AutoCap.progStates.lift -> {
+                Robot.lift.heightTarget = 12.0
+                ScorerState.triggerBackRelease()
+                if (Robot.lift.height > 5.0)
+                    nextStage()
+            }
+            AutoCap.progStates.cap -> {
+                Robot.lift.heightTarget = 12.0
+                Robot.cap.deployed = true
+                ScorerState.triggerBackRelease()
+                if (timer.seconds() > 0.5)
+                    nextStage()
+            }
+            AutoCap.progStates.lower -> {
+                Robot.lift.lower()
+                ScorerState.triggerBackRelease()
+                if (Robot.lift.bottomPressed)
+                    nextStage()
+            }
+            AutoCap.progStates.grabStone -> {
+                Robot.lift.lower()
+                ScorerState.triggerGrab()
+                if (ScorerState.clearToLift)
+                    nextStage()
+            }
+            AutoCap.progStates.finished -> {
+            }
+        }
+    }
+
+    val isActive get() = progState != 0 && progState != AutoCap.progStates.finished.ordinal
 }
