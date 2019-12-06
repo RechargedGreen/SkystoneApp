@@ -4,12 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.field.Quarry
 import org.firstinspires.ftc.teamcode.field.Stone
-import org.firstinspires.ftc.teamcode.leaguebot.misc.LeagueBotAutoBase
-import org.firstinspires.ftc.teamcode.leaguebot.hardware.ScorerState
-import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.MainIntake
-import org.firstinspires.ftc.teamcode.opmodeLib.Alliance
-import org.firstinspires.ftc.teamcode.opmodeLib.RunData.ALLIANCE
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.ScorerState
+import org.firstinspires.ftc.teamcode.leaguebot.misc.LeagueBotAutoBase
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric_mirror
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_turn
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_x
@@ -21,11 +19,15 @@ import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_mirror
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.goToPosition_mirror
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.pointAngle_mirror
 import org.firstinspires.ftc.teamcode.movement.toRadians
+import org.firstinspires.ftc.teamcode.opmodeLib.Alliance
+import org.firstinspires.ftc.teamcode.opmodeLib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.vision.SkystoneDetector
 import kotlin.math.absoluteValue
 
 abstract class SingleSkystone_Foundation_Rotation(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(72.0 - 9.0, -24.0 - 9.0, (-90.0).toRadians)) {
     enum class progStages {
+        parkPartner,
+
         lineUpParrallel,
         driveIntoQuarry,
         intake,
@@ -38,6 +40,9 @@ abstract class SingleSkystone_Foundation_Rotation(alliance: Alliance) : LeagueBo
         pull,
         rotate,
         slam,
+
+        moveUp,
+        park,
 
         doNothing
     }
@@ -56,6 +61,9 @@ abstract class SingleSkystone_Foundation_Rotation(alliance: Alliance) : LeagueBo
 
     override fun onInitLoop() {
         telemetry.addData("skystoneIndex", SkystoneDetector.placeInt)
+        if (driver.x.justPressed)
+            parkPartner = !parkPartner
+        telemetry.addData("x to toggle park partner", parkPartner)
     }
 
     override fun onMainLoop() {
@@ -72,13 +80,23 @@ abstract class SingleSkystone_Foundation_Rotation(alliance: Alliance) : LeagueBo
         Robot.intake.state = MainIntake.State.STOP
 
         when (currentStage) {
+            progStages.parkPartner -> {
+                if (parkPartner) {
+                    moveFieldCentric_mirror(if(world_x_mirror > 48.0) -0.25 else 0.0, 1.0, 0.0)
+                    if (isTimedOut(2.0) || world_y_mirror > -10.0)
+                        nextStage()
+                } else {
+                    nextStage()
+                }
+            }
+
             progStages.lineUpParrallel -> {
                 val r = goToPosition_mirror(40.0, stoneY + halfStoneWidth + distanceFromStone + 9.0, 180.0)
                 if (r.point.hypot < 2.0 && r.deg.absoluteValue < 2.0)
                     nextStage()
             }
             progStages.driveIntoQuarry -> {
-                val r = goToPosition_mirror(23.0 + if(ALLIANCE.isRed()) 0.0 else 2.0, stoneY + halfStoneWidth + distanceFromStone + 9.0, 180.0)
+                val r = goToPosition_mirror(23.0 + if (ALLIANCE.isRed()) 0.0 else 2.0, stoneY + halfStoneWidth + distanceFromStone + 9.0, 180.0)
                 if (r.point.hypot < 2.0 && r.deg.absoluteValue < 2.0 && isTimedOut(3.0))
                     nextStage()
             }
@@ -101,13 +119,13 @@ abstract class SingleSkystone_Foundation_Rotation(alliance: Alliance) : LeagueBo
             }
 
             progStages.crossField -> {
-                val r = goToPosition_mirror(needleX, if(ALLIANCE.isRed()) 48.0 else 42.0, 90.0)
+                val r = goToPosition_mirror(needleX, if (ALLIANCE.isRed()) 48.0 else 42.0, 90.0)
                 ScorerState.triggerGrab()
-                if(world_y_mirror > 24.0) {
+                if (world_y_mirror > 24.0) {
                     ScorerState.triggerExtend()
                     Robot.foundationGrabber.prepForGrab()
                 }
-                if(r.point.hypot < 3.0)
+                if (r.point.hypot < 3.0)
                     nextStage()
             }
 
@@ -115,27 +133,27 @@ abstract class SingleSkystone_Foundation_Rotation(alliance: Alliance) : LeagueBo
                 ScorerState.triggerExtend()
                 moveFieldCentric_mirror(-0.2, 0.0, 0.0)
                 pointAngle_mirror(90.0)
-                if(world_x_mirror < 21 + 9.0)
+                if (world_x_mirror < 21 + 9.0)
                     nextStage()
             }
 
             progStages.pull -> {
                 ScorerState.triggerRelease()
                 Robot.foundationGrabber.grab()
-                if(isTimedOut(.25)) {
-                    moveFieldCentric_mirror(if(world_x_mirror < 45.0) 1.0 else 0.0, if(world_y_mirror > 35.0) -1.0 else 0.0, 0.0)
+                if (isTimedOut(.25)) {
+                    moveFieldCentric_mirror(if (world_x_mirror < 45.0) 1.0 else 0.0, if (world_y_mirror > 35.0) -1.0 else 0.0, 0.0)
                     pointAngle_mirror(90.0)
                 }
-                if(isTimedOut(.75))
+                if (isTimedOut(.75))
                     ScorerState.triggerPullBack()
-                if(world_x_mirror > 40.0 && world_y_mirror < 40.0) {
+                if (world_x_mirror > 40.0 && world_y_mirror < 40.0) {
                     ScorerState.triggerPullBack()
                     nextStage()
                 }
             }
 
             progStages.rotate -> {
-                if(pointAngle_mirror(180.0) < 5.0)
+                if (pointAngle_mirror(180.0) < 5.0)
                     nextStage()
                 movement_turn = 1.0 * ALLIANCE.sign
             }
@@ -143,12 +161,28 @@ abstract class SingleSkystone_Foundation_Rotation(alliance: Alliance) : LeagueBo
             progStages.slam -> {
                 moveFieldCentric_mirror(1.0, 0.5, 0.0)
                 pointAngle_mirror(180.0)
-                if(isTimedOut(1.0)) {
+                if (isTimedOut(2.5)) {
                     stopDrive()
                     Robot.foundationGrabber.release()
-                    if(isTimedOut(1.25))
+                    if (isTimedOut(2.75))
                         nextStage()
                 }
+            }
+
+            progStages.moveUp -> {
+                val r = goToPosition_mirror(36.0, 14.0, 180.0)
+                if (r.point.hypot > 3.0)
+                    nextStage()
+            }
+
+            progStages.park -> {
+                val r = goToPosition_mirror(36.0, 0.0, 180.0)
+                if (r.deg > 5.0) {
+                    movement_y = 0.0
+                    movement_x = 0.0
+                }
+                if ((r.point.hypot < 3.0 && r.deg < 3.0) || isTimedOut(2.0))
+                    nextStage()
             }
 
             progStages.doNothing -> {
@@ -157,6 +191,8 @@ abstract class SingleSkystone_Foundation_Rotation(alliance: Alliance) : LeagueBo
             }
         }
     }
+
+    var parkPartner = false
 }
 
 @Autonomous
