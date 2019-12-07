@@ -53,7 +53,7 @@ abstract class SingleSkystone_Foundation_Rotation(alliance: Alliance) : LeagueBo
 
     val halfStoneWidth = Stone.LENGTH / 2.0
 
-    val needleX = 42.0 // needle allows 6" on either side // 39.0 was tested
+    val needleX = 39.0 // needle allows 6" on either side // 39.0 was tested
 
     override fun onStart() {
         stoneY = Quarry.popStone().center_y
@@ -82,7 +82,7 @@ abstract class SingleSkystone_Foundation_Rotation(alliance: Alliance) : LeagueBo
         when (currentStage) {
             progStages.parkPartner -> {
                 if (parkPartner) {
-                    moveFieldCentric_mirror(if(world_x_mirror > 48.0) -0.25 else 0.0, 1.0, 0.0)
+                    moveFieldCentric_mirror(if (world_x_mirror > 48.0) -0.25 else 0.0, 1.0, 0.0)
                     if (isTimedOut(2.0) || world_y_mirror > -10.0)
                         nextStage()
                 } else {
@@ -114,12 +114,12 @@ abstract class SingleSkystone_Foundation_Rotation(alliance: Alliance) : LeagueBo
 
             progStages.pullOutOfQuarry -> {
                 val r = goToPosition_mirror(needleX, stoneY + 5.0, 90.0)
-                if (r.point.x.absoluteValue < 2.0 && r.deg.absoluteValue < 3.0)
+                if (r.point.x.absoluteValue < 2.0 && r.deg.absoluteValue < 3.0 && isTimedOut(2.0))
                     nextStage()
             }
 
             progStages.crossField -> {
-                val r = goToPosition_mirror(needleX, if (ALLIANCE.isRed()) 48.0 else 42.0, 90.0)
+                val r = goToPosition_mirror(needleX, if (ALLIANCE.isRed()) 48.0 else 42.0, 90.0, yClip = 1.0)
                 ScorerState.triggerGrab()
                 if (world_y_mirror > 24.0) {
                     ScorerState.triggerExtend()
@@ -141,12 +141,12 @@ abstract class SingleSkystone_Foundation_Rotation(alliance: Alliance) : LeagueBo
                 ScorerState.triggerRelease()
                 Robot.foundationGrabber.grab()
                 if (isTimedOut(.25)) {
-                    moveFieldCentric_mirror(if (world_x_mirror < 45.0) 1.0 else 0.0, if (world_y_mirror > 35.0) -1.0 else 0.0, 0.0)
+                    moveFieldCentric_mirror(1.0, 0.0, 0.0)
                     pointAngle_mirror(90.0)
                 }
                 if (isTimedOut(.75))
                     ScorerState.triggerPullBack()
-                if (world_x_mirror > 40.0 && world_y_mirror < 40.0) {
+                if (world_x_mirror > 45.0) {
                     ScorerState.triggerPullBack()
                     nextStage()
                 }
@@ -161,10 +161,9 @@ abstract class SingleSkystone_Foundation_Rotation(alliance: Alliance) : LeagueBo
             progStages.slam -> {
                 moveFieldCentric_mirror(1.0, 0.5, 0.0)
                 pointAngle_mirror(180.0)
-                if (isTimedOut(2.5)) {
-                    stopDrive()
+                if (isTimedOut(1.0)) {
                     Robot.foundationGrabber.release()
-                    if (isTimedOut(2.75))
+                    if (isTimedOut(1.25))
                         nextStage()
                 }
             }
