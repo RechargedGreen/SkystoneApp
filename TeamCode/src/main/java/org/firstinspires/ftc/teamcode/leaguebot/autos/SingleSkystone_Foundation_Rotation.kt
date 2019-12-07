@@ -53,7 +53,7 @@ abstract class SingleSkystone_Foundation_Rotation(alliance: Alliance) : LeagueBo
 
     val halfStoneWidth = Stone.LENGTH / 2.0
 
-    val needleX = 39.0 // needle allows 6" on either side // 39.0 was tested
+    val needleX = 41.0 // needle allows 6" on either side // 39.0 was tested
 
     override fun onStart() {
         stoneY = Quarry.popStone().center_y
@@ -119,7 +119,7 @@ abstract class SingleSkystone_Foundation_Rotation(alliance: Alliance) : LeagueBo
             }
 
             progStages.crossField -> {
-                val r = goToPosition_mirror(needleX, if (ALLIANCE.isRed()) 48.0 else 42.0, 90.0, yClip = 1.0)
+                val r = goToPosition_mirror(needleX, 42.0, 90.0, yClip = 1.0)
                 ScorerState.triggerGrab()
                 if (world_y_mirror > 24.0) {
                     ScorerState.triggerExtend()
