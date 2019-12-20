@@ -34,7 +34,7 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean, pri
         changedStage = true
     }
 
-    fun nextStage(nextStage: Int = stage + 1, initStateVariables: Boolean = true) {
+    open fun nextStage(nextStage: Int = stage + 1, initStateVariables: Boolean = true) {
         /*if (stage != nextStage)*/
         forceStageChange()
         stage = nextStage

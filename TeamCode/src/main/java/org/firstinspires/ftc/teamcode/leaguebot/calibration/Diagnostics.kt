@@ -28,5 +28,6 @@ class Diagnostics : LeagueTeleOp() {
         combinedPacket.put("x", DriveMovement.world_x_raw)
         combinedPacket.put("deg", DriveMovement.world_angle_unwrapped_raw.deg)
         combinedPacket.put("rr deg", DriveMovement.roadRunnerPose2dRaw.heading.toDegrees)
+        combinedPacket.put("raw gyro deg", Robot.gyro.angle1_deg)
     }
 }
