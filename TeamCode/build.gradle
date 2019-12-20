@@ -17,6 +17,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
