@@ -40,4 +40,6 @@ object RoadRunnerConstraints {
         movement_x = -(velocity.y) * kV
         movement_turn = (velocity.heading * effectiveTrackWidth) * kV
     }
+
+    const val WHEEL_DIAMETER = 100.0 / 25.4
 }

@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode.bulkLib
 
 
 import com.qualcomm.hardware.lynx.LynxDcMotorController
-import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorSimple
-import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.*
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType
 import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.robotcore.external.navigation.Rotation
@@ -14,7 +12,7 @@ import kotlin.math.absoluteValue
 import kotlin.reflect.KClass
 
 class RevHubMotor(config: String, motorType: KClass<*>, hMap: HardwareMap = BlackMagic.hMap) {
-    private val motor = hMap.dcMotor.get(config)
+    private val motor = hMap.get(DcMotorEx::class.java, config)
     private val port = motor.portNumber
     private val type = MotorConfigurationType.getMotorType(motorType.java)
     private val controller = (motor.controller as LynxDcMotorController).apply {
@@ -33,6 +31,14 @@ class RevHubMotor(config: String, motorType: KClass<*>, hMap: HardwareMap = Blac
             Rotation.CW, null -> 1
             Rotation.CCW -> -1
         }
+
+    var veloPIDF: PIDFCoefficients = type.hubVelocityParams.pidfCoefficients
+        set(value) {
+            motor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, value)
+            field = value
+        }
+
+    val velocity get() = lynx.cachedInput.getVelocity(port) * orientationSign
 
     var power: Double = 0.0
         set(value) {
