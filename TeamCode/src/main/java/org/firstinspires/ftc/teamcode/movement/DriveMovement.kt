@@ -6,6 +6,9 @@ import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.opmodeLib.Controller
 import org.firstinspires.ftc.teamcode.opmodeLib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.odometry.Odometry
+import org.firstinspires.ftc.teamcode.odometry.ThreeWheel.degTraveled
+import org.firstinspires.ftc.teamcode.odometry.ThreeWheel.xTraveled
+import org.firstinspires.ftc.teamcode.odometry.ThreeWheel.yTraveled
 import org.firstinspires.ftc.teamcode.util.epsilonEquals
 import kotlin.math.absoluteValue
 import kotlin.math.cos
@@ -71,6 +74,11 @@ object DriveMovement {
     fun setAngleRad_mirror(angle_rad: Double) = setAngleRad_raw(angle_rad * ALLIANCE.sign)
 
     fun updatePos(baseDelta: Pose, finalAngle: Angle) {
+
+        yTraveled += baseDelta.y
+        xTraveled += baseDelta.x
+        degTraveled += baseDelta.heading.deg
+
         /*val circleArcDelta = Geometry.circleArcRelativeDelta(baseDelta)
 
         val finalDelta = Geometry.pointDelta(circleArcDelta, world_angle)*/

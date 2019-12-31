@@ -38,14 +38,18 @@ class DriveKFCalibration : LeagueBotTeleOpBase() {
             }
             progStates.cruise -> {
                 moveRobotCentric_raw(0.0, 1.0, 0.0)
-                if(yTraveled > cruiseDistance){
+                if(yTraveled > cruiseDistance + accelerateDistance){
                     cruiseSpeed = (yTraveled - distanceAtStartOfCruise) / stageTimer.seconds()
                     nextStage()
                 }
             }
             progStates.stop -> {
                 val ticksPerSecond = (cruiseSpeed / WHEEL_DIAMETER / PI) * 28.0 * 19.2
-                val kF = (ticksPerSecond)
+                val kF = 32767.0 / (ticksPerSecond)
+
+                telemetry.addData("cruiseSpeed", cruiseSpeed)
+                telemetry.addData("kF", kF)
+
                 stopDrive()
             }
         }

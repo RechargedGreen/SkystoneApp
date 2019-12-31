@@ -68,10 +68,9 @@ class DriveVeloPIDTuner : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
 
                 combinedPacket.put("desiredCPS", desiredCPS)
 
-                val averageCPS = drive.motors.map { it.velocity }.average()
-                combinedPacket.put("averageCPS", averageCPS)
-
-                combinedPacket.put("cpsError", averageCPS - desiredCPS)
+                val velocities = drive.motors.map{ it.velocity }
+                for(i in 0..velocities.size)
+                    combinedPacket.put("velocity_$i", velocities[i])
 
             }
             progStages.waiting -> {

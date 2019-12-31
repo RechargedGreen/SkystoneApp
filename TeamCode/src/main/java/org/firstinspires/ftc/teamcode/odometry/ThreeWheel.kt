@@ -41,10 +41,6 @@ object ThreeWheel : Odometry {
         val yDelta = (lWheelDelta + rWheelDelta) / 2.0
         val xDelta = aWheelDelta - aux_prediction
 
-        yTraveled += yDelta
-        xTraveled += xDelta
-        degTraveled += angleIncrement.toDegrees
-
         DriveMovement.updatePos(Pose(xDelta, yDelta, angleIncrement), Angle.createUnwrappedRad(finalAngleRad))
 
         last_l_encoder = curr_l_encoder
