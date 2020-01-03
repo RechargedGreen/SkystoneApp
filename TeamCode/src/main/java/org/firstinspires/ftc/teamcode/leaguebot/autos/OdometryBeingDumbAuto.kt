@@ -7,9 +7,9 @@ import org.firstinspires.ftc.teamcode.leaguebot.misc.LeagueBotAutoBase
 import org.firstinspires.ftc.teamcode.opmodeLib.Alliance
 
 @Autonomous(group = "c")
-class OdometryBeingDumbAuto(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(0.0, 0.0, 0.0)){
+class OdometryBeingDumbAuto : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)){
     override fun onMainLoop() {
         if(secondsTillEnd < 2.0)
-            ScorerState.triggerExtend()
+            ScorerState.triggerRelease()
     }
 }

@@ -25,6 +25,9 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
 
         @JvmField
         var stoneH = 4.1
+
+        @JvmField
+        var intakeHeight = 0.75
     }
 
     var inputBias = 0.0
@@ -120,7 +123,7 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
         }
 
         when (liftState) {
-            LiftState.GOING_DOWN -> Robot.lift.lower()
+            LiftState.GOING_DOWN -> if (gamepad1.right_bumper) Robot.lift.heightTarget = intakeHeight else Robot.lift.lower()
             LiftState.GOING_TO_STONE_HEIGHT -> {
                 if (towerHeight == 0 || !ScorerState.clearToLift)
                     Robot.lift.lower()

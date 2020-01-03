@@ -39,6 +39,13 @@ class SuperSonicLift {
         var kI = 0.4
         @JvmField
         var kD: Double = 0.01
+
+        var kP_low: Double = 0.15
+        @JvmField
+        var kI_low = 1.0
+        @JvmField
+        var kD_low: Double = 0.01
+
         @JvmField
         var speedStartIntegrating = 1.0
         @JvmField
@@ -103,6 +110,11 @@ class SuperSonicLift {
     var lastTime = Double.NaN
 
     fun update() {
+        val low = heightTarget < 2.0
+        val kP = if(low) kP_low else kP
+        val kI = if(low) kI_low else kI
+        val kD = if(low) kD_low else kD
+
         val currRawHeight = rawHeight
         val currTime = Clock.seconds
         val dt = if (lastTime.isNaN()) 0.0 else (currTime - lastTime)
