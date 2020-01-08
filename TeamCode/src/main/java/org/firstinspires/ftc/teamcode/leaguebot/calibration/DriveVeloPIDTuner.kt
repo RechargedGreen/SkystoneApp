@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients
 import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.drive
 import org.firstinspires.ftc.teamcode.leaguebot.misc.LeagueBotAutoBase
+import org.firstinspires.ftc.teamcode.movement.DriveMovement.gamepadControl
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_y
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
 import org.firstinspires.ftc.teamcode.movement.roadRunner.RoadRunnerConstraints
@@ -28,7 +29,7 @@ class DriveVeloPIDTuner : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
         var f = 11.8
     }
 
-    val distance = 24.0 * 6.5
+    val distance = 24.0 * 6.0
 
     var profile = MotionProfileGenerator.generateSimpleMotionProfile(
             MotionState(0.0, 0.0, 0.0),
@@ -39,8 +40,9 @@ class DriveVeloPIDTuner : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
 
     enum class progStages {
         forward,
+        waiting1,
         backward,
-        waiting
+        waiting2
     }
 
     override fun onMainLoop() {
@@ -48,6 +50,8 @@ class DriveVeloPIDTuner : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
 
         for (motor in drive.motors)
             motor.veloPIDF = PIDFCoefficients(p, i, d, f)
+
+        stopDrive()
 
         when (currentStage) {
             progStages.forward, progStages.backward -> {
@@ -73,11 +77,14 @@ class DriveVeloPIDTuner : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
                 combinedPacket.put("error", velocities.average() - velocity)
 
             }
-            progStages.waiting -> {
-                stopDrive()
+            progStages.waiting1, progStages.waiting2 -> {
+                gamepadControl(driver)
                 telemetry.addLine("press b to continue")
-                if (driver.b.currentState)
-                    nextStage(0)
+                if (driver.b.currentState) {
+                    nextStage()
+                    if(stage >= progStages.values().size)
+                        nextStage(0)
+                }
 
                 combinedPacket.put("desiredVel", 0.0)
                 for (i in 0 until drive.motors.size)
