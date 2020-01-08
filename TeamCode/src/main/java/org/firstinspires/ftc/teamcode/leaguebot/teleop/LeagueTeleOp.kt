@@ -27,7 +27,7 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
         var stoneH = 4.1
 
         @JvmField
-        var intakeHeight = 0.75
+        var intakeHeight = 0.9
     }
 
     var inputBias = 0.0

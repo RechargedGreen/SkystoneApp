@@ -8,6 +8,9 @@ object ScorerState {
     @JvmField
     var grabTime = 0.5
 
+    @JvmField
+    var retractBeforeLoadTime = 0.75
+
     fun triggerExtend() {
         state = State.EXTEND
     }
@@ -53,6 +56,8 @@ object ScorerState {
     private val grabberTimer = ElapsedTime()
     private val intakeTimer = ElapsedTime()
 
+    private val retractTimer = ElapsedTime()
+
     fun update() {
         if (state != State.PULL_BACK_WHILE_RELEASED)
             pullBackTimer.reset()
@@ -61,7 +66,7 @@ object ScorerState {
             State.INTAKING                 -> {
                 grabberTimer.reset()
 
-                Robot.grabber.state = Grabber.State.LOAD
+                Robot.grabber.state = if(retractTimer.seconds() > retractBeforeLoadTime) Grabber.State.LOAD else Grabber.State.PRE_LOAD
                 Robot.extension.state = Extension.State.IN
             }
 
@@ -73,6 +78,7 @@ object ScorerState {
             }
 
             State.EXTEND                   -> {
+                retractTimer.reset()
                 intakeTimer.reset()
 
                 Robot.grabber.state = Grabber.State.GRAB
@@ -80,6 +86,7 @@ object ScorerState {
             }
 
             State.RELEASE                  -> {
+                retractTimer.reset()
                 grabberTimer.reset()
                 intakeTimer.reset()
 

@@ -25,10 +25,10 @@ class DriveVeloPIDTuner : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
         @JvmField
         var d = 0.0
         @JvmField
-        var f = 0.0
+        var f = 11.8
     }
 
-    val distance = 24.0 * 4.0
+    val distance = 24.0 * 6.5
 
     var profile = MotionProfileGenerator.generateSimpleMotionProfile(
             MotionState(0.0, 0.0, 0.0),
@@ -55,22 +55,22 @@ class DriveVeloPIDTuner : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
 
                 val motionState = profile[time]
 
-                val velocity = RoadRunnerConstraints.kV * motionState.v
+                val velocity = motionState.v
 
-                val desiredCPS = velocity * 28.0 * 19.2
-
-                movement_y = velocity
+                movement_y = RoadRunnerConstraints.kV * velocity
 
                 if (time > profile.duration()) {
                     profile = profile.flipped()
                     nextStage()
                 }
 
-                combinedPacket.put("desiredCPS", desiredCPS)
+                combinedPacket.put("desiredVel", velocity)
 
-                val velocities = drive.motors.map{ it.velocity }
-                for(i in 0..velocities.size)
+                val velocities = drive.wheelVelocities
+                for (i in 0 until velocities.size)
                     combinedPacket.put("velocity_$i", velocities[i])
+
+                combinedPacket.put("error", velocities.average() - velocity)
 
             }
             progStages.waiting -> {
@@ -78,6 +78,12 @@ class DriveVeloPIDTuner : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
                 telemetry.addLine("press b to continue")
                 if (driver.b.currentState)
                     nextStage(0)
+
+                combinedPacket.put("desiredVel", 0.0)
+                for (i in 0 until drive.motors.size)
+                    combinedPacket.put("velocity_$i", 0)
+
+                combinedPacket.put("error", 0.0)
             }
         }
     }
