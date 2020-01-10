@@ -14,7 +14,7 @@ object RobotOdometry {
     @JvmField
     var turnTrackWidth = 14.77// was 14.5
     @JvmField
-    var auxTrackWidth = 6.8 //-0.125// -3.5 was origanal
+    var auxTrackWidth = -6.8 //-0.125// -3.5 was origanal
 
     @JvmField
     var leftD = 1.88976
