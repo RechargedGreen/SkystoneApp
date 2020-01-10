@@ -37,6 +37,14 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
         GOING_DOWN
     }
 
+    var foundationState = FoundationStates.RELEASE
+
+    enum class FoundationStates {
+        RELEASE,
+        PREP,
+        GRAB
+    }
+
     enum class ExtensionRoutineState {
         OFF,
         GRAB,
@@ -132,12 +140,20 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
             }
         }
 
-        if (driver.dUp.justPressed)
+        /*if (driver.dUp.justPressed) //todo make sure drive team likes this change
             grabbingFoundationToggle = !grabbingFoundationToggle
         if (grabbingFoundationToggle)
             Robot.foundationGrabber.grab()
         else
-            Robot.foundationGrabber.release()
+            Robot.foundationGrabber.release()*/
+
+        if (driver.dUp.justPressed)
+            foundationState = FoundationStates.values()[(foundationState.ordinal + 1) % FoundationStates.values().size]
+        when (foundationState) {
+            FoundationStates.RELEASE -> Robot.foundationGrabber.release()
+            FoundationStates.PREP -> Robot.foundationGrabber.prepForGrab()
+            FoundationStates.GRAB -> Robot.foundationGrabber.grab()
+        }
 
 
         if (driver.b.justPressed)
@@ -148,8 +164,8 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
 
         //DriveMovement.moveFieldCentric(driver.leftStick.x, driver.leftStick.y, driver.rightStick.x)
 
-        /*if (operator.b.currentState)
-            DriveMovement.setPosition_raw(0.0, 0.0, 0.0)*/
+        if (operator.b.currentState)
+            DriveMovement.setPosition_raw(0.0, 0.0, 0.0)
 
         telemetry.addData("current tower height, ", towerHeight)
         telemetry.addData("highest tower, ", highestTower)

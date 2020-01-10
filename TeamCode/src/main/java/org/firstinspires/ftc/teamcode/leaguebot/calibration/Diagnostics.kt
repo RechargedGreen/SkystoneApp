@@ -1,9 +1,14 @@
 package org.firstinspires.ftc.teamcode.leaguebot.calibration
 
-import com.qualcomm.robotcore.eventloop.opmode.*
-import org.firstinspires.ftc.teamcode.leaguebot.hardware.*
-import org.firstinspires.ftc.teamcode.leaguebot.teleop.*
-import org.firstinspires.ftc.teamcode.movement.*
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.drive
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.intake
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.RobotOdometry
+import org.firstinspires.ftc.teamcode.leaguebot.teleop.LeagueTeleOp
+import org.firstinspires.ftc.teamcode.movement.DriveMovement
+import org.firstinspires.ftc.teamcode.movement.Speedometer
+import org.firstinspires.ftc.teamcode.movement.toDegrees
 
 /**
  * Created by David Lukens on 12/2/2019.
@@ -13,11 +18,14 @@ class Diagnostics : LeagueTeleOp() {
     override fun onMainLoop() {
         super.onMainLoop()
 
-        telemetry.addData("drive wheels y pos", Robot.drive.y_drivePos)
-        telemetry.addData("lf pos", Robot.drive.leftFront.encoderTicks)
-        telemetry.addData("lb pos", Robot.drive.leftBack.encoderTicks)
-        telemetry.addData("rf pos", Robot.drive.rightFront.encoderTicks)
-        telemetry.addData("rb pos", Robot.drive.rightBack.encoderTicks)
+        telemetry.addData("drive wheels y pos", drive.y_drivePos)
+        telemetry.addData("lf pos", drive.leftFront.encoderTicks)
+        telemetry.addData("lb pos", drive.leftBack.encoderTicks)
+        telemetry.addData("rf pos", drive.rightFront.encoderTicks)
+        telemetry.addData("rb pos", drive.rightBack.encoderTicks)
+
+        telemetry.addData("intakeDistance", intake.sensorDistance)
+        telemetry.addData("intakeLoaded", intake.sensorTriggered)
 
         combinedPacket.put("y fps", Speedometer.yInchPerSec / 12.0)
         combinedPacket.put("x fps", Speedometer.xInchPerSec / 12.0)

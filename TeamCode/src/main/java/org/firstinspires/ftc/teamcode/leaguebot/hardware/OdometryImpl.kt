@@ -7,23 +7,25 @@ import org.firstinspires.ftc.teamcode.odometry.ThreeWheel
 import org.firstinspires.ftc.teamcode.odometry.TwoWheel
 import kotlin.math.PI
 
+// new odometry has 48mm 1.88976" wheel diameter
+
 @Config
 object RobotOdometry {
     @JvmField
-    var turnTrackWidth = 14.574// was 14.5
+    var turnTrackWidth = 14.77// was 14.5
     @JvmField
-    var auxTrackWidth = -0.125// -3.5 was origanal
+    var auxTrackWidth = 6.8 //-0.125// -3.5 was origanal
 
     @JvmField
-    var leftD = 2.83465
+    var leftD = 1.88976
     @JvmField
-    var rightD = 2.83465
+    var rightD = 1.88976
     @JvmField
-    var auxD = 2.83465
+    var auxD = 1.88976
 
-    const val CPR = 4000.0
+    const val CPR = 8192.0
 
-    fun inchesPerTick(radius: Double) = (radius * PI) / CPR
+    fun inchesPerTick(diameter: Double) = (diameter * PI) / CPR
 
     val leftTicks: Int get() = -lynx1.cachedInput.getEncoder(3)
     val rightTicks: Int get() = lynx1.cachedInput.getEncoder(0)

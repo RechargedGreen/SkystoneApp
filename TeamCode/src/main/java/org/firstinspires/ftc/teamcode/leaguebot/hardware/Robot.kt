@@ -52,9 +52,11 @@ object Robot : BaseBot {
     }
 
     override fun update() {
-       // RobotOdometry.updateThreeWheel()
-        if (mode.isAutonomous)
-            RobotOdometry.updateTwoWheel()
+        intake.clearCache()
+
+        RobotOdometry.updateThreeWheel()
+        /*if (mode.isAutonomous)
+            RobotOdometry.updateTwoWheel()*/
         drive.update()
 
         grabber.update()

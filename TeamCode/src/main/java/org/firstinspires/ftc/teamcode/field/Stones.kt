@@ -4,6 +4,16 @@ import org.firstinspires.ftc.teamcode.field.Field.SOUTH_WALL
 import org.firstinspires.ftc.teamcode.opmodeLib.*
 import org.firstinspires.ftc.teamcode.vision.*
 
+enum class QuarryLocation {
+    FAR_LEFT,
+    FAR_MIDDLE,
+    FAR_RIGHT,
+
+    NEAR_LEFT,
+    NEAR_MIDDLE,
+    NEAR_RIGHT
+}
+
 class Stone(val index: Int) { // highest index
     var isSkystone = index % 3 == SkystoneDetector.placeInt
     var isEndNearBuildZone = index == 5
@@ -28,6 +38,9 @@ class Stone(val index: Int) { // highest index
 object Quarry {
 
     val allStones = ArrayList<Stone>()
+
+    operator fun get(index:Int) = allStones[index]
+    operator fun get(location:QuarryLocation) = get(location.ordinal)
 
     private val stones = ArrayList<Stone>()
     private val skystones = ArrayList<Stone>()

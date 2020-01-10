@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.bulkLib.RevHubMotor
 import org.firstinspires.ftc.teamcode.bulkLib.cachedInput
 import org.firstinspires.ftc.teamcode.opmodeLib.Globals.mode
 import org.firstinspires.ftc.teamcode.bulkLib.Go_5_2
+import org.firstinspires.ftc.teamcode.leaguebot.teleop.LeagueTeleOp
 import org.firstinspires.ftc.teamcode.util.Clock
 import kotlin.math.absoluteValue
 
@@ -180,6 +181,10 @@ class SuperSonicLift {
 
     fun forceCalibration(){
         resetSpoolRadians = rawRadians
+    }
+
+    fun triggerIntake(){
+        heightTarget = LeagueTeleOp.intakeHeight
     }
 
     val rawRadians get() = -encoder.radians
