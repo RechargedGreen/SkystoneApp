@@ -17,9 +17,12 @@ import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_mirror
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_mirror
 import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_mirror
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.goToPosition_mirror
+import org.firstinspires.ftc.teamcode.movement.SimpleMotion.moveD
+import org.firstinspires.ftc.teamcode.movement.SimpleMotion.moveP
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.pointAngle_mirror
 import org.firstinspires.ftc.teamcode.movement.Speedometer
 import org.firstinspires.ftc.teamcode.movement.toRadians
+import org.firstinspires.ftc.teamcode.odometry.ThreeWheel.yTraveled
 import org.firstinspires.ftc.teamcode.opmodeLib.Alliance
 import org.firstinspires.ftc.teamcode.opmodeLib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.vision.SkystoneDetector
@@ -27,28 +30,118 @@ import org.firstinspires.ftc.teamcode.vision.SkystoneRandomization
 import kotlin.math.absoluteValue
 
 @Config
+object FirstStoneBiases_RED {
+    @JvmField
+    var far_left = 16.5
+    @JvmField
+    var far_middle = 18.0
+    @JvmField
+    var far_right = 18.0
+    val biases: ArrayList<Double>
+        get() {
+            val list = ArrayList<Double>()
+            list.add(far_left)
+            list.add(far_middle)
+            list.add(far_right)
+            list.add(0.0)
+            list.add(0.0)
+            list.add(0.0)
+            return list
+        }
+}
+
+@Config
+object FirstStoneBiases_BLUE {
+    @JvmField
+    var far_left = 17.5
+    @JvmField
+    var far_middle = 19.0
+    @JvmField
+    var far_right = 19.0
+    val biases: ArrayList<Double>
+        get() {
+            val list = ArrayList<Double>()
+            list.add(far_left)
+            list.add(far_middle)
+            list.add(far_right)
+            list.add(0.0)
+            list.add(0.0)
+            list.add(0.0)
+            return list
+        }
+}
+
+private val stoneBiases: ArrayList<ArrayList<Double>>
+    get() {
+        val list = ArrayList<ArrayList<Double>>()
+        list.add(if (ALLIANCE == Alliance.RED) FirstStoneBiases_RED.biases else FirstStoneBiases_BLUE.biases)
+        list.add(if (ALLIANCE == Alliance.RED) SecondStoneBiases_RED.biases else SecondStoneBiases_BLUE.biases)
+        return list
+    }
+
+@Config
+object SecondStoneBiases_RED {
+    @JvmField
+    var near_left = 18.5
+    @JvmField
+    var near_middle = 18.4
+    @JvmField
+    var near_right = 19.0
+    val biases: ArrayList<Double>
+        get() {
+            val list = ArrayList<Double>()
+            list.add(0.0)
+            list.add(0.0)
+            list.add(0.0)
+            list.add(near_left)
+            list.add(near_middle)
+            list.add(near_right)
+            return list
+        }
+}
+
+@Config
+object SecondStoneBiases_BLUE {
+    @JvmField
+    var near_left = 20.0
+    @JvmField
+    var near_middle = 19.4
+    @JvmField
+    var near_right = 20.0
+    val biases: ArrayList<Double>
+        get() {
+            val list = ArrayList<Double>()
+            list.add(0.0)
+            list.add(0.0)
+            list.add(0.0)
+            list.add(near_left)
+            list.add(near_middle)
+            list.add(near_right)
+            return list
+        }
+}
+
+@Config
 abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(Field.EAST_WALL - 8.625, Field.SOUTH_WALL + 38.25, (-90.0).toRadians)) {
     companion object {
         @JvmField
         var xOffset = 15.0
-        @JvmField
-        var yOffset = 15.0
 
         @JvmField
         var intakeAngleOffset = -50.0
         @JvmField
-        var intakeSpeed = 0.5
+        var intakeSpeed = 0.3
 
         @JvmField
-        var pullOutX = 30.0
-
+        var preFoundationX_red = 39.0
         @JvmField
-        var preFoundationX = 35.0
+        var preFoundationX_blue = 40.0
+
         @JvmField
         var preFoundationY = 48.0
 
         @JvmField
-        var backIntoFoundationX = 30.0
+        var backIntoFoundationX = 28.0
         @JvmField
         var foundationTurnSpeed = 1.0
 
@@ -56,9 +149,16 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
         var pullFoundationX = 38.0
 
         @JvmField
-        var postFoundationWallX = 36.0
+        var scoreSpeed = 0.2
+
+        @JvmField
+        var scoreY = 40.0
+
+        @JvmField
+        var parkY = -1.0
     }
 
+    val preFoundationX get() = if (ALLIANCE == Alliance.RED) preFoundationX_red else preFoundationX_blue
 
     val intakeAngle get() = -90 + intakeAngleOffset
 
@@ -78,6 +178,13 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
         goingToSecondIntakeAngle,
         goingForwardToSecondIntake,
         secondBackOut,
+
+        secondStoneBackForScore,
+        secondStoneRechargedRam,
+        secondStoneRelease,
+
+        yeetToPark,
+
         stopDoNothing
     }
 
@@ -86,29 +193,57 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
             SkystoneRandomization.FAR -> {
                 stoneOrder.add(Quarry[QuarryLocation.FAR_LEFT])
                 stoneOrder.add(Quarry[QuarryLocation.NEAR_LEFT])
+                stoneOrder.add(Quarry[QuarryLocation.NEAR_RIGHT])
             }
             SkystoneRandomization.MID -> {
                 stoneOrder.add(Quarry[QuarryLocation.FAR_MIDDLE])
                 stoneOrder.add(Quarry[QuarryLocation.NEAR_MIDDLE])
+                stoneOrder.add(Quarry[QuarryLocation.FAR_LEFT])
             }
             SkystoneRandomization.NEAR -> {
                 stoneOrder.add(Quarry[QuarryLocation.FAR_RIGHT])
                 stoneOrder.add(Quarry[QuarryLocation.NEAR_RIGHT])
+                stoneOrder.add(Quarry[QuarryLocation.FAR_LEFT])
             }
         }
+    }
+
+    private var hasStartedParking = false
+
+    fun tryToStartParking() {
+        if (!hasStartedParking) {
+            nextStage(progStages.yeetToPark.ordinal)
+            ScorerState.state = ScorerState.State.PULL_BACK_WHILE_RELEASED
+        }
+        hasStartedParking = true
     }
 
     override fun onMainLoop() {
         stopDrive()
         val currentStage = progStages.values()[stage]
 
+        if (currentStage == progStages.yeetToPark)
+            tryToStartParking()
+
         telemetry.addData("currentStage", currentStage)
+        telemetry.addData("x", world_x_mirror)
+        telemetry.addData("y", world_y_mirror)
+        telemetry.addData("deg", world_angle_mirror.deg)
 
         when (currentStage) {
+            progStages.stopDoNothing -> {
+                intake.state = MainIntake.State.STOP
+                stopDrive()
+                if (isTimedOut(2.0))
+                    requestOpModeStop()
+            }
+
             progStages.goingToIntakeAngle, progStages.goingToSecondIntakeAngle -> {
+                val run = if (currentStage == progStages.goingToIntakeAngle) 0 else 1
                 if (changedStage)
                     lift.triggerIntake()
-                val stone = stoneOrder[if (currentStage == progStages.goingToIntakeAngle) 0 else 1]
+                val stone = stoneOrder[run]
+                val yOffset = stoneBiases[run][stone.index]
                 val error = goToPosition_mirror(stone.center_x + xOffset, stone.center_y + yOffset, -90.0 + intakeAngleOffset)
                 telemetry.addData("hypot", error.point.hypot)
                 telemetry.addData("deg", error.deg)
@@ -122,22 +257,31 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
 
                 movement_y = intakeSpeed
 
+                if (isTimedOut(2.0)) {
+                    stopDrive()
+                    pointAngle_mirror(180.0)
+                }
+
                 if (isTimedOut(3.0) || world_x_mirror < 20.0 || intake.sensorTriggered)
                     nextStage()
             }
 
             progStages.backOut, progStages.secondBackOut -> {
-                moveFieldCentric_mirror(1.0, 0.0, 0.0)
+                val xSpeed = (preFoundationX - world_x_mirror) * moveP - Speedometer.fieldSpeed.x.checkMirror * moveD
+                moveFieldCentric_mirror(xSpeed, xSpeed.absoluteValue * 0.5, 0.0)
                 pointAngle_mirror(180.0)
-                if (world_x_mirror > pullOutX) {
+
+                if ((preFoundationX - world_x_mirror).absoluteValue < 2.0) {
                     lift.lower()
-                    intake.state = MainIntake.State.OUT
                     ScorerState.triggerGrab()
                     nextStage()
                 }
             }
 
             progStages.preFoundationCrossField -> {
+                if (ScorerState.timeSpentGrabbing > 0.25)
+                    intake.state = MainIntake.State.OUT
+
                 if (isTimedOut(0.5))
                     intake.state = MainIntake.State.STOP
 
@@ -151,7 +295,7 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
 
             progStages.preFoundationTurn -> {
                 val error = goToPosition_mirror(preFoundationX, preFoundationY, 90.0)
-                if (error.deg.absoluteValue < 2.0 && error.point.hypot < 3.0)
+                if (error.deg.absoluteValue < 2.0 && error.point.hypot < 3.0 && Speedometer.robotSpeed.hypot < 5.0 && Speedometer.degPerSec < 5.0)
                     nextStage()
             }
 
@@ -186,24 +330,54 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
             progStages.postFoundationAwayFromWall -> {
                 val timedOut = isTimedOut(0.25)
                 if (timedOut) {
-                    moveFieldCentric_mirror(-0.5, -0.5, 0.0)
+                    moveFieldCentric_mirror((preFoundationX - world_x_mirror) * moveP, -0.5, 0.0)
                     pointAngle_mirror(180.0)
-                    if (world_x_mirror < postFoundationWallX)
+                    if ((world_x_mirror - preFoundationX).absoluteValue < 2.0)
                         nextStage()
                 }
             }
 
             progStages.crossForSecondStone -> {
-                val error = goToPosition_mirror(preFoundationX, stoneOrder[1].center_y + yOffset, 180.0, yClip = 1.0)
+                val error = goToPosition_mirror(preFoundationX, stoneOrder[1].center_y + 16.5, 180.0, yClip = 1.0)
                 if (error.y.absoluteValue < 4.0 || world_y_mirror < -16.0)
                     nextStage()
             }
 
-            progStages.stopDoNothing -> {
-                intake.state = MainIntake.State.STOP
-                stopDrive()
-                if (isTimedOut(2.0))
-                    requestOpModeStop()
+            progStages.secondStoneBackForScore -> {
+                val xSpeed = (preFoundationX - world_x_mirror) * moveP - Speedometer.fieldSpeed.x.checkMirror * moveD
+                val ySpeed = scoreSpeed + (scoreY - world_y_mirror) * moveP - Speedometer.fieldSpeed.y * moveD
+
+                if (world_y_mirror > 8.0)
+                    ScorerState.triggerExtend()
+
+                if (world_y_mirror > scoreY)
+                    nextStage()
+
+                moveFieldCentric_mirror(xSpeed, ySpeed, 0.0)
+                pointAngle_mirror(180.0)
+            }
+
+            progStages.secondStoneRechargedRam -> {
+                movement_y = - scoreSpeed
+                movement_turn = -scoreSpeed * 0.5
+                if (isTimedOut(0.25))
+                    nextStage()
+            }
+
+            progStages.secondStoneRelease -> {
+                if (ScorerState.timeSpentExtended > 0.75)
+                    ScorerState.triggerRelease()
+                if (ScorerState.timeSpentReleased > 0.5) {
+                    ScorerState.state = ScorerState.State.PULL_BACK_WHILE_RELEASED
+                    nextStage()
+                    yTraveled = 0.0
+                }
+            }
+
+            progStages.yeetToPark -> {
+                var error = goToPosition_mirror(preFoundationX, parkY, 180.0)
+                if (error.point.hypot < 3.0 && Speedometer.fieldSpeed.hypot < 5.0)
+                    nextStage()
             }
         }
     }
@@ -212,6 +386,9 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
         telemetry.addData("skystone randomization", SkystoneDetector.place)
     }
 }
+
+@Autonomous
+class DoubleSkystoneIntake_BLUE : DoubleSkystoneIntake(Alliance.BLUE)
 
 @Autonomous
 class DoubleSkystoneIntake_RED : DoubleSkystoneIntake(Alliance.RED)

@@ -9,15 +9,12 @@ import org.firstinspires.ftc.teamcode.bulkLib.Go_3_7
 import org.firstinspires.ftc.teamcode.bulkLib.RevHubMotor
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.lift
 import org.firstinspires.ftc.teamcode.leaguebot.teleop.LeagueTeleOp
+import org.firstinspires.ftc.teamcode.opmodeLib.Globals.mode
 
 @Config
 class MainIntake {
     private val sensor = hMap.get(Rev2mDistanceSensor::class.java, "intakeSensor")
-    private val sensorHZ = 10.0
-    private val sensorTimeout = 1.0 / sensorHZ
-    private val sensorTimer = ElapsedTime()
 
-    private var readYet = false
     private var readThisCycle = false
     private var sensorCache = 0.0
 
@@ -26,9 +23,8 @@ class MainIntake {
     val sensorTriggered get() = sensorDistance < sensorThreshold
     val sensorDistance: Double
         get() {
-            if (!readYet || (!readThisCycle && sensorTimer.seconds() > sensorTimeout)) {
+            if (!readThisCycle) {
                 readThisCycle = true
-                readYet = true
                 sensorCache = sensor.getDistance(DistanceUnit.INCH)
             }
             return sensorCache
@@ -68,7 +64,7 @@ class MainIntake {
     fun update() {
         val power = when (state.hardwareState) {
             HardwareStates.STOP -> STOP_POWER
-            HardwareStates.IN -> IN_POWER
+            HardwareStates.IN -> if(mode.isAutonomous) IN_POWER else 1.0
             HardwareStates.OUT -> OUT_POWER
         }
 
@@ -99,11 +95,12 @@ class MainIntake {
     }
 
     companion object {
-        private const val IN_POWER = 1.0
+        @JvmField
+        var IN_POWER = 0.7
         private const val STOP_POWER = 0.0
         private const val OUT_POWER = -1.0
 
         @JvmField
-        var sensorThreshold = 4.0
+        var sensorThreshold = 2.0
     }
 }

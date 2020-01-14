@@ -27,7 +27,7 @@ object ScorerState {
         state = State.INTAKING
     }
 
-    fun triggerBackRelease(){
+    fun triggerBackRelease() {
         state = ScorerState.State.BACK_RELEASE
     }
 
@@ -51,10 +51,15 @@ object ScorerState {
 
     val timeSpentGrabbing get() = grabberTimer.seconds()
     val timeSpentLoading get() = intakeTimer.seconds()
+    val timeSpentExtended get() = extendTimer.seconds()
+    val timeSpentReleased get() = releaseTimer.seconds()
 
+    private val releaseTimer = ElapsedTime()
     private val pullBackTimer = ElapsedTime()
     private val grabberTimer = ElapsedTime()
     private val intakeTimer = ElapsedTime()
+
+    private val extendTimer = ElapsedTime()
 
     private val retractTimer = ElapsedTime()
 
@@ -62,22 +67,28 @@ object ScorerState {
         if (state != State.PULL_BACK_WHILE_RELEASED)
             pullBackTimer.reset()
 
+        if (state != ScorerState.State.RELEASE) {
+            releaseTimer.reset()
+            if (state != ScorerState.State.EXTEND)
+                extendTimer.reset()
+        }
+
         when (state) {
-            State.INTAKING                 -> {
+            State.INTAKING -> {
                 grabberTimer.reset()
 
-                Robot.grabber.state = if(retractTimer.seconds() > retractBeforeLoadTime) Grabber.State.LOAD else Grabber.State.PRE_LOAD
+                Robot.grabber.state = if (retractTimer.seconds() > retractBeforeLoadTime) Grabber.State.LOAD else Grabber.State.PRE_LOAD
                 Robot.extension.state = Extension.State.IN
             }
 
-            State.GRAB                     -> {
+            State.GRAB -> {
                 intakeTimer.reset()
 
                 Robot.grabber.state = Grabber.State.GRAB
                 Robot.extension.state = Extension.State.IN
             }
 
-            State.EXTEND                   -> {
+            State.EXTEND -> {
                 retractTimer.reset()
                 intakeTimer.reset()
 
@@ -85,7 +96,7 @@ object ScorerState {
                 Robot.extension.state = if (timeSpentGrabbing < grabTime) Extension.State.IN else Extension.State.OUT
             }
 
-            State.RELEASE                  -> {
+            State.RELEASE -> {
                 retractTimer.reset()
                 grabberTimer.reset()
                 intakeTimer.reset()
@@ -98,8 +109,13 @@ object ScorerState {
                 grabberTimer.reset()
                 intakeTimer.reset()
 
+                val seconds = pullBackTimer.seconds()
+
                 Robot.extension.state = Extension.State.IN
-                Robot.grabber.state = if (pullBackTimer.seconds() > 1.0) Grabber.State.LOAD else Grabber.State.RELEASE
+                Robot.grabber.state = if (seconds > 1.0) Grabber.State.LOAD else Grabber.State.RELEASE
+                if (seconds > 1.0) {
+                    state = State.INTAKING
+                }
             }
             State.BACK_RELEASE -> {
                 intakeTimer.reset()

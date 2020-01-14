@@ -77,8 +77,8 @@ class SkystoneDetector : Tracker() {
 
         /// red
 
-        @JvmField var r_y = 75.0
-        @JvmField var b_y = 75.0
+        @JvmField var r_y = 45.0
+        @JvmField var b_y = 45.0
 
         @JvmField
         var r_x0 = 35.0
@@ -90,11 +90,11 @@ class SkystoneDetector : Tracker() {
         /// blue
 
         @JvmField
-        var b_x0 = 220.0
+        var b_x0 = 240.0
         @JvmField
-        var b_x1 = 150.0
+        var b_x1 = 160.0
         @JvmField
-        var b_x2 = 70.0
+        var b_x2 = 80.0
         //////////////
 
         @JvmField
