@@ -103,7 +103,7 @@ object SecondStoneBiases_RED {
 @Config
 object SecondStoneBiases_BLUE {
     @JvmField
-    var near_left = 20.0
+    var near_left = 21.0
     @JvmField
     var near_middle = 19.4
     @JvmField
@@ -368,7 +368,6 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
                 if (ScorerState.timeSpentExtended > 0.75)
                     ScorerState.triggerRelease()
                 if (ScorerState.timeSpentReleased > 0.5) {
-                    ScorerState.state = ScorerState.State.PULL_BACK_WHILE_RELEASED
                     nextStage()
                     yTraveled = 0.0
                 }
@@ -376,6 +375,8 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
 
             progStages.yeetToPark -> {
                 var error = goToPosition_mirror(preFoundationX, parkY, 180.0)
+                if(yTraveled > 12.0)
+                    ScorerState.triggerLoad()
                 if (error.point.hypot < 3.0 && Speedometer.fieldSpeed.hypot < 5.0)
                     nextStage()
             }
