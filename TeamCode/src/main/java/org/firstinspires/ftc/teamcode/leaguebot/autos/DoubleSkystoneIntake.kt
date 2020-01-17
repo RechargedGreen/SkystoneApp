@@ -57,7 +57,7 @@ object FirstStoneBiases_BLUE {
     @JvmField
     var far_middle = 19.0
     @JvmField
-    var far_right = 19.0
+    var far_right = 25.0
     val biases: ArrayList<Double>
         get() {
             val list = ArrayList<Double>()
@@ -105,9 +105,9 @@ object SecondStoneBiases_BLUE {
     @JvmField
     var near_left = 21.0
     @JvmField
-    var near_middle = 19.4
+    var near_middle = 20.2
     @JvmField
-    var near_right = 20.0
+    var near_right = 25.5
     val biases: ArrayList<Double>
         get() {
             val list = ArrayList<Double>()
@@ -149,10 +149,10 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
         var pullFoundationX = 38.0
 
         @JvmField
-        var scoreSpeed = 0.2
+        var scoreSpeed = 0.4
 
         @JvmField
-        var scoreY = 40.0
+        var scoreY = 30.0
 
         @JvmField
         var parkY = -1.0
@@ -180,6 +180,7 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
         secondBackOut,
 
         secondStoneBackForScore,
+        secondStoneRotate,
         secondStoneRechargedRam,
         secondStoneRelease,
 
@@ -240,19 +241,19 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
 
             progStages.goingToIntakeAngle, progStages.goingToSecondIntakeAngle -> {
                 val run = if (currentStage == progStages.goingToIntakeAngle) 0 else 1
-                if (changedStage)
-                    lift.triggerIntake()
+                lift.triggerIntake()
                 val stone = stoneOrder[run]
                 val yOffset = stoneBiases[run][stone.index]
                 val error = goToPosition_mirror(stone.center_x + xOffset, stone.center_y + yOffset, -90.0 + intakeAngleOffset)
                 telemetry.addData("hypot", error.point.hypot)
                 telemetry.addData("deg", error.deg)
-                if (error.deg.absoluteValue < 2.0 && error.point.hypot < 3.0 && Speedometer.robotSpeed.hypot < 5.0)
+                if (error.deg.absoluteValue < 2.0 && error.point.hypot < 3.0 && Speedometer.robotSpeed.hypot < 5.0) {
                     nextStage()
+                    intake.state = MainIntake.State.IN
+                }
             }
 
             progStages.goForwardToIntake, progStages.goingForwardToSecondIntake -> {
-                intake.state = MainIntake.State.IN
                 pointAngle_mirror(-90.0 + intakeAngleOffset)
 
                 movement_y = intakeSpeed
@@ -262,8 +263,10 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
                     pointAngle_mirror(180.0)
                 }
 
-                if (isTimedOut(3.0) || world_x_mirror < 20.0 || intake.sensorTriggered)
+                if (isTimedOut(3.0) || world_x_mirror < 20.0 || intake.sensorTriggered) {
                     nextStage()
+                    intake.state = MainIntake.State.FINISH_AUTO_INTAKE
+                }
             }
 
             progStages.backOut, progStages.secondBackOut -> {
@@ -271,20 +274,11 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
                 moveFieldCentric_mirror(xSpeed, xSpeed.absoluteValue * 0.5, 0.0)
                 pointAngle_mirror(180.0)
 
-                if ((preFoundationX - world_x_mirror).absoluteValue < 2.0) {
-                    lift.lower()
-                    ScorerState.triggerGrab()
+                if ((preFoundationX - world_x_mirror).absoluteValue < 2.0)
                     nextStage()
-                }
             }
 
             progStages.preFoundationCrossField -> {
-                if (ScorerState.timeSpentGrabbing > 0.25)
-                    intake.state = MainIntake.State.OUT
-
-                if (isTimedOut(0.5))
-                    intake.state = MainIntake.State.STOP
-
                 goToPosition_mirror(preFoundationX, preFoundationY, 180.0, yClip = 1.0)
                 if (world_y_mirror > 24.0) {
                     ScorerState.triggerExtend()
@@ -311,8 +305,10 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
             }
 
             progStages.pullFoundation -> {
-                moveFieldCentric_mirror(1.0, 0.0, 0.0)
-                pointAngle_mirror(90.0)
+                if (isTimedOut(.25)) {
+                    moveFieldCentric_mirror(1.0, 0.0, 0.0)
+                    pointAngle_mirror(90.0)
+                }
                 if (world_x_mirror > pullFoundationX)
                     nextStage()
             }
@@ -344,23 +340,23 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
             }
 
             progStages.secondStoneBackForScore -> {
-                val xSpeed = (preFoundationX - world_x_mirror) * moveP - Speedometer.fieldSpeed.x.checkMirror * moveD
-                val ySpeed = scoreSpeed + (scoreY - world_y_mirror) * moveP - Speedometer.fieldSpeed.y * moveD
-
                 if (world_y_mirror > 8.0)
                     ScorerState.triggerExtend()
 
-                if (world_y_mirror > scoreY)
+                val error = goToPosition_mirror(preFoundationX, scoreY, 180.0)
+                if (error.point.hypot < 4.0 && Speedometer.fieldSpeed.hypot < 5.0)
                     nextStage()
+            }
 
-                moveFieldCentric_mirror(xSpeed, ySpeed, 0.0)
-                pointAngle_mirror(180.0)
+            progStages.secondStoneRotate -> {
+                val error = pointAngle_mirror(if(ALLIANCE == Alliance.RED) 220.0 else 200.0)
+                if (error.absoluteValue < 3.0 && Speedometer.degPerSec < 5.0)
+                    nextStage()
             }
 
             progStages.secondStoneRechargedRam -> {
-                movement_y = - scoreSpeed
-                movement_turn = -scoreSpeed * 0.5
-                if (isTimedOut(0.25))
+                movement_y = -scoreSpeed
+                if (isTimedOut(1.0))
                     nextStage()
             }
 
@@ -374,8 +370,8 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
             }
 
             progStages.yeetToPark -> {
-                var error = goToPosition_mirror(preFoundationX, parkY, 180.0)
-                if(yTraveled > 12.0)
+                var error = goToPosition_mirror(preFoundationX - 5.0, parkY, 180.0)
+                if (yTraveled > 12.0)
                     ScorerState.triggerLoad()
                 if (error.point.hypot < 3.0 && Speedometer.fieldSpeed.hypot < 5.0)
                     nextStage()

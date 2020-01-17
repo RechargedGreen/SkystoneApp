@@ -34,10 +34,7 @@ class MainIntake {
         STOP(HardwareStates.STOP),
         IN(HardwareStates.IN),
         OUT(HardwareStates.OUT),
-
-        AUTO_INTAKE(HardwareStates.IN),
         FINISH_AUTO_INTAKE(HardwareStates.IN),
-        AUTO_EJECT(HardwareStates.OUT)
     }
 
     enum class HardwareStates {
@@ -59,34 +56,20 @@ class MainIntake {
         readThisCycle = false
     }
 
-    val autoIntakeDone get() = state != State.AUTO_INTAKE
-
     fun update() {
         val power = when (state.hardwareState) {
             HardwareStates.STOP -> STOP_POWER
-            HardwareStates.IN -> if(mode.isAutonomous) IN_POWER else 1.0
+            HardwareStates.IN -> if (!mode.isAutonomous || sensorTriggered) 1.0 else IN_POWER
             HardwareStates.OUT -> OUT_POWER
         }
 
         when (state) {
-            State.AUTO_INTAKE -> {
-                lift.heightTarget = LeagueTeleOp.intakeHeight
-                if (sensorTriggered)
-                    state = State.FINISH_AUTO_INTAKE
-            }
-
             State.FINISH_AUTO_INTAKE -> {
-                if (stateTimer.seconds() > 0.3) {
-                    state = State.AUTO_EJECT
+                if (stateTimer.seconds() > 0.7) {
+                    ScorerState.triggerGrab()
                     lift.lower()
+                    state = State.OUT
                 }
-            }
-
-            State.AUTO_EJECT -> {
-                if (stateTimer.seconds() > 1.0)
-                    state = State.STOP
-            }
-            else -> {
             }
         }
 
