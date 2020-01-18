@@ -255,7 +255,7 @@ object AutoCap {
                     nextStage()
             }
             AutoCap.progStates.lower -> {
-                Robot.lift.ultraManual = -0.5
+                Robot.lift.ultraManual = -0.2
                 ScorerState.triggerCapRelease()
                 if (Robot.lift.bottomPressed)
                     nextStage()
