@@ -237,26 +237,26 @@ object AutoCap {
             }
             AutoCap.progStates.release -> {
                 Robot.lift.lower()
-                ScorerState.triggerBackRelease()
+                ScorerState.triggerCapRelease()
                 if (timer.seconds() > 0.1)
                     nextStage()
             }
             AutoCap.progStates.lift -> {
                 Robot.lift.heightTarget = 12.0
-                ScorerState.triggerBackRelease()
+                ScorerState.triggerCapRelease()
                 if (Robot.lift.height > 5.0)
                     nextStage()
             }
             AutoCap.progStates.cap -> {
                 Robot.lift.heightTarget = 8.0
                 Robot.cap.deployed = true
-                ScorerState.triggerBackRelease()
+                ScorerState.triggerCapRelease()
                 if (timer.seconds() > 0.5)
                     nextStage()
             }
             AutoCap.progStates.lower -> {
                 Robot.lift.ultraManual = -0.5
-                ScorerState.triggerBackRelease()
+                ScorerState.triggerCapRelease()
                 if (Robot.lift.bottomPressed)
                     nextStage()
             }

@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.leaguebot.hardware
 
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.extension
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.grabber
 
 @Config
 object ScorerState {
@@ -17,6 +19,10 @@ object ScorerState {
 
     fun triggerGrab() {
         state = State.GRAB
+    }
+
+    fun triggerCapRelease(){
+        state = State.CAP_RELEASE
     }
 
     fun triggerRelease() {
@@ -37,7 +43,8 @@ object ScorerState {
         EXTEND,
         RELEASE,
         PULL_BACK_WHILE_RELEASED,
-        BACK_RELEASE
+        BACK_RELEASE,
+        CAP_RELEASE,
     }
 
     fun triggerPullBack() {
@@ -123,6 +130,15 @@ object ScorerState {
 
                 Robot.extension.state = Extension.State.IN
                 Robot.grabber.state = Grabber.State.RELEASE
+            }
+
+            State.CAP_RELEASE -> {
+                intakeTimer.reset()
+                grabberTimer.reset()
+                extendTimer.reset()
+
+                extension.state = Extension.State.IN
+                grabber.state = Grabber.State.FULL_RELEASE
             }
         }
     }
