@@ -32,7 +32,8 @@ class Grabber {
         GRAB({ frontGrabPosition }, { backGrabPosition }),
         RELEASE({ frontReleasePosition }, { backReleasePosition }),
         LOAD({ frontLoadPosition}, { backGrabPosition}),
-        PRE_LOAD({ frontReleasePosition}, { backGrabPosition})
+        PRE_LOAD({ frontReleasePosition}, { backGrabPosition}),
+        FULL_RELEASE({frontFullReleasePosition}, { backReleasePosition})
     }
 
     companion object {
@@ -40,6 +41,8 @@ class Grabber {
         var frontGrabPosition = 0.0
         @JvmField
         var frontReleasePosition = 0.45
+        @JvmField
+        var frontFullReleasePosition = 1.0
         @JvmField
         var backGrabPosition = 0.8
         @JvmField
