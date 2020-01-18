@@ -57,13 +57,13 @@ object FirstStoneBiases_BLUE {
     @JvmField
     var far_middle = 19.0
     @JvmField
-    var far_right = 25.0
+    var far_right = 19.0
     val biases: ArrayList<Double>
         get() {
             val list = ArrayList<Double>()
-            list.add(far_left)
-            list.add(far_middle)
             list.add(far_right)
+            list.add(far_middle)
+            list.add(far_left)
             list.add(0.0)
             list.add(0.0)
             list.add(0.0)
@@ -103,20 +103,20 @@ object SecondStoneBiases_RED {
 @Config
 object SecondStoneBiases_BLUE {
     @JvmField
-    var near_left = 21.0
+    var near_left = 19.5
     @JvmField
     var near_middle = 20.2
     @JvmField
-    var near_right = 25.5
+    var near_right = 20.2
     val biases: ArrayList<Double>
         get() {
             val list = ArrayList<Double>()
             list.add(0.0)
             list.add(0.0)
             list.add(0.0)
-            list.add(near_left)
-            list.add(near_middle)
             list.add(near_right)
+            list.add(near_middle)
+            list.add(near_left)
             return list
         }
 }
@@ -305,7 +305,7 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
             }
 
             progStages.pullFoundation -> {
-                if (isTimedOut(.25)) {
+                if (isTimedOut(1.0)) {
                     moveFieldCentric_mirror(1.0, 0.0, 0.0)
                     pointAngle_mirror(90.0)
                 }
