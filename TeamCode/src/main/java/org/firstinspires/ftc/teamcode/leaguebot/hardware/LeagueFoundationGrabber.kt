@@ -6,8 +6,8 @@ import org.firstinspires.ftc.teamcode.opmodeLib.Globals
 
 @Config
 class LeagueFoundationGrabber {
-    private val leftServo = RevHubServo("leftFoundation")
-    private val rightServo = RevHubServo("rightFoundation")
+    private val leftServo = RevHubServo("rightFoundation")
+    private val rightServo = RevHubServo("leftFoundation")// todo make not jank name
 
 
     enum class State(val leftPos: () -> Double, val rightPos: () -> Double) {
@@ -41,9 +41,9 @@ class LeagueFoundationGrabber {
 
     companion object {
         @JvmField
-        var lDown = 0.77 // 1.0
+        var lDown = 1.0
         @JvmField
-        var rDown = 0.09 // 0.0
+        var rDown = 0.0
         @JvmField
         var lUp = 0.0
         @JvmField
