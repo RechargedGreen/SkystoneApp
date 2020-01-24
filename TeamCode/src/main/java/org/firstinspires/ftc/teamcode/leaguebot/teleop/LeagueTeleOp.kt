@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode.leaguebot.teleop
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.MainIntake
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.ScorerState
 import org.firstinspires.ftc.teamcode.leaguebot.misc.LeagueBotTeleOpBase
-import org.firstinspires.ftc.teamcode.movement.DriveMovement
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.setPosition_raw
 import org.firstinspires.ftc.teamcode.opmodeLib.Globals
 
 @TeleOp(group = "a")
@@ -165,7 +167,7 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
         //DriveMovement.moveFieldCentric(driver.leftStick.x, driver.leftStick.y, driver.rightStick.x)
 
         if (operator.b.currentState)
-            DriveMovement.setPosition_raw(0.0, 0.0, 0.0)
+            setPosition_raw(Pose(0.0, 0.0, 0.0))
 
         telemetry.addData("current tower height, ", towerHeight)
         telemetry.addData("highest tower, ", highestTower)

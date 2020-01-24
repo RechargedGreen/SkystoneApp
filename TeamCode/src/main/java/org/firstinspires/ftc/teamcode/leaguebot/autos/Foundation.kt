@@ -5,10 +5,10 @@ import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.leaguebot.misc.LeagueBotAutoBase
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot
 import org.firstinspires.ftc.teamcode.opmodeLib.Alliance
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric_mirror
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_mirror
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_mirror
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.moveFieldCentric_mirror
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.stopDrive
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_x_mirror
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_y_mirror
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.pointAngle_mirror
 import org.firstinspires.ftc.teamcode.movement.toRadians
 

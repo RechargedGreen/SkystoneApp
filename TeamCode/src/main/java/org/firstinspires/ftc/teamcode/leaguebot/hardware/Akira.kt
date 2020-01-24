@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType
 import org.firstinspires.ftc.teamcode.bulkLib.Go_19_2
 import org.firstinspires.ftc.teamcode.bulkLib.RevHubMotor
-import org.firstinspires.ftc.teamcode.movement.DriveMovement
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement
 import org.firstinspires.ftc.teamcode.opmodeLib.Globals
 import kotlin.math.PI
 import kotlin.math.absoluteValue

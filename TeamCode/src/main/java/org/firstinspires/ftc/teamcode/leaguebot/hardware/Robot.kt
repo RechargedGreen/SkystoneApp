@@ -5,8 +5,7 @@ import org.firstinspires.ftc.teamcode.bulkLib.BlackMagic.hMap
 import org.firstinspires.ftc.teamcode.bulkLib.OptimizedGyro
 import org.firstinspires.ftc.teamcode.leaguebot.teleop.LeagueTeleOp
 import org.firstinspires.ftc.teamcode.opmodeLib.BaseBot
-import org.firstinspires.ftc.teamcode.opmodeLib.Globals.mode
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.stopDrive
 
 object Robot : BaseBot {
     const val placeWidth = 18.0

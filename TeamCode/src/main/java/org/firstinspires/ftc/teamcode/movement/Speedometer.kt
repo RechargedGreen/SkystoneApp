@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.movement
 
 import org.firstinspires.ftc.teamcode.field.*
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_raw
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_angle_raw
 import org.firstinspires.ftc.teamcode.util.*
 
 object Speedometer {

@@ -2,12 +2,13 @@ package org.firstinspires.ftc.teamcode.leaguebot.calibration
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.leaguebot.misc.LeagueBotTeleOpBase
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.gamepadControl
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.setPosition_raw
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_raw
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_raw
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_raw
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.gamepadControl
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.setPosition_raw
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_angle_raw
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_x_raw
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_y_raw
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.goToPosition_raw
 
 @TeleOp(group = "c")
@@ -17,7 +18,7 @@ class PDTuner : LeagueBotTeleOpBase() {
 
     override fun onMainLoop() {
         if (driver.a.currentState)
-            setPosition_raw(0.0, 0.0, 0.0)
+            setPosition_raw(Pose(0.0, 0.0, 0.0))
         if (driver.b.justPressed)
             pd = !pd
 

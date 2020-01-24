@@ -6,9 +6,8 @@ import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.drive
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.intake
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.RobotOdometry
 import org.firstinspires.ftc.teamcode.leaguebot.teleop.LeagueTeleOp
-import org.firstinspires.ftc.teamcode.movement.DriveMovement
 import org.firstinspires.ftc.teamcode.movement.Speedometer
-import org.firstinspires.ftc.teamcode.movement.toDegrees
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.*
 
 /**
  * Created by David Lukens on 12/2/2019.
@@ -32,10 +31,9 @@ class Diagnostics : LeagueTeleOp() {
         combinedPacket.put("leftInches", RobotOdometry.leftInches)
         combinedPacket.put("rightInches", RobotOdometry.rightInches)
         combinedPacket.put("auxInches", RobotOdometry.auxInches)
-        combinedPacket.put("y", DriveMovement.world_y_raw)
-        combinedPacket.put("x", DriveMovement.world_x_raw)
-        combinedPacket.put("deg", DriveMovement.world_angle_unwrapped_raw.deg)
-        combinedPacket.put("rr deg", DriveMovement.roadRunnerPose2dRaw.heading.toDegrees)
+        combinedPacket.put("y", DrivePosition.world_y_raw)
+        combinedPacket.put("x", DrivePosition.world_x_raw)
+        combinedPacket.put("deg", DrivePosition.world_angle_unwrapped_raw.deg)
         combinedPacket.put("raw gyro deg", Robot.gyro.angle1_deg)
     }
 }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.odometry
 
 import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.movement.*
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.*
 
 object TwoWheel : Odometry {
     private var last_y_encoder = 0
@@ -11,7 +12,7 @@ object TwoWheel : Odometry {
     private var last_raw_angle_rad = 0.0
 
     fun update(curr_y_encoder: Int, curr_x_encoder: Int, curr_raw_angle_rad: Double, yTrackWidth: Double, xTrackWidth: Double, yInchesPerTick: Double, xInchesPerTick: Double) {
-        DriveMovement.odometer = this
+        DrivePosition.odometer = this
 
         // convert ticks to wheel deltas
         val xEncoderDelta = curr_x_encoder - last_x_encoder
@@ -32,7 +33,7 @@ object TwoWheel : Odometry {
         val r_x = xWheelDelta - xPrediction
         val r_y = yWheelDelta - yPrediction
 
-        DriveMovement.updatePos(Pose(r_x, r_y, angleIncrement), Angle.createUnwrappedRad(final_angle_rad))
+        DrivePosition.updatePos(Pose(r_x, r_y, angleIncrement), Angle.createUnwrappedRad(final_angle_rad))
 
         last_x_encoder = curr_x_encoder
         last_y_encoder = curr_y_encoder

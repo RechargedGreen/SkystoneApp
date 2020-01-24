@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.odometry
 
 import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.movement.*
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.*
 
 object ThreeWheel : Odometry {
     var yTraveled = 0.0
@@ -19,7 +20,7 @@ object ThreeWheel : Odometry {
     private var lastRawAngle = 0.0
 
     fun update(curr_l_encoder: Int, curr_r_encoder: Int, curr_a_encoder: Int, leftInchesPerTick: Double, rightInchesPerTick: Double, auxInchesPerTick: Double, turnTrackWidth: Double, auxTrackWidth: Double) {
-        DriveMovement.odometer = this
+        DrivePosition.odometer = this
 
         val lWheelDelta = (curr_l_encoder - last_l_encoder) * leftInchesPerTick
         val rWheelDelta = (curr_r_encoder - last_r_encoder) * rightInchesPerTick
@@ -41,7 +42,7 @@ object ThreeWheel : Odometry {
         val yDelta = (lWheelDelta + rWheelDelta) / 2.0
         val xDelta = aWheelDelta - aux_prediction
 
-        DriveMovement.updatePos(Pose(xDelta, yDelta, angleIncrement), Angle.createUnwrappedRad(finalAngleRad))
+        DrivePosition.updatePos(Pose(xDelta, yDelta, angleIncrement), Angle.createUnwrappedRad(finalAngleRad))
 
         last_l_encoder = curr_l_encoder
         last_r_encoder = curr_r_encoder

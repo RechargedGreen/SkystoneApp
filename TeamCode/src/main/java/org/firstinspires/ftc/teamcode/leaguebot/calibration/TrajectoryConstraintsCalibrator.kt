@@ -4,10 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.leaguebot.misc.LeagueBotAutoBase
 import org.firstinspires.ftc.teamcode.opmodeLib.Alliance
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.gamepadControl
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_turn
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_y
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.stopDrive
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.gamepadControl
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_turn
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_y
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.stopDrive
 import org.firstinspires.ftc.teamcode.movement.Speedometer
 import org.firstinspires.ftc.teamcode.odometry.ThreeWheel.degTraveled
 import org.firstinspires.ftc.teamcode.odometry.ThreeWheel.yTraveled

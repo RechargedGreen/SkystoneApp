@@ -6,10 +6,10 @@ import com.qualcomm.robotcore.util.*
 import org.firstinspires.ftc.robotcore.internal.opmode.*
 import org.firstinspires.ftc.teamcode.bulkLib.*
 import org.firstinspires.ftc.teamcode.field.*
-import org.firstinspires.ftc.teamcode.movement.*
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.setAngle_mirror
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_mirror
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_mirror
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.*
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.setPosition_mirror
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_x_mirror
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_y_mirror
 import org.firstinspires.ftc.teamcode.ryanVision.*
 import org.firstinspires.ftc.teamcode.util.*
 import org.firstinspires.ftc.teamcode.vision.*
@@ -125,9 +125,7 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean, pri
                         camera.close()
                         Quarry.reset()
                         position_mirror?.apply {
-                            world_x_mirror = point.x
-                            world_y_mirror = point.y
-                            setAngle_mirror(heading)
+                            setPosition_mirror(position_mirror)
                         }
                         stageTimer.reset()
                         runTimeTimer.reset()

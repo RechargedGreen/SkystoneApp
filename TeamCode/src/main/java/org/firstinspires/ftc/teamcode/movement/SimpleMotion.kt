@@ -3,12 +3,12 @@ package org.firstinspires.ftc.teamcode.movement
 import com.acmerobotics.dashboard.config.Config
 import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.field.angleWrapDeg
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.clipMovement
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.moveFieldCentric_raw
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.movement_turn
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_angle_raw
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_x_raw
-import org.firstinspires.ftc.teamcode.movement.DriveMovement.world_y_raw
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.clipMovement
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.moveFieldCentric_raw
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_turn
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_angle_raw
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_x_raw
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_y_raw
 import org.firstinspires.ftc.teamcode.opmodeLib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.util.clip
 
