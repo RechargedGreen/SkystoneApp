@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.movement.purePursuit
 import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.goToPosition_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_pose_raw
+import org.firstinspires.ftc.teamcode.util.*
 import kotlin.math.*
 
 /**
@@ -13,8 +14,24 @@ import kotlin.math.*
  * can't find any intersections - high priority
  */
 
+class PurePursuitPath(var followDistance: Double) {
+    val curvePoints = ArrayList<CurvePoint>()
+
+    val firstFollowDistance = followDistance
+
+    fun resetArgs() {
+        followDistance = firstFollowDistance
+    }
+
+    fun add(point: Point) {
+        curvePoints.add(CurvePoint(point, followDistance))
+    }
+
+    var finalAngle = Double.NaN
+}
+
 object PurePursuit {
-    fun goToFollowPoint(targetPoint: Point, robotLocation: Point, preferredAngle: Double) = goToPosition_raw(targetPoint.x, targetPoint.y, robotLocation.angleTo(targetPoint).deg + preferredAngle)
+    fun goToFollowPoint(targetPoint: Point, robotLocation: Point, followAngle: Double) = goToPosition_raw(targetPoint.x, targetPoint.y, robotLocation.angleTo(targetPoint).deg + followAngle)
 
     var lastIndex = 0
     var finishingMove = false
@@ -24,12 +41,23 @@ object PurePursuit {
         finishingMove = false
     }
 
-    fun followCurve(allPoints: ArrayList<CurvePoint>, followAngle: Double = 0.0) {
+    fun followCurve(path: PurePursuitPath, followAngle: Double = 0.0) {
+        val allPoints = path.curvePoints
+        val finalAngle = path.finalAngle
+
         val robotLocation = world_pose_raw
 
         val followMe = getFollowPoint(allPoints, robotLocation, allPoints[0].followDistance)
 
         goToFollowPoint(followMe.point, robotLocation.point, followAngle)
+
+        val finalPoint = allPoints.last()
+
+        if (finalAngle.notNaN() && finalPoint.point.distanceTo(robotLocation.point) < finalPoint.followDistance)
+            finishingMove = true
+
+        if (finishingMove)
+            goToPosition_raw(finalPoint.point.x, finalPoint.point.y, finalAngle)
     }
 
     fun getFollowPoint(pathPoints: ArrayList<CurvePoint>, robotLocation: Pose, followDistance: Double): CurvePoint {
@@ -58,24 +86,4 @@ object PurePursuit {
     }
 }
 
-fun lineCircleIntersection(center: Point, radius: Double, line1: Point, line2: Point) = Circle(center, radius).intersectingPoints(Line(line1, line2))
-
-data class CurvePoint(var point: Point, var followDistance: Double) {
-
-}
-
-data class PurePursuitBuilder(var followDistance: Double) {
-    val points = arrayListOf<CurvePoint>()
-
-    val firstFollowDistance = followDistance
-
-    fun resetArgs() {
-        followDistance = firstFollowDistance
-    }
-
-    fun add(point: Point) {
-        points.add(CurvePoint(point, followDistance))
-    }
-
-
-}
+data class CurvePoint(var point: Point, var followDistance: Double)

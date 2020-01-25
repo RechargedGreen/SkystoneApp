@@ -16,3 +16,5 @@ infix fun Double.difference(other: Double) = (this - other).absoluteValue
 
 infix fun Double.deadZone(deadZone: Double) = if (this.absoluteValue > deadZone) this else 0.0
 infix fun Double.clip(range:Double) = Range.clip(this, -range, range)
+
+fun Double.notNaN() = !this.isNaN()

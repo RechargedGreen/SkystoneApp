@@ -70,3 +70,5 @@ data class Circle(val center: Point, val radius: Double) {
 
     operator fun div(scalar: Double) = Circle(center, radius / scalar)
 }
+
+fun lineCircleIntersection(center: Point, radius: Double, line1: Point, line2: Point) = Circle(center, radius).intersectingPoints(Line(line1, line2))
