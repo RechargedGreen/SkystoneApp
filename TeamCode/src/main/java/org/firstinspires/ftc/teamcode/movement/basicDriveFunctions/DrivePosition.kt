@@ -14,6 +14,10 @@ object DrivePosition {
     lateinit var odometer: Odometry
 
     var world_pose_raw = Pose(Point(0.0, 0.0), Angle.createWrappedRad(0.0))
+        set(value) {
+            field = value
+            world_angle_unwrapped_raw = value.heading
+        }
 
     var world_pose_mirror
         get() = world_pose_raw.checkMirror
