@@ -81,11 +81,11 @@ object Geometry {
 }
 
 data class Point(
-        @JvmField val x: Double,
-        @JvmField val y: Double
+        @JvmField var x: Double,
+        @JvmField var y: Double
 ) {
-    val atan2 = Geometry.atan2(x, y)
-    val hypot = hypot(x, y)
+    val atan2 get() = Geometry.atan2(x, y)
+    val hypot get()  = hypot(x, y)
 
     fun distanceTo(other: Point): Double = (other - this).hypot
     fun angleTo(other: Point) = (other - this).atan2

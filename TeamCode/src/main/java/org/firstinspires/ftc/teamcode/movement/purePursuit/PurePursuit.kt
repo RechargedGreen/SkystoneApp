@@ -2,10 +2,18 @@ package org.firstinspires.ftc.teamcode.movement.purePursuit
 
 import org.firstinspires.ftc.teamcode.field.Point
 import org.firstinspires.ftc.teamcode.field.Pose
+import org.firstinspires.ftc.teamcode.movement.Angle
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.goToPosition_raw
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_x
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_y
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_angle_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_pose_raw
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_x_raw
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_y_raw
 import org.firstinspires.ftc.teamcode.movement.toDegrees
+import org.firstinspires.ftc.teamcode.opmodeLib.Globals.mode
 import org.firstinspires.ftc.teamcode.util.notNaN
+import kotlin.math.absoluteValue
 import kotlin.math.atan2
 
 /**
@@ -14,6 +22,9 @@ import kotlin.math.atan2
  * better end position? Peter suggests checking if the distance to end is < a certain amount - high priority
  * prevent skipping? - low priority
  * can't find any intersections - high priority
+ *
+ * fix the math for intersections - high priority
+ * fix infinite line glitch - high priority
  */
 
 class PurePursuitPath(var followDistance: Double) {
@@ -32,14 +43,27 @@ class PurePursuitPath(var followDistance: Double) {
     var finalAngle = Double.NaN
 }
 
-
 object PurePursuit {
-    fun angleBetween_deg(point:Point, otherPoint: Point):Double{
+    fun angleBetween_deg(point: Point, otherPoint: Point): Double {
         return atan2(otherPoint.x - point.x, otherPoint.y - point.y).toDegrees
+    }
+
+    fun angleWrap_deg(_angle: Double):Double{
+        var angle = _angle
+        while(angle < -180)
+            angle += 360.0
+        while(angle > 180.0)
+            angle -= 360.0
+        return angle
     }
 
     fun goToFollowPoint(targetPoint: Point, robotLocation: Point, followAngle: Double) {
         goToPosition_raw(targetPoint.x, targetPoint.y, angleBetween_deg(robotLocation, targetPoint) + followAngle)
+        val movementAbs = (movement_y + movement_x).absoluteValue
+        /*if(movementAbs != 0.0){
+            movement_y /= movementAbs
+            movement_x /= movementAbs
+        }*/
     }
 
     var lastIndex = 0
@@ -57,7 +81,7 @@ object PurePursuit {
 
         val robotLocation = world_pose_raw
 
-        val followMe = getFollowPoint(allPoints, robotLocation, allPoints[0].followDistance)
+        val followMe = getFollowPoint(allPoints, robotLocation, allPoints[0].followDistance, followAngle)
 
         goToFollowPoint(followMe, robotLocation.point, followAngle)
 
@@ -71,7 +95,7 @@ object PurePursuit {
     }
 
     var followMe: Point? = null
-    fun getFollowPoint(pathPoints: ArrayList<CurvePoint>, robotLocation: Pose, followDistance: Double): Point {
+    fun getFollowPoint(pathPoints: ArrayList<CurvePoint>, robotLocation: Pose, followDistance: Double, followAngle:Double): Point {
         if (followMe == null)
             followMe = pathPoints[0].point
 
@@ -79,16 +103,20 @@ object PurePursuit {
             val startLine = pathPoints[i]
             val endLine = pathPoints[i + 1]
 
-            val intersections = lineCircleIntersection(robotLocation.point, followDistance, startLine.point, endLine.point)
+            val intersections = lineCircleIntersection(robotLocation.point, followDistance, startLine.point.copy(), endLine.point.copy())
 
-            var closestDistance = Double.POSITIVE_INFINITY
+            var closestAngle = 1000.0
+
+            mode.telemetry.addData("intersections", intersections.size)
+            mode.telemetry.addData("x", world_x_raw)
+            mode.telemetry.addData("y", world_y_raw)
+            mode.telemetry.addData("deg", world_angle_raw.deg)
 
             for (intersection in intersections) {
-                val angle = robotLocation.point.angleTo(intersection)
-                val distance = endLine.point.distanceTo(robotLocation.point)
+                val angle = angleWrap_deg((angleBetween_deg(robotLocation.point, intersection) + followAngle)).absoluteValue
 
-                if (distance < closestDistance) {
-                    closestDistance = distance
+                if (angle < closestAngle) {
+                    closestAngle = angle
                     followMe = intersection
                 }
             }
