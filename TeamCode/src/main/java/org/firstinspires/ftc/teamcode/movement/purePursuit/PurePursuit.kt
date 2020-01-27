@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.movement.purePursuit
 
-import org.firstinspires.ftc.teamcode.field.*
+import org.firstinspires.ftc.teamcode.field.Point
+import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.goToPosition_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_pose_raw
-import org.firstinspires.ftc.teamcode.util.*
-import kotlin.math.*
+import org.firstinspires.ftc.teamcode.movement.toDegrees
+import org.firstinspires.ftc.teamcode.util.notNaN
+import kotlin.math.atan2
 
 /**
  * todo things to add
@@ -30,8 +32,15 @@ class PurePursuitPath(var followDistance: Double) {
     var finalAngle = Double.NaN
 }
 
+
 object PurePursuit {
-    fun goToFollowPoint(targetPoint: Point, robotLocation: Point, followAngle: Double) = goToPosition_raw(targetPoint.x, targetPoint.y, robotLocation.angleTo(targetPoint).deg + followAngle)
+    fun angleBetween_deg(point:Point, otherPoint: Point):Double{
+        return atan2(otherPoint.x - point.x, otherPoint.y - point.y).toDegrees
+    }
+
+    fun goToFollowPoint(targetPoint: Point, robotLocation: Point, followAngle: Double) {
+        goToPosition_raw(targetPoint.x, targetPoint.y, angleBetween_deg(robotLocation, targetPoint) + followAngle)
+    }
 
     var lastIndex = 0
     var finishingMove = false
@@ -39,6 +48,7 @@ object PurePursuit {
     fun reset() {
         lastIndex = 0
         finishingMove = false
+        followMe = null
     }
 
     fun followCurve(path: PurePursuitPath, followAngle: Double = 0.0) {
@@ -49,7 +59,7 @@ object PurePursuit {
 
         val followMe = getFollowPoint(allPoints, robotLocation, allPoints[0].followDistance)
 
-        goToFollowPoint(followMe.point, robotLocation.point, followAngle)
+        goToFollowPoint(followMe, robotLocation.point, followAngle)
 
         val finalPoint = allPoints.last()
 
@@ -60,8 +70,10 @@ object PurePursuit {
             goToPosition_raw(finalPoint.point.x, finalPoint.point.y, finalAngle)
     }
 
-    fun getFollowPoint(pathPoints: ArrayList<CurvePoint>, robotLocation: Pose, followDistance: Double): CurvePoint {
-        val followMe = pathPoints[0].copy()
+    var followMe: Point? = null
+    fun getFollowPoint(pathPoints: ArrayList<CurvePoint>, robotLocation: Pose, followDistance: Double): Point {
+        if (followMe == null)
+            followMe = pathPoints[0].point
 
         for (i in 0 until pathPoints.size - 1) {
             val startLine = pathPoints[i]
@@ -69,20 +81,20 @@ object PurePursuit {
 
             val intersections = lineCircleIntersection(robotLocation.point, followDistance, startLine.point, endLine.point)
 
-            var closestAngle = Double.POSITIVE_INFINITY
+            var closestDistance = Double.POSITIVE_INFINITY
 
             for (intersection in intersections) {
                 val angle = robotLocation.point.angleTo(intersection)
-                val deltaAngle = (angle - robotLocation.heading).wrapped().rad.absoluteValue
+                val distance = endLine.point.distanceTo(robotLocation.point)
 
-                if (deltaAngle < closestAngle) {
-                    closestAngle = deltaAngle
-                    followMe.point = intersection
+                if (distance < closestDistance) {
+                    closestDistance = distance
+                    followMe = intersection
                 }
             }
         }
 
-        return followMe
+        return followMe!!
     }
 }
 

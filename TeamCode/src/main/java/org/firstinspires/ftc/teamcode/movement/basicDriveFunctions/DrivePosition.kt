@@ -1,14 +1,19 @@
 package org.firstinspires.ftc.teamcode.movement.basicDriveFunctions
 
-import org.firstinspires.ftc.teamcode.field.*
-import org.firstinspires.ftc.teamcode.movement.*
-import org.firstinspires.ftc.teamcode.odometry.*
+import org.firstinspires.ftc.teamcode.field.Geometry
+import org.firstinspires.ftc.teamcode.field.Point
+import org.firstinspires.ftc.teamcode.field.Pose
+import org.firstinspires.ftc.teamcode.field.checkMirror
+import org.firstinspires.ftc.teamcode.movement.Angle
+import org.firstinspires.ftc.teamcode.movement.Speedometer
+import org.firstinspires.ftc.teamcode.odometry.Odometry
 import org.firstinspires.ftc.teamcode.odometry.ThreeWheel.degTraveled
 import org.firstinspires.ftc.teamcode.odometry.ThreeWheel.xTraveled
 import org.firstinspires.ftc.teamcode.odometry.ThreeWheel.yTraveled
 import org.firstinspires.ftc.teamcode.opmodeLib.RunData.ALLIANCE
-import org.firstinspires.ftc.teamcode.util.*
-import kotlin.math.*
+import org.firstinspires.ftc.teamcode.util.epsilonEquals
+import kotlin.math.cos
+import kotlin.math.sin
 
 object DrivePosition {
     lateinit var odometer: Odometry
@@ -34,7 +39,7 @@ object DrivePosition {
     val world_point_raw: Point get() = world_pose_raw.point
     val world_point_mirror: Point get() = world_point_raw.checkMirror
 
-    val world_angle_raw = world_pose_raw.heading
+    val world_angle_raw get() = world_pose_raw.heading
     val world_angle_mirror: Angle get() = world_angle_raw * ALLIANCE.sign
 
     var world_angle_unwrapped_raw = Angle.createUnwrappedRad(0.0)
@@ -65,10 +70,10 @@ object DrivePosition {
                 move
         )
 
-        val finalDelta = Geometry.pointDelta(pointDelta, world_angle_raw)
+        yTraveled += pointDelta.y
+        xTraveled += pointDelta.x
 
-        yTraveled += finalDelta.y
-        xTraveled += finalDelta.x
+        val finalDelta = Geometry.pointDelta(pointDelta, world_angle_raw)
 
         world_pose_raw = Pose(world_pose_raw.point + finalDelta, finalAngle)
         world_angle_unwrapped_raw = finalAngle
