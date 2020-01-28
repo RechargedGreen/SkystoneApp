@@ -41,6 +41,8 @@ object DrivePosition {
 
     val world_angle_raw get() = world_pose_raw.heading
     val world_angle_mirror: Angle get() = world_angle_raw * ALLIANCE.sign
+    val world_deg_raw:Double get() = world_angle_raw.deg
+    val world_deg_mirror:Double get() = world_angle_mirror.deg
 
     var world_angle_unwrapped_raw = Angle.createUnwrappedRad(0.0)
     val world_angle_unwrapped_mirror: Angle get() = world_angle_unwrapped_raw * ALLIANCE.sign

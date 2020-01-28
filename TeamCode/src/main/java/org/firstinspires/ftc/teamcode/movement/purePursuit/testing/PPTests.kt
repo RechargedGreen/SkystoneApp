@@ -44,9 +44,9 @@ class SimpleCurveTest : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
     override fun onMainLoop() {
         val path = PurePursuitPath(15.0)
         path.finalAngle = 0.0
-        //path.add(Point(0.0, 0.0))
+     //   path.add(Point(0.0, 0.0))
         path.add(Point(0.0, 48.0))
-        path.add(Point(72.0, 48.0))
+        path.add(Point(90.0, 48.0))
         PurePursuit.followCurve(path, 0.0)
 
         telemetry.addData("finishingMove", PurePursuit.finishingMove)

@@ -2,11 +2,11 @@ package org.firstinspires.ftc.teamcode.movement.purePursuit
 
 import org.firstinspires.ftc.teamcode.field.Point
 import org.firstinspires.ftc.teamcode.field.Pose
-import org.firstinspires.ftc.teamcode.movement.Angle
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.goToPosition_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_x
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_y
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_angle_raw
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_deg_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_pose_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_x_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_y_raw
@@ -50,7 +50,7 @@ object PurePursuit {
 
     fun angleWrap_deg(_angle: Double):Double{
         var angle = _angle
-        while(angle < -180)
+        while(angle < -180.0)
             angle += 360.0
         while(angle > 180.0)
             angle -= 360.0
@@ -113,7 +113,7 @@ object PurePursuit {
             mode.telemetry.addData("deg", world_angle_raw.deg)
 
             for (intersection in intersections) {
-                val angle = angleWrap_deg((angleBetween_deg(robotLocation.point, intersection) + followAngle)).absoluteValue
+                val angle = angleWrap_deg((angleBetween_deg(robotLocation.point, intersection) - world_deg_raw + followAngle)).absoluteValue
 
                 if (angle < closestAngle) {
                     closestAngle = angle
