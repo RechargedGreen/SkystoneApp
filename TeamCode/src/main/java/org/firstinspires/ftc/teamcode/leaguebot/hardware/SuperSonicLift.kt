@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.leaguebot.hardware
 
 import com.acmerobotics.dashboard.config.Config
-import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.teamcode.bulkLib.*
 import org.firstinspires.ftc.teamcode.leaguebot.teleop.LeagueTeleOp
 import org.firstinspires.ftc.teamcode.opmodeLib.Globals.mode
 import org.firstinspires.ftc.teamcode.util.Clock
-import kotlin.math.PI
 import kotlin.math.absoluteValue
 
 /**
@@ -87,19 +85,6 @@ class SuperSonicLift {
                 lower()
         }
 
-    var heightTargetRTP = 0.0
-        set(value) {
-            var newValue = value
-            if (newValue > targetCap)
-                newValue = targetCap
-
-            desiredControlState = ControlStates.RTP
-            field = newValue
-
-            if (newValue <= 0.0)
-                lower()
-        }
-
     var errorSum = 0.0
 
     fun resetIntegral() {
@@ -115,8 +100,7 @@ class SuperSonicLift {
     enum class ControlStates {
         HEIGHT,
         LOWER,
-        ULTRA_MANUAL,
-        RTP
+        ULTRA_MANUAL
     }
 
     var lastRawHeight = Double.NaN
@@ -150,13 +134,6 @@ class SuperSonicLift {
                 power = if (height > 10.0) -0.3 else if (height > 2.0) -0.25 else -0.1
             }
 
-            ControlStates.RTP -> {
-                val targetRotations = heightTargetRTP / SPOOL_RADIUS / 2.0 / PI
-                val baseTicks = (targetRotations * 28.0 * 3.7).toInt()
-                left.targetPosition = baseTicks + resetSpoolTicks
-                left.mode = DcMotor.RunMode.RUN_TO_POSITION
-                left.power = 1.0
-            }
             ControlStates.HEIGHT -> {
                 power += heightLeft * kP
                 power -= speed * kD
@@ -187,12 +164,8 @@ class SuperSonicLift {
 
         if (bottomPressed && power < 0.0)
             power = 0.0
-
-        if (desiredControlState != ControlStates.RTP) {
-            left.mode = DcMotor.RunMode.RUN_USING_ENCODER
-            left.power = power
-            right.power = power
-        }
+        left.power = power
+        right.power = power
     }
 
     fun checkCalibration() {
@@ -204,10 +177,7 @@ class SuperSonicLift {
 
     fun forceCalibration() {
         resetSpoolRadians = rawRadians
-        resetSpoolTicks = left.encoderTicks
     }
-
-    var resetSpoolTicks = 0
 
     fun triggerIntake() {
         heightTarget = LeagueTeleOp.intakeHeight
@@ -218,7 +188,7 @@ class SuperSonicLift {
     val radians get() = (rawRadians - resetSpoolRadians)
     val height get() = radians * SPOOL_RADIUS * fudgeFactor
 
-    val left = RevHubMotor("leftLift", Go_5_2::class).reverse.openLoopControl.float // this wasnt reversed
+    val left = RevHubMotor("leftLift", Go_5_2::class).openLoopControl.float
     val right = RevHubMotor("rightLift", Go_5_2::class).reverse.openLoopControl.float
     val encoder = Encoder(Robot.lynx1, 1, MotorEncoder.G3_7)
     val bottomPressed get() = !Robot.lynx1.cachedInput.getDigitalInput(1)
