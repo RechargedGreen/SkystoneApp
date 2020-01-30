@@ -142,7 +142,7 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
             }
         }
 
-        /*if (driver.dUp.justPressed) //todo make sure drive team likes this change
+        /*if (driver.dUp.justPressed)
             grabbingFoundationToggle = !grabbingFoundationToggle
         if (grabbingFoundationToggle)
             Robot.foundationGrabber.grab()

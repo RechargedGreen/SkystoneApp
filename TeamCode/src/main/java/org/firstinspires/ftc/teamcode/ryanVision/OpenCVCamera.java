@@ -44,9 +44,9 @@ public class OpenCVCamera extends VisionCamera implements CameraBridgeViewBase.C
 			cameraView.setVisibility(parameters.cameraMonitorViewId == 0 ? SurfaceView.INVISIBLE : SurfaceView.VISIBLE);
 			cameraView.setCvCameraViewListener(this);
 			if(parameters.cameraMonitorViewId == 0) {
-				cameraMonitorView = (ViewGroup) activity.findViewById(android.R.id.content); // todo do not add .getParent
+				cameraMonitorView = (ViewGroup) activity.findViewById(android.R.id.content);
 			} else {
-				cameraMonitorView = (LinearLayout) activity.findViewById(parameters.cameraMonitorViewId).getParent(); // todo added .getParent
+				cameraMonitorView = (LinearLayout) activity.findViewById(parameters.cameraMonitorViewId).getParent();
 			}
 			cameraMonitorView.addView(cameraView);
 			cameraView.enableView();

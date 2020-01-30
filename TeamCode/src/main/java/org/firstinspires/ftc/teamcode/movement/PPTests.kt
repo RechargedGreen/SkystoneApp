@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.movement.purePursuit.testing
+package org.firstinspires.ftc.teamcode.movement
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.field.Point
@@ -9,9 +9,6 @@ import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_point_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_x_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_y_raw
-import org.firstinspires.ftc.teamcode.movement.purePursuit.PurePursuit
-import org.firstinspires.ftc.teamcode.movement.purePursuit.PurePursuitPath
-import org.firstinspires.ftc.teamcode.movement.toDegrees
 import org.firstinspires.ftc.teamcode.opmodeLib.Alliance
 import kotlin.math.atan2
 

@@ -27,8 +27,8 @@ public class CanvasOverlay implements Overlay {
 		this.scalingFactor = 1;
 	}
 
-	// TODO: find a better way to manage colors
-	public static int getColorFromScalarBGR(Scalar scalar) {//todo swapped to rgb from bgr
+
+	public static int getColorFromScalarBGR(Scalar scalar) {
 		return Color.rgb((int) scalar.val[0], (int) scalar.val[2], (int) scalar.val[2]);
 		//return Color.rgb((int) scalar.val[2], (int) scalar.val[1], (int) scalar.val[0]);
 	}

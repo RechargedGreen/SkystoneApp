@@ -58,7 +58,7 @@ public class VuforiaCamera extends VisionCamera {
 							}
 							byteBuffer.get(frameBuffer);
 							if(this.frame == null) {
-								this.frame = new Mat(imageHeight, imageWidth, CvType.CV_8UC3);// todo tried 1, 3 amd 4
+								this.frame = new Mat(imageHeight, imageWidth, CvType.CV_8UC3);
 
 								if(overlayView != null) {
 									overlayView.setImageSize(imageWidth, imageHeight);

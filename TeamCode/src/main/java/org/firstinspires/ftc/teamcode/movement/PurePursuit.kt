@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.movement.purePursuit
+package org.firstinspires.ftc.teamcode.movement
 
-import org.firstinspires.ftc.teamcode.field.Point
-import org.firstinspires.ftc.teamcode.field.Pose
+import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.goToPosition_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_x
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_y
@@ -10,22 +9,9 @@ import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_pose_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_x_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_y_raw
-import org.firstinspires.ftc.teamcode.movement.toDegrees
 import org.firstinspires.ftc.teamcode.opmodeLib.Globals.mode
-import org.firstinspires.ftc.teamcode.util.notNaN
-import kotlin.math.absoluteValue
-import kotlin.math.atan2
-
-/**
- * todo things to add
- * modifiable follow radius. Peter's suggestion is drawing parallel line then - medium priority
- * better end position? Peter suggests checking if the distance to end is < a certain amount - high priority
- * prevent skipping? - low priority
- * can't find any intersections - high priority
- *
- * fix the math for intersections - high priority
- * fix infinite line glitch - high priority
- */
+import org.firstinspires.ftc.teamcode.util.*
+import kotlin.math.*
 
 class PurePursuitPath(var followDistance: Double) {
     val curvePoints = ArrayList<CurvePoint>()
@@ -48,16 +34,16 @@ object PurePursuit {
         return atan2(otherPoint.x - point.x, otherPoint.y - point.y).toDegrees
     }
 
-    fun angleWrap_deg(_angle: Double):Double{
+    fun angleWrap_deg(_angle: Double): Double {
         var angle = _angle
-        while(angle < -180.0)
+        while (angle < -180.0)
             angle += 360.0
-        while(angle > 180.0)
+        while (angle > 180.0)
             angle -= 360.0
         return angle
     }
 
-    fun goToFollowPoint(targetPoint: Point, robotLocation: Point, followAngle: Double) {
+    fun goToFollowPoint(targetPoint: Point, robotLocation: Point, followAngle: Double, allowSkipping:Boolean = false) {
         goToPosition_raw(targetPoint.x, targetPoint.y, angleBetween_deg(robotLocation, targetPoint) + followAngle)
         val movementAbs = (movement_y + movement_x).absoluteValue
         /*if(movementAbs != 0.0){
@@ -95,7 +81,7 @@ object PurePursuit {
     }
 
     var followMe: Point? = null
-    fun getFollowPoint(pathPoints: ArrayList<CurvePoint>, robotLocation: Pose, followDistance: Double, followAngle:Double): Point {
+    fun getFollowPoint(pathPoints: ArrayList<CurvePoint>, robotLocation: Pose, followDistance: Double, followAngle: Double): Point {
         if (followMe == null)
             followMe = pathPoints[0].point
 
@@ -123,6 +109,53 @@ object PurePursuit {
         }
 
         return followMe!!
+    }
+
+    fun lineCircleIntersection(center: Point, radius: Double, lineP1: Point, lineP2: Point): ArrayList<Point> {
+        if ((lineP1.y - lineP2.y).absoluteValue < 0.003)
+            lineP1.y = lineP2.y + 0.003
+        if ((lineP1.x - lineP2.x).absoluteValue < 0.003)
+            lineP1.x = lineP2.x + 0.003
+
+        val m1 = (lineP2.y - lineP1.y) / (lineP2.x - lineP1.x)
+
+        val quadA = 1.0 + Math.pow(m1, 2.0)
+
+        val x1 = lineP1.x - center.x
+        val y1 = lineP1.y - center.y
+
+        val quadB = (2.0 * m1 * y1) - (2.0 * Math.pow(m1, 2.0) * x1)
+
+        val quadC = (Math.pow(m1, 2.0) * Math.pow(x1, 2.0)) - (2.0 * y1 * m1 * x1) + Math.pow(y1, 2.0) - Math.pow(radius, 2.0)
+
+        val points = ArrayList<Point>()
+
+        var xRoot1 = (-quadB + sqrt(Math.pow(quadB, 2.0) - (4.0 * quadA * quadC))) / (2.0 * quadA)
+
+        var yRoot1 = m1 * (xRoot1 - x1) + y1
+
+        xRoot1 += center.x
+        yRoot1 += center.y
+
+        val minX = if (lineP1.x < lineP2.x) lineP1.x else lineP2.x
+        val maxX = if (lineP1.x > lineP2.x) lineP1.x else lineP2.x
+
+        if (xRoot1.notNaN() && yRoot1.notNaN())
+            if (xRoot1 > minX && xRoot1 < maxX)
+                points.add(Point(xRoot1, yRoot1))
+
+        var xRoot2 = (-quadB - sqrt(Math.pow(quadB, 2.0) - (4.0 * quadA * quadC))) / (2.0 * quadA)
+
+        var yRoot2 = m1 * (xRoot2 - x1) + y1
+
+        xRoot2 += center.x
+        yRoot2 += center.y
+
+        if (xRoot2.notNaN() && yRoot2.notNaN())
+            if (xRoot2 > minX && xRoot2 < maxX)
+                points.add(Point(xRoot2, yRoot2))
+
+        return points
     }
 }
 

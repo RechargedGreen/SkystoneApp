@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.opmodeLib.Globals
 @Config
 class LeagueFoundationGrabber {
     private val leftServo = RevHubServo("rightFoundation")
-    private val rightServo = RevHubServo("leftFoundation")// todo make not jank name
+    private val rightServo = RevHubServo("leftFoundation")
 
 
     enum class State(val leftPos: () -> Double, val rightPos: () -> Double) {

@@ -11,8 +11,6 @@ object BlackMagic {
         get() = OpModeManagerImpl.getOpModeManagerOfActivity(AppUtil.getInstance().rootActivity)
 
     val hMap: HardwareMap get() = Globals.mode.hardwareMap
-    /*val hMap: HardwareMap//todo fix
-        get() = opModeManager.hardwareMap*/
 
     fun lynxModuleFromController(controller: LynxController): LynxModule {
         val moduleField = LynxController::class.java.getDeclaredField("module")
