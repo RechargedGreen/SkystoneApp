@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.opmodeLib.RunData.ALLIANCE
 import kotlin.math.*
 
 object DriveMovement {
+    var veloControl = false
+
     var movement_y = 0.0
     var movement_x = 0.0
     var movement_turn = 0.0

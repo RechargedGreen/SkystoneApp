@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.internal.opmode.*
 import org.firstinspires.ftc.teamcode.bulkLib.*
 import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.*
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.veloControl
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.setPosition_mirror
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_x_mirror
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_y_mirror
@@ -104,6 +105,8 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean, pri
         onInit()
 
         eventLoop@ while (true) {
+            veloControl = isAutonomous
+
             GamePadMaster.update()
 
             BulkDataMaster.clearAllCaches()

@@ -46,4 +46,10 @@ object Speedometer {
 
     var fieldSpeed: Point = Point(0.0, 0.0)
         private set
+
+    val point_slip get() = Point(fieldSpeed.x * distanceFactor, fieldSpeed.y * distanceFactor)
+    val deg_slip get() = degPerSec * turnFactor
+
+    val distanceFactor = 0.3
+    val turnFactor = 0.1
 }
