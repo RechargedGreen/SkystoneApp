@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.movement
 
-import org.firstinspires.ftc.teamcode.field.*
+import org.firstinspires.ftc.teamcode.field.Point
+import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.goToPosition_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_x
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_y
@@ -10,8 +11,11 @@ import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_x_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_y_raw
 import org.firstinspires.ftc.teamcode.opmodeLib.Globals.mode
-import org.firstinspires.ftc.teamcode.util.*
-import kotlin.math.*
+import org.firstinspires.ftc.teamcode.util.notNaN
+import kotlin.math.absoluteValue
+import kotlin.math.atan2
+import kotlin.math.hypot
+import kotlin.math.sqrt
 
 class PurePursuitPath(var followDistance: Double) {
     val curvePoints = ArrayList<CurvePoint>()
@@ -43,7 +47,7 @@ object PurePursuit {
         return angle
     }
 
-    fun goToFollowPoint(targetPoint: Point, robotLocation: Point, followAngle: Double, allowSkipping:Boolean = false) {
+    fun goToFollowPoint(targetPoint: Point, robotLocation: Point, followAngle: Double, allowSkipping: Boolean = false) {
         goToPosition_raw(targetPoint.x, targetPoint.y, angleBetween_deg(robotLocation, targetPoint) + followAngle)
         val movementAbs = (movement_y + movement_x).absoluteValue
         /*if(movementAbs != 0.0){
@@ -67,14 +71,17 @@ object PurePursuit {
 
         val robotLocation = world_pose_raw
 
-        val followMe = getFollowPoint(allPoints, robotLocation, allPoints[0].followDistance, followAngle)
-
-        goToFollowPoint(followMe, robotLocation.point, followAngle)
+        var followMe = getFollowPoint(allPoints, robotLocation, allPoints[0].followDistance, followAngle)
 
         val finalPoint = allPoints.last()
 
-        if (finalAngle.notNaN() && finalPoint.point.distanceTo(robotLocation.point) < finalPoint.followDistance)
-            finishingMove = true
+        if (hypot(finalPoint.point.x - world_x_raw, finalPoint.point.y - world_y_raw) <= finalPoint.followDistance) {
+            followMe = finalPoint.point
+            if (finalAngle.notNaN())
+                finishingMove = true
+        }
+
+        goToFollowPoint(followMe, robotLocation.point, followAngle)
 
         if (finishingMove)
             goToPosition_raw(finalPoint.point.x, finalPoint.point.y, finalAngle)
@@ -99,7 +106,7 @@ object PurePursuit {
             mode.telemetry.addData("deg", world_angle_raw.deg)
 
             for (intersection in intersections) {
-                val angle = angleWrap_deg((angleBetween_deg(robotLocation.point, intersection) - world_deg_raw + followAngle)).absoluteValue
+                val angle = angleWrap_deg((angleBetween_deg(robotLocation.point, intersection) - (world_deg_raw + followAngle))).absoluteValue
 
                 if (angle < closestAngle) {
                     closestAngle = angle
