@@ -20,10 +20,7 @@ import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_y_raw
 import org.firstinspires.ftc.teamcode.opmodeLib.Globals.mode
 import org.firstinspires.ftc.teamcode.util.notNaN
-import kotlin.math.absoluteValue
-import kotlin.math.atan2
-import kotlin.math.hypot
-import kotlin.math.sqrt
+import kotlin.math.*
 
 class PurePursuitPath(var followDistance: Double) {
     val curvePoints = ArrayList<CurvePoint>()
@@ -114,7 +111,7 @@ object PurePursuit {
 
         val finalPoint = allPoints.last()
 
-        if (hypot(finalPoint.point.x - world_x_raw, finalPoint.point.y - world_y_raw) <= 10.0) {
+        if (lastIndex >= allPoints.size - 2 && hypot(finalPoint.point.x - world_x_raw, finalPoint.point.y - world_y_raw) <= 10.0) {
             followMe = finalPoint.point
             if (finalAngle.notNaN())
                 finishingMove = true
@@ -133,7 +130,7 @@ object PurePursuit {
         if (followMe == null)
             followMe = pathPoints[0].point
 
-        for (i in 0 until pathPoints.size - 1) {
+        for (i in 0 until min(lastIndex+2, pathPoints.size - 1)) {
             val startLine = pathPoints[i]
             val endLine = pathPoints[i + 1]
 
@@ -145,6 +142,9 @@ object PurePursuit {
             mode.telemetry.addData("x", world_x_raw)
             mode.telemetry.addData("y", world_y_raw)
             mode.telemetry.addData("deg", world_angle_raw.deg)
+
+            if (intersections.isNotEmpty())
+                lastIndex = i
 
             for (intersection in intersections) {
                 val angle = angleWrap_deg((angleBetween_deg(robotLocation.point, intersection) - (world_deg_raw + followAngle))).absoluteValue

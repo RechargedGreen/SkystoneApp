@@ -42,7 +42,7 @@ class GoToFollowPointTest : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0))
 }
 
 @TeleOp(group = "c")
-class SimpleCurveTest : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
+class SimpleCurveTest : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 180.0.toRadians)) {
     override fun onStart() {
         PurePursuit.reset()
     }
@@ -54,6 +54,27 @@ class SimpleCurveTest : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
         path.add(Point(0.0, 48.0))
         path.add(Point(24.0, 72.0))
         path.extrude(48.0, 90.0)
+        PurePursuit.followCurve(path, 180.0)
+
+        telemetry.addData("finishingMove", PurePursuit.finishingMove)
+    }
+}
+
+@TeleOp(group = "c")
+class SquareTest : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
+    override fun onStart() {
+        PurePursuit.reset()
+    }
+
+    override fun onMainLoop() {
+        val path = PurePursuitPath(8.0)
+        path.finalAngle = -180.0
+        for (i in 0 until 3) {
+            path.add(Point(0.0, 0.0))
+            path.add(Point(0.0, 24.0))
+            path.add(Point(24.0, 24.0))
+            path.add(Point(24.0, 0.0))
+        }
         PurePursuit.followCurve(path, 0.0)
 
         telemetry.addData("finishingMove", PurePursuit.finishingMove)
@@ -73,6 +94,7 @@ class PPTurnTuner : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
             movement_turn = -(world_deg_raw) * PurePursuitConstants.gun_turn_p - PurePursuitConstants.gun_turn_d * Speedometer.degPerSec
     }
 }
+
 
 @TeleOp(group = "c")
 class SlippageCalculater : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
