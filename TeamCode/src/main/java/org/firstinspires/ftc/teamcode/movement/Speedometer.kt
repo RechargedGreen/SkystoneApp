@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.movement
 
+import com.acmerobotics.dashboard.config.Config
 import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_angle_raw
 import org.firstinspires.ftc.teamcode.util.*
 
+@Config
 object Speedometer {
     private var lastUpdateTime = 0.0
     val xInchPerSec: Double get() = robotSpeed.x
@@ -47,9 +49,5 @@ object Speedometer {
     var fieldSpeed: Point = Point(0.0, 0.0)
         private set
 
-    val point_slip get() = Point(fieldSpeed.x * distanceFactor, fieldSpeed.y * distanceFactor)
-    val deg_slip get() = degPerSec * turnFactor
-
-    val distanceFactor = 0.3
-    val turnFactor = 0.1
+    val point_slip get() = Point(fieldSpeed.x * PurePursuitConstants.distanceFactor, fieldSpeed.y * PurePursuitConstants.distanceFactor)
 }

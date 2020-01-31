@@ -1,10 +1,18 @@
 package org.firstinspires.ftc.teamcode.movement
 
+import com.acmerobotics.dashboard.config.Config
+import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.teamcode.field.Point
 import org.firstinspires.ftc.teamcode.field.Pose
+import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.gun_turn_d
+import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.gun_turn_p
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.goToPosition_raw
+import org.firstinspires.ftc.teamcode.movement.Speedometer.point_slip
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.moveFieldCentric_raw
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_turn
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_x
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_y
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.veloControl
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_angle_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_deg_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_pose_raw
@@ -30,10 +38,31 @@ class PurePursuitPath(var followDistance: Double) {
         curvePoints.add(CurvePoint(point, followDistance))
     }
 
+    fun extrude(distance:Double, angle:Double){
+        val rad = angle.toRadians
+        val lastPoint = curvePoints.last().point
+        add(Point(lastPoint.x + rad.sin * distance, lastPoint.y + rad.cos * distance))
+    }
+
     var finalAngle = Double.NaN
 }
 
+val Double.sin get() = Math.sin(this)
+val Double.cos get() = Math.cos(this)
+val Double.tan get() = Math.tan(this)
+
+@Config
+object PurePursuitConstants {
+    @JvmField
+    var gun_turn_p = 0.03
+    @JvmField
+    var gun_turn_d = 0.0015
+    @JvmField
+    var distanceFactor = 0.25
+}
+
 object PurePursuit {
+
     fun angleBetween_deg(point: Point, otherPoint: Point): Double {
         return atan2(otherPoint.x - point.x, otherPoint.y - point.y).toDegrees
     }
@@ -47,13 +76,23 @@ object PurePursuit {
         return angle
     }
 
-    fun goToFollowPoint(targetPoint: Point, robotLocation: Point, followAngle: Double, allowSkipping: Boolean = false) {
-        goToPosition_raw(targetPoint.x, targetPoint.y, angleBetween_deg(robotLocation, targetPoint) + followAngle)
+    fun goToFollowPoint(targetPoint: Point, robotLocation: Point, followAngle: Double) {
+        //goToPosition_raw(targetPoint.x, targetPoint.y, angleBetween_deg(robotLocation, targetPoint) + followAngle)
+
+
+        val slip = point_slip
+        val adjustedTarget = Point(targetPoint.x - slip.x, targetPoint.y - slip.y)
+        moveFieldCentric_raw(adjustedTarget.x - robotLocation.x, adjustedTarget.y - robotLocation.y, 0.0)
+
+        val targetAngle = angleBetween_deg(robotLocation, targetPoint) + followAngle
+
+        movement_turn = Range.clip(angleWrap_deg(targetAngle - world_deg_raw) * gun_turn_p - Speedometer.degPerSec * gun_turn_d, -1.0, 1.0)
+
         val movementAbs = (movement_y + movement_x).absoluteValue
-        /*if(movementAbs != 0.0){
+        if (movementAbs != 0.0) {
             movement_y /= movementAbs
             movement_x /= movementAbs
-        }*/
+        }
     }
 
     var lastIndex = 0
@@ -75,7 +114,7 @@ object PurePursuit {
 
         val finalPoint = allPoints.last()
 
-        if (hypot(finalPoint.point.x - world_x_raw, finalPoint.point.y - world_y_raw) <= finalPoint.followDistance) {
+        if (hypot(finalPoint.point.x - world_x_raw, finalPoint.point.y - world_y_raw) <= 10.0) {
             followMe = finalPoint.point
             if (finalAngle.notNaN())
                 finishingMove = true
@@ -85,6 +124,8 @@ object PurePursuit {
 
         if (finishingMove)
             goToPosition_raw(finalPoint.point.x, finalPoint.point.y, finalAngle)
+
+        veloControl = !finishingMove
     }
 
     var followMe: Point? = null

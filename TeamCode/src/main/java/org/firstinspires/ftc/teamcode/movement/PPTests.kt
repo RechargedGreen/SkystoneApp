@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.stopDrive
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.veloControl
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_angle_unwrapped_raw
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_deg_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_point_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_x_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_y_raw
@@ -48,13 +49,28 @@ class SimpleCurveTest : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
 
     override fun onMainLoop() {
         val path = PurePursuitPath(15.0)
-        path.finalAngle = 0.0
+        path.finalAngle = 45.0
         path.add(Point(0.0, 0.0))
         path.add(Point(0.0, 48.0))
-        path.add(Point(72.0, 48.0))
+        path.add(Point(24.0, 72.0))
+        path.extrude(48.0, 90.0)
         PurePursuit.followCurve(path, 0.0)
 
         telemetry.addData("finishingMove", PurePursuit.finishingMove)
+    }
+}
+
+@TeleOp(group = "c")
+class PPTurnTuner : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
+    var driving = false
+    override fun onMainLoop() {
+        veloControl = false
+        if (driver.a.justPressed)
+            driving = !driving
+        if (driving)
+            gamepadControl(driver)
+        else
+            movement_turn = -(world_deg_raw) * PurePursuitConstants.gun_turn_p - PurePursuitConstants.gun_turn_d * Speedometer.degPerSec
     }
 }
 
