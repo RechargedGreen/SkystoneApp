@@ -35,10 +35,14 @@ class PurePursuitPath(var followDistance: Double) {
         curvePoints.add(CurvePoint(point, followDistance))
     }
 
-    fun extrude(distance:Double, angle:Double){
+    fun extrude(distance: Double, angle: Double) {
         val rad = angle.toRadians
         val lastPoint = curvePoints.last().point
         add(Point(lastPoint.x + rad.sin * distance, lastPoint.y + rad.cos * distance))
+    }
+
+    fun toY(axis: Double) {
+        add(Point(curvePoints.last().point.x, axis))
     }
 
     var finalAngle = Double.NaN
@@ -130,7 +134,7 @@ object PurePursuit {
         if (followMe == null)
             followMe = pathPoints[0].point
 
-        for (i in 0 until min(lastIndex+2, pathPoints.size - 1)) {
+        for (i in 0 until min(lastIndex + 2, pathPoints.size - 1)) {
             val startLine = pathPoints[i]
             val endLine = pathPoints[i + 1]
 
