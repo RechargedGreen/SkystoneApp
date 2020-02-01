@@ -76,6 +76,10 @@ object PurePursuit {
         return angle
     }
 
+    fun distanceBetweenPoints(point: Point, otherPoint: Point): Double {
+        return hypot(point.x - otherPoint.x, point.y - otherPoint.y)
+    }
+
     fun goToFollowPoint(targetPoint: Point, robotLocation: Point, followAngle: Double) {
         //goToPosition_raw(targetPoint.x, targetPoint.y, angleBetween_deg(robotLocation, targetPoint) + followAngle)
 
@@ -104,13 +108,95 @@ object PurePursuit {
         followMe = null
     }
 
+    fun findCurvePoint(points: ArrayList<CurvePoint>, robotLocation: Point): CurvePoint {
+        if (points.size <= 2)
+            return points[points.size - 1]
+
+        if (lastIndex <= 0 || lastIndex >= points.size - 2) { // handling of very start and end of path
+            val index = max(lastIndex - 1, 0)
+
+            val p0 = points[index].point
+            val p1 = points[index + 1].point
+            val p2 = points[index + 2].point
+
+            val distance1 = projectToLine(p0, p1, robotLocation)
+            val distance2 = projectToLine(p1, p2, robotLocation)
+
+            val angR = angleBetween_deg(p1, robotLocation)
+            val ang0 = angleWrap_deg(angleBetween_deg(p1, p0) - angR).absoluteValue
+            val ang2 = angleWrap_deg(angleBetween_deg(p1, p2) - angR).absoluteValue // if there's no projections we need to find the angle
+
+            if (distance1.isNaN() || distance2.isNaN()) {
+                if (distance1.notNaN())
+                    return points[index + 1]
+                if (distance2.notNaN())
+                    return points[index + 2]
+
+                return if (ang0 < ang2)
+                    points[index + 0]
+                else
+                    points[index + 2]
+            }
+
+            return if (distance1 > distance2) points[index + 1] else points[index + 2]
+        }
+
+        val index = lastIndex - 1
+
+        val p0 = points[index].point
+        val p1 = points[index + 1].point
+        val p2 = points[index + 2].point
+        val p3 = points[index + 3].point
+
+        val distance1 = projectToLine(p0, p1, robotLocation)
+        val distance2 = projectToLine(p1, p2, robotLocation)
+        val distance3 = projectToLine(p2, p3, robotLocation)
+
+        val listOfDistances = ArrayList<IndexedData<Double>>()
+        listOfDistances.add(IndexedData(1, distance1))
+        listOfDistances.add(IndexedData(2, distance2))
+        listOfDistances.add(IndexedData(3, distance3))
+        val listOfActualDistances = ArrayList<IndexedData<Double>>()
+        for (d in listOfDistances)/// remove nan values
+            if (d.data.notNaN())
+                listOfActualDistances.add(d)
+        if (listOfActualDistances.isNotEmpty())
+            return points[index + listOfActualDistances.sortedByDescending { it.data }.last().index] // do lowest projection
+
+        if (distanceBetweenPoints(robotLocation, p1) < distanceBetweenPoints(robotLocation, p2)) { /// check early point angles
+            val angR = angleBetween_deg(p1, robotLocation)
+            val ang0 = angleWrap_deg(angleBetween_deg(p1, p0) - angR).absoluteValue
+            val ang2 = angleWrap_deg(angleBetween_deg(p1, p2) - angR).absoluteValue
+
+            return if (ang0 < ang2)
+                points[index + 0]
+            else
+                points[index + 2]
+        }
+
+        val angR = angleBetween_deg(p2, robotLocation) // check later point angles
+        val ang1 = angleWrap_deg(angleBetween_deg(p2, p1) - angR).absoluteValue
+        val ang3 = angleWrap_deg(angleBetween_deg(p2, p3) - angR).absoluteValue
+
+        return if (ang1 < ang3)
+            points[index + 1]
+        else
+            points[index + 3]
+    }
+
     fun followCurve(path: PurePursuitPath, followAngle: Double = 0.0) {
         val allPoints = path.curvePoints
+
+        if (allPoints.isEmpty())
+            throw IllegalArgumentException("pp path needs a point")
+
         val finalAngle = path.finalAngle
 
         val robotLocation = world_pose_raw
 
-        var followMe = getFollowPoint(allPoints, robotLocation, allPoints[0].followDistance, followAngle)
+        val curvePoint = findCurvePoint(allPoints, robotLocation.point)
+
+        var followMe = getFollowPoint(allPoints, robotLocation, curvePoint.followDistance, followAngle)
 
         val finalPoint = allPoints.last()
 
@@ -239,5 +325,7 @@ object PurePursuit {
         return distance
     }
 }
+
+data class IndexedData<type>(val index: Int, val data: type)
 
 data class CurvePoint(var point: Point, var followDistance: Double)
