@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.movement
 
-import com.acmerobotics.dashboard.config.Config
-import com.qualcomm.robotcore.util.Range
-import org.firstinspires.ftc.teamcode.field.Point
-import org.firstinspires.ftc.teamcode.field.Pose
+import com.acmerobotics.dashboard.config.*
+import com.qualcomm.robotcore.util.*
+import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.gun_turn_d
 import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.gun_turn_p
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.goToPosition_raw
@@ -19,7 +18,7 @@ import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_x_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_y_raw
 import org.firstinspires.ftc.teamcode.opmodeLib.Globals.mode
-import org.firstinspires.ftc.teamcode.util.notNaN
+import org.firstinspires.ftc.teamcode.util.*
 import kotlin.math.*
 
 class PurePursuitPath(var followDistance: Double) {
@@ -208,6 +207,36 @@ object PurePursuit {
                 points.add(Point(xRoot2, yRoot2))
 
         return points
+    }
+
+    fun projectToLine(lineP1: Point, lineP2: Point, robotLocation: Point): Double {
+        var distance = Double.NaN
+
+        val minX = if (lineP1.x < lineP2.x) lineP1.x else lineP2.x
+        val maxX = if (lineP1.x < lineP2.x) lineP2.x else lineP1.x
+
+        val minY = if (lineP1.y < lineP2.y) lineP1.y else lineP2.y
+        val maxY = if (lineP1.y < lineP2.y) lineP2.y else lineP1.y
+
+        if ((lineP1.x - lineP2.x).absoluteValue < 0.003)
+            return if (robotLocation.y < maxY && robotLocation.y > minY) (robotLocation.x - lineP1.x).absoluteValue else Double.NaN
+        if ((lineP1.y - lineP2.y).absoluteValue < 0.003)
+            return if (robotLocation.x < maxX && robotLocation.x > minX) (robotLocation.y - lineP1.y).absoluteValue else Double.NaN
+
+        val m1 = (lineP2.y - lineP1.y) / (lineP2.x - lineP1.x)
+        val m2 = -(1.0 / m1)
+
+        val b1 = lineP1.y - m1 * lineP1.x
+        val b2 = robotLocation.y - m2 * robotLocation.x
+
+        val x = (m1 * b2 - m1 * b1) / (m1 * m1 + 1)
+
+        if (x > minX && x < maxX) {
+            val y = x * m1 + b1
+            distance = Math.hypot(x - robotLocation.x, y - robotLocation.y)
+        }
+
+        return distance
     }
 }
 
