@@ -68,12 +68,9 @@ object PurePursuit {
 
     fun findCurvePoint(allCurvePoints: ArrayList<CurvePoint>, robotLocation: Point): CurvePoint {
         if (allCurvePoints.size < 2) {
-            lastCurvePointIndex = 0
+            lastCurvePointIndex = max(0, allCurvePoints.size - 1)
             return allCurvePoints[lastCurvePointIndex]
         }
-
-        if (lastCurvePointIndex == 0)
-            lastCurvePointIndex = 1
 
         if (lastIndex > lastCurvePointIndex)
             lastCurvePointIndex = lastIndex
