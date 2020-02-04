@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.movement
 
 import com.acmerobotics.dashboard.config.Config
-import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.teamcode.field.Point
 import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.gun_turn_d
@@ -31,6 +30,10 @@ class PurePursuitPath(var followDistance: Double, var moveSpeed: Double = 1.0) {
         followDistance = firstFollowDistance
     }
 
+    fun toX(x: Double) {
+        add(Point(x, curvePoints.last().point.y))
+    }
+
     fun add(point: Point) {
         curvePoints.add(CurvePoint(point, followDistance, moveSpeed, false))
     }
@@ -55,7 +58,7 @@ val Double.tan get() = Math.tan(this)
 @Config
 object PurePursuitConstants {
     @JvmField
-    var gun_turn_p = 0.03
+    var gun_turn_p = 0.04 // was 0.03
     @JvmField
     var gun_turn_d = 0.0015
     @JvmField
@@ -75,7 +78,7 @@ object PurePursuit {
         if (lastIndex > lastCurvePointIndex)
             lastCurvePointIndex = lastIndex
 
-        if (allCurvePoints.size > lastCurvePointIndex + 1) {
+        if (allCurvePoints.size > lastCurvePointIndex + 1 && lastCurvePointIndex > 0) {
             val p0 = allCurvePoints[lastCurvePointIndex - 1].point
             val p1 = allCurvePoints[lastCurvePointIndex].point
             val p2 = allCurvePoints[lastCurvePointIndex + 1].point
@@ -117,7 +120,7 @@ object PurePursuit {
 
         val targetAngle = angleBetween_deg(robotLocation, targetPoint) + followAngle
 
-        movement_turn = Range.clip(angleWrap_deg(targetAngle - world_deg_raw) * gun_turn_p - Speedometer.degPerSec * gun_turn_d, -1.0, 1.0)
+        movement_turn = angleWrap_deg(targetAngle - world_deg_raw) * gun_turn_p - Speedometer.degPerSec * gun_turn_d
 
         val movementAbs = (movement_y + movement_x).absoluteValue
         if (movementAbs != 0.0) {

@@ -59,7 +59,7 @@ class MainIntake {
     fun update() {
         val power = when (state.hardwareState) {
             HardwareStates.STOP -> STOP_POWER
-            HardwareStates.IN -> if (!mode.isAutonomous || sensorTriggered) 1.0 else IN_POWER
+            HardwareStates.IN -> /*if (!mode.isAutonomous || sensorTriggered) 1.0 else IN_POWER*/1.0
             HardwareStates.OUT -> OUT_POWER
         }
 
