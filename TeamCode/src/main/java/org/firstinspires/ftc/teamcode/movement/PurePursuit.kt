@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.movement
 
-import com.acmerobotics.dashboard.config.*
-import com.qualcomm.robotcore.util.*
-import org.firstinspires.ftc.teamcode.field.*
+import com.acmerobotics.dashboard.config.Config
+import com.qualcomm.robotcore.util.Range
+import org.firstinspires.ftc.teamcode.field.Point
+import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.gun_turn_d
 import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.gun_turn_p
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.goToPosition_raw
@@ -18,10 +19,10 @@ import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_x_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_y_raw
 import org.firstinspires.ftc.teamcode.opmodeLib.Globals.mode
-import org.firstinspires.ftc.teamcode.util.*
+import org.firstinspires.ftc.teamcode.util.notNaN
 import kotlin.math.*
 
-class PurePursuitPath(var followDistance: Double) {
+class PurePursuitPath(var followDistance: Double, var moveSpeed: Double = 1.0) {
     val curvePoints = ArrayList<CurvePoint>()
 
     val firstFollowDistance = followDistance
@@ -31,7 +32,7 @@ class PurePursuitPath(var followDistance: Double) {
     }
 
     fun add(point: Point) {
-        curvePoints.add(CurvePoint(point, followDistance))
+        curvePoints.add(CurvePoint(point, followDistance, moveSpeed, false))
     }
 
     fun extrude(distance: Double, angle: Double) {
@@ -62,6 +63,35 @@ object PurePursuitConstants {
 }
 
 object PurePursuit {
+
+    var lastCurvePointIndex = 0
+
+    fun findCurvePoint(allCurvePoints: ArrayList<CurvePoint>, robotLocation: Point): CurvePoint {
+        if (allCurvePoints.size < 2) {
+            lastCurvePointIndex = 0
+            return allCurvePoints[lastCurvePointIndex]
+        }
+
+        if (lastCurvePointIndex == 0)
+            lastCurvePointIndex = 1
+
+        if (lastIndex > lastCurvePointIndex)
+            lastCurvePointIndex = lastIndex
+
+        if (allCurvePoints.size > lastCurvePointIndex + 1) {
+            val p0 = allCurvePoints[lastCurvePointIndex - 1].point
+            val p1 = allCurvePoints[lastCurvePointIndex].point
+            val p2 = allCurvePoints[lastCurvePointIndex + 1].point
+            val distance0 = projectToLine(p0, p1, robotLocation)
+            val distance1 = projectToLine(p1, p2, robotLocation)
+
+            if (distance1.notNaN())
+                if (distance0.isNaN() || distance1 < distance0)
+                    lastCurvePointIndex++
+        }
+
+        return allCurvePoints[lastCurvePointIndex]
+    }
 
     fun angleBetween_deg(point: Point, otherPoint: Point): Double {
         return atan2(otherPoint.x - point.x, otherPoint.y - point.y).toDegrees
@@ -104,84 +134,9 @@ object PurePursuit {
 
     fun reset() {
         lastIndex = 0
+        lastCurvePointIndex = 0
         finishingMove = false
         followMe = null
-    }
-
-    fun findCurvePoint(points: ArrayList<CurvePoint>, robotLocation: Point): CurvePoint {
-        if (points.size <= 2)
-            return points[points.size - 1]
-
-        if (lastIndex <= 0 || lastIndex >= points.size - 2) { // handling of very start and end of path
-            val index = max(lastIndex - 1, 0)
-
-            val p0 = points[index].point
-            val p1 = points[index + 1].point
-            val p2 = points[index + 2].point
-
-            val distance1 = projectToLine(p0, p1, robotLocation)
-            val distance2 = projectToLine(p1, p2, robotLocation)
-
-            val angR = angleBetween_deg(p1, robotLocation)
-            val ang0 = angleWrap_deg(angleBetween_deg(p1, p0) - angR).absoluteValue
-            val ang2 = angleWrap_deg(angleBetween_deg(p1, p2) - angR).absoluteValue // if there's no projections we need to find the angle
-
-            if (distance1.isNaN() || distance2.isNaN()) {
-                if (distance1.notNaN())
-                    return points[index + 1]
-                if (distance2.notNaN())
-                    return points[index + 2]
-
-                return if (ang0 < ang2)
-                    points[index + 0]
-                else
-                    points[index + 2]
-            }
-
-            return if (distance1 > distance2) points[index + 1] else points[index + 2]
-        }
-
-        val index = lastIndex - 1
-
-        val p0 = points[index].point
-        val p1 = points[index + 1].point
-        val p2 = points[index + 2].point
-        val p3 = points[index + 3].point
-
-        val distance1 = projectToLine(p0, p1, robotLocation)
-        val distance2 = projectToLine(p1, p2, robotLocation)
-        val distance3 = projectToLine(p2, p3, robotLocation)
-
-        val listOfDistances = ArrayList<IndexedData<Double>>()
-        listOfDistances.add(IndexedData(1, distance1))
-        listOfDistances.add(IndexedData(2, distance2))
-        listOfDistances.add(IndexedData(3, distance3))
-        val listOfActualDistances = ArrayList<IndexedData<Double>>()
-        for (d in listOfDistances)/// remove nan values
-            if (d.data.notNaN())
-                listOfActualDistances.add(d)
-        if (listOfActualDistances.isNotEmpty())
-            return points[index + listOfActualDistances.sortedByDescending { it.data }.last().index] // do lowest projection
-
-        if (distanceBetweenPoints(robotLocation, p1) < distanceBetweenPoints(robotLocation, p2)) { /// check early point angles
-            val angR = angleBetween_deg(p1, robotLocation)
-            val ang0 = angleWrap_deg(angleBetween_deg(p1, p0) - angR).absoluteValue
-            val ang2 = angleWrap_deg(angleBetween_deg(p1, p2) - angR).absoluteValue
-
-            return if (ang0 < ang2)
-                points[index + 0]
-            else
-                points[index + 2]
-        }
-
-        val angR = angleBetween_deg(p2, robotLocation) // check later point angles
-        val ang1 = angleWrap_deg(angleBetween_deg(p2, p1) - angR).absoluteValue
-        val ang3 = angleWrap_deg(angleBetween_deg(p2, p3) - angR).absoluteValue
-
-        return if (ang1 < ang3)
-            points[index + 1]
-        else
-            points[index + 3]
     }
 
     fun followCurve(path: PurePursuitPath, followAngle: Double = 0.0) {
@@ -201,12 +156,18 @@ object PurePursuit {
         val finalPoint = allPoints.last()
 
         if (lastIndex >= allPoints.size - 2 && hypot(finalPoint.point.x - world_x_raw, finalPoint.point.y - world_y_raw) <= 10.0) {
-            followMe = finalPoint.point
+            lastIndex = allPoints.size - 1
             if (finalAngle.notNaN())
                 finishingMove = true
         }
+        val followMeCurvePoint = allPoints[lastIndex]
 
+        val moveSpeed = if (followMeCurvePoint.forceMoveSpeedEarly) followMeCurvePoint.moveSpeed else curvePoint.moveSpeed
         goToFollowPoint(followMe, robotLocation.point, followAngle)
+        if (distanceBetweenPoints(finalPoint.point, robotLocation.point) < followMeCurvePoint.followDistance / 2.0)
+            movement_turn = 0.0
+        movement_y *= moveSpeed
+        movement_x *= moveSpeed
 
         if (finishingMove)
             goToPosition_raw(finalPoint.point.x, finalPoint.point.y, finalAngle)
@@ -244,6 +205,11 @@ object PurePursuit {
                 }
             }
         }
+
+        val lastPoint = pathPoints.last().point
+        val distance = distanceBetweenPoints(robotLocation.point, lastPoint)
+        if (distance <= followDistance)
+            followMe = lastPoint
 
         return followMe!!
     }
@@ -328,4 +294,4 @@ object PurePursuit {
 
 data class IndexedData<type>(val index: Int, val data: type)
 
-data class CurvePoint(var point: Point, var followDistance: Double)
+data class CurvePoint(var point: Point, var followDistance: Double, val moveSpeed: Double, val forceMoveSpeedEarly: Boolean)
