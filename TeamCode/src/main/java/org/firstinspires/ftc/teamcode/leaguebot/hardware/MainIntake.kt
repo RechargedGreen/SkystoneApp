@@ -8,8 +8,6 @@ import org.firstinspires.ftc.teamcode.bulkLib.BlackMagic.hMap
 import org.firstinspires.ftc.teamcode.bulkLib.Go_3_7
 import org.firstinspires.ftc.teamcode.bulkLib.RevHubMotor
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.lift
-import org.firstinspires.ftc.teamcode.leaguebot.teleop.LeagueTeleOp
-import org.firstinspires.ftc.teamcode.opmodeLib.Globals.mode
 
 @Config
 class MainIntake {

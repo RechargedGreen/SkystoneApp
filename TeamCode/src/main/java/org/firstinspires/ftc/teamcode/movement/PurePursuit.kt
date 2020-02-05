@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.movement
 
 import com.acmerobotics.dashboard.config.Config
+import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.teamcode.field.Point
 import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.gun_turn_d
 import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.gun_turn_p
+import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.slowDownAmount
+import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.slowDownDegrees
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.goToPosition_raw
 import org.firstinspires.ftc.teamcode.movement.Speedometer.point_slip
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.moveFieldCentric_raw
@@ -21,7 +24,7 @@ import org.firstinspires.ftc.teamcode.opmodeLib.Globals.mode
 import org.firstinspires.ftc.teamcode.util.notNaN
 import kotlin.math.*
 
-class PurePursuitPath(var followDistance: Double, var moveSpeed: Double = 1.0) {
+class PurePursuitPath(var followDistance: Double, var moveSpeed: Double = 1.0, var forceMoveSpeedEarly: Boolean = false) {
     val curvePoints = ArrayList<CurvePoint>()
 
     val firstFollowDistance = followDistance
@@ -35,7 +38,7 @@ class PurePursuitPath(var followDistance: Double, var moveSpeed: Double = 1.0) {
     }
 
     fun add(point: Point) {
-        curvePoints.add(CurvePoint(point, followDistance, moveSpeed, false))
+        curvePoints.add(CurvePoint(point, followDistance, moveSpeed, forceMoveSpeedEarly))
     }
 
     fun extrude(distance: Double, angle: Double) {
@@ -58,11 +61,16 @@ val Double.tan get() = Math.tan(this)
 @Config
 object PurePursuitConstants {
     @JvmField
-    var gun_turn_p = 0.04 // was 0.03
+    var gun_turn_p = 0.03 // was 0.03
     @JvmField
-    var gun_turn_d = 0.0015
+    var gun_turn_d = 0.002 // was .0015
     @JvmField
-    var distanceFactor = 0.25
+    var distanceFactor = 0.2
+
+    @JvmField
+    var slowDownAmount = 0.5
+    @JvmField
+    var slowDownDegrees = 40.0
 }
 
 object PurePursuit {
@@ -120,13 +128,22 @@ object PurePursuit {
 
         val targetAngle = angleBetween_deg(robotLocation, targetPoint) + followAngle
 
-        movement_turn = angleWrap_deg(targetAngle - world_deg_raw) * gun_turn_p - Speedometer.degPerSec * gun_turn_d
+        val angleError = angleWrap_deg(targetAngle - world_deg_raw)
+        movement_turn = Range.clip(angleError * gun_turn_p - Speedometer.degPerSec * gun_turn_d, -1.0, 1.0)
 
         val movementAbs = (movement_y + movement_x).absoluteValue
+
         if (movementAbs != 0.0) {
             movement_y /= movementAbs
             movement_x /= movementAbs
         }
+
+        var slowDownScale = Range.clip(1.0 - (angleError.absoluteValue / slowDownDegrees), 1.0 - slowDownAmount, 1.0)
+        if (angleError.absoluteValue < 4.0)
+            slowDownScale = 1.0
+
+        movement_x *= slowDownScale
+        movement_y *= slowDownScale
     }
 
     var lastIndex = 0
@@ -139,7 +156,7 @@ object PurePursuit {
         followMe = null
     }
 
-    fun followCurve(path: PurePursuitPath, followAngle: Double = 0.0) {
+    fun followCurve(path: PurePursuitPath, followAngle: Double = 0.0): Boolean {
         val allPoints = path.curvePoints
 
         if (allPoints.isEmpty())
@@ -154,6 +171,8 @@ object PurePursuit {
         var followMe = getFollowPoint(allPoints, robotLocation, curvePoint.followDistance, followAngle)
 
         val finalPoint = allPoints.last()
+
+        val distToEndPoint = hypot(finalPoint.point.x - world_x_raw, finalPoint.point.y - world_y_raw)
 
         if (lastIndex >= allPoints.size - 2 && hypot(finalPoint.point.x - world_x_raw, finalPoint.point.y - world_y_raw) <= 10.0) {
             lastIndex = allPoints.size - 1
@@ -173,6 +192,8 @@ object PurePursuit {
             goToPosition_raw(finalPoint.point.x, finalPoint.point.y, finalAngle)
 
         veloControl = !finishingMove
+
+        return distToEndPoint < 5.0
     }
 
     var followMe: Point? = null
