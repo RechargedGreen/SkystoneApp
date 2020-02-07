@@ -2,10 +2,13 @@ package org.firstinspires.ftc.teamcode.leaguebot.hardware
 
 import com.acmerobotics.dashboard.config.Config
 import org.firstinspires.ftc.teamcode.bulkLib.RevHubServo
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.grabber
 import org.firstinspires.ftc.teamcode.opmodeLib.Globals.movementAllowed
 
 @Config
 class Grabber {
+    var doingCap = false
+
     var state = State.RELEASE
 
     private val frontServo = RevHubServo("grabberFront")
@@ -30,7 +33,7 @@ class Grabber {
 
     enum class State(internal val frontPosition: () -> Double, internal val backPosition: () -> Double) {
         GRAB({ frontGrabPosition }, { backGrabPosition }),
-        RELEASE({ frontReleasePosition }, { backReleasePosition }),
+        RELEASE({ frontReleasePosition }, { if(grabber.doingCap) capPosition else backReleasePosition }),
         LOAD({ frontLoadPosition}, { backGrabPosition}),
         PRE_LOAD({ frontReleasePosition}, { backGrabPosition}),
         FULL_RELEASE({frontFullReleasePosition}, { backReleasePosition})
@@ -46,9 +49,12 @@ class Grabber {
         @JvmField
         var backGrabPosition = 0.8
         @JvmField
-        var backReleasePosition = 0.0
+        var backReleasePosition = 0.43
 
         @JvmField
         var frontLoadPosition = 1.0
+
+        @JvmField
+        var capPosition = 0.0
     }
 }

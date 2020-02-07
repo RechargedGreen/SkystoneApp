@@ -4,8 +4,10 @@ import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.field.*
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.Grabber
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.MainIntake
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.grabber
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.ScorerState
 import org.firstinspires.ftc.teamcode.leaguebot.misc.LeagueBotTeleOpBase
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement
@@ -159,7 +161,8 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
 
 
         if (driver.b.justPressed)
-            AutoCap.toggle()
+            grabber.doingCap = !grabber.doingCap
+            /*AutoCap.toggle()*/
 
         if ((!AutoCap.isActive) && Robot.lift.height > 5.0)
             Robot.cap.deployed = false
@@ -169,6 +172,7 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
         if (operator.b.currentState)
             setPosition_raw(Pose(0.0, 0.0, 0.0))
 
+        telemetry.addData("doing cap", grabber.doingCap)
         telemetry.addData("current tower height, ", towerHeight)
         telemetry.addData("highest tower, ", highestTower)
         telemetry.addData("input bias", inputBias)
