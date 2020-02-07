@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.teamcode.field.Point
 import org.firstinspires.ftc.teamcode.field.Pose
+import org.firstinspires.ftc.teamcode.movement.PurePursuit.angleBetween_deg
 import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.gun_turn_d
 import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.gun_turn_p
 import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.slowDownAmount
@@ -24,7 +25,7 @@ import org.firstinspires.ftc.teamcode.opmodeLib.Globals.mode
 import org.firstinspires.ftc.teamcode.util.notNaN
 import kotlin.math.*
 
-class PurePursuitPath(var followDistance: Double, var moveSpeed: Double = 1.0, var forceMoveSpeedEarly: Boolean = false) {
+class PurePursuitPath(var followDistance: Double, var moveSpeed: Double = 1.0, var forceMoveSpeedEarly: Boolean = true) {
     val curvePoints = ArrayList<CurvePoint>()
 
     val firstFollowDistance = followDistance
@@ -51,6 +52,10 @@ class PurePursuitPath(var followDistance: Double, var moveSpeed: Double = 1.0, v
         add(Point(curvePoints.last().point.x, axis))
     }
 
+    fun extend(distance: Double){
+        extrude(distance, angleBetween_deg(curvePoints[curvePoints.size - 2].point, curvePoints.last().point))
+    }
+
     var finalAngle = Double.NaN
 }
 
@@ -68,7 +73,7 @@ object PurePursuitConstants {
     var distanceFactor = 0.2
 
     @JvmField
-    var slowDownAmount = 0.5
+    var slowDownAmount = 0.75
     @JvmField
     var slowDownDegrees = 40.0
 }
@@ -179,9 +184,9 @@ object PurePursuit {
             if (finalAngle.notNaN())
                 finishingMove = true
         }
-        val followMeCurvePoint = allPoints[lastIndex]
+        val followMeCurvePoint = if(lastIndex < allPoints.size - 1) allPoints[lastIndex + 1] else allPoints.last()
 
-        val moveSpeed = if (followMeCurvePoint.forceMoveSpeedEarly) followMeCurvePoint.moveSpeed else curvePoint.moveSpeed
+        val moveSpeed = followMeCurvePoint.moveSpeed
         goToFollowPoint(followMe, robotLocation.point, followAngle)
         if (distanceBetweenPoints(finalPoint.point, robotLocation.point) < followMeCurvePoint.followDistance / 2.0)
             movement_turn = 0.0
@@ -199,7 +204,7 @@ object PurePursuit {
     var followMe: Point? = null
     fun getFollowPoint(pathPoints: ArrayList<CurvePoint>, robotLocation: Pose, followDistance: Double, followAngle: Double): Point {
         if (followMe == null)
-            followMe = pathPoints[0].point
+            followMe = pathPoints[min(1, pathPoints.size - 1)].point
 
         for (i in 0 until min(lastIndex + 2, pathPoints.size - 1)) {
             val startLine = pathPoints[i]
