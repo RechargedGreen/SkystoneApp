@@ -63,7 +63,7 @@ class MainIntake {
 
         when (state) {
             State.FINISH_AUTO_INTAKE -> {
-                if (stateTimer.seconds() > 0.7) {
+                if (stateTimer.seconds() > 1.2) {
                     ScorerState.triggerGrab()
                     lift.lower()
                     state = State.OUT

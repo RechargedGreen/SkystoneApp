@@ -32,8 +32,8 @@ class Extension {
 
     companion object {
         @JvmField
-        var inPosition = 0.9 // 0.0 with gobilda
+        var inPosition = 0.89 // 0.0 with gobilda
         @JvmField
-        var outPosition = 0.06 // 1.0 with gobilda
+        var outPosition = 0.065 // 1.0 with gobilda
     }
 }

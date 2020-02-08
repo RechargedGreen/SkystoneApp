@@ -36,7 +36,7 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
         @JvmField
         var nearAngle = 25.0
         @JvmField
-        var midAngle = 30.0
+        var midAngle = 30.5
         @JvmField
         var farAngle = 39.0
         @JvmField
@@ -95,8 +95,11 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
             firstOuttakePath.add(it)
             firstOuttakePath.toX(38.0)
             firstOuttakePath.toY(0.0)
-            firstOuttakePath.add(Point(56.0, 30.0))
-            firstOuttakePath.toY(44.0)
+            firstOuttakePath.add(Point(47.0, 30.0))
+            firstOuttakePath.toY(50.0)
+            firstOuttakePath.moveSpeed = 0.5
+            firstOuttakePath.toX(-49.0)
+            firstOuttakePath.moveSpeed = 0.3
             firstOuttakePath.toX(0.0)
             firstOuttakePath
         }
@@ -146,7 +149,7 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
             secondIntakePath.toX(58.0)
 
             secondIntakePath.toY(30.0) // was 20
-            secondIntakePath.moveSpeed = intakeMoveSpeed
+            secondIntakePath.moveSpeed = 0.7
             secondIntakePath.add(Point(36.0, -12.0))
 
             secondIntakePath.moveSpeed = intakeMoveSpeed
@@ -174,6 +177,8 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
             fourthIntakePath.toY(-24.0)
             fourthIntakePath.add(Point(24.0, -64.0))
 
+            fourthIntakePath.extend(3.0)
+
             fourthIntakePath
         }
     }
@@ -190,21 +195,50 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
         intakePaths.add {
             val secondIntakePath = PurePursuitPath(20.0)
             secondIntakePath.add(Point(0.0, 44.0))
-            secondIntakePath.toX(53.0)
+            secondIntakePath.toX(58.0)
 
             secondIntakePath.toY(30.0) // was 20
-            secondIntakePath.add(Point(38.0, 0.0))
-
-            secondIntakePath.toY(-10.0)
+            secondIntakePath.moveSpeed = 0.7
+            secondIntakePath.add(Point(36.0, -5.0))
 
             secondIntakePath.moveSpeed = intakeMoveSpeed
-            secondIntakePath.forceMoveSpeedEarly = true
-
-            secondIntakePath.toY(-22.0)
-
-            secondIntakePath.extrude(15.0, -140.0)
+            secondIntakePath.toY(-34.0)
+            secondIntakePath.extrude(27.0, -90.0 - 15.0)
 
             secondIntakePath
+        }
+
+        intakePaths.add {
+            val thirdIntakePath = PurePursuitPath(20.0)
+            thirdIntakePath.add(Point(38.0, 48.0))
+
+            thirdIntakePath.moveSpeed = 0.8
+            thirdIntakePath.toY(-36.0)
+            thirdIntakePath.moveSpeed = 0.6
+            thirdIntakePath.toY(-48.0)
+            thirdIntakePath.toX(6.0)
+            /*thirdIntakePath.toY(-28.0)
+            thirdIntakePath.moveSpeed = 0.5
+            thirdIntakePath.extrude(35.0, -120.0)*/
+            thirdIntakePath
+        }
+
+        intakePaths.add {
+            val fourthIntakePath = PurePursuitPath(20.0)
+
+            fourthIntakePath.add(it)
+            fourthIntakePath.add(Point(38.0, 12.0))
+
+            fourthIntakePath.moveSpeed = 0.8
+
+            fourthIntakePath.toY(-17.0)
+
+            fourthIntakePath.moveSpeed = 0.6
+
+            fourthIntakePath.toY(-26.0)
+            fourthIntakePath.toX(6.0)
+
+            fourthIntakePath
         }
     }
 
@@ -231,6 +265,8 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
         setupOuttakePaths()
     }
 
+    val loadedIntake get() = intake.sensorTriggered && world_y_mirror < -4.0
+
     override fun onMainLoop() {
         val currentStage = progStages.values()[stage]
         telemetry.addData("currentStage", currentStage)
@@ -245,7 +281,7 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
             progStages.intakingFirstStone -> {
                 val path = intakePaths[0](world_point_mirror)
                 val doneWithCurve = PurePursuit.followCurve(path)
-                if (intake.sensorTriggered || doneWithCurve) {
+                if (loadedIntake || doneWithCurve) {
                     intake.state = MainIntake.State.FINISH_AUTO_INTAKE
                     nextStage()
                     outPath = outtakePaths[0](world_point_mirror)
@@ -258,12 +294,12 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
                 if (world_y_mirror > 10.0)
                     hasCrossedY = true
 
-                if (hasCrossedY && world_deg_mirror > 0.0 && world_deg_mirror < 90.0 + 30.0) {
+                if (hasCrossedY) {
                     foundationGrabber.prepForGrab()
                     ScorerState.triggerExtend()
                 }
 
-                if (hasCrossedY && world_x_mirror < 26.0) {
+                if (hasCrossedY && world_x_mirror < 31.0) {
                     nextStage()
                     foundationGrabber.grab()
                     hasCrossedY = false
@@ -273,13 +309,14 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
             }
 
             progStages.intakingSecondStone -> {
-                intake.state = MainIntake.State.IN
+                if (world_y_mirror < 0.0)
+                    intake.state = MainIntake.State.IN
 
                 var doneWithCurve = false
-                if (isTimedOut(1.0))
+                if (isTimedOut(0.5))
                     doneWithCurve = PurePursuit.followCurve(intakePaths[1](world_point_mirror))
 
-                if (angleWrap_deg(world_deg_mirror) > 170.0 || angleWrap_deg(world_deg_mirror) < 0.0) {
+                if (angleWrap_deg(world_deg_mirror) > 170.0 || angleWrap_deg(world_deg_mirror) < -135.0) {
                     foundationGrabber.release()
                     ScorerState.triggerPullBack()
                 }
@@ -287,7 +324,7 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
                 if (world_y_mirror < 0.0)
                     lift.triggerIntake()
 
-                if (intake.sensorTriggered || doneWithCurve) {
+                if (loadedIntake || doneWithCurve) {
                     intake.state = MainIntake.State.FINISH_AUTO_INTAKE
                     nextStage()
                     PurePursuit.reset()
@@ -308,7 +345,7 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
                 moveFieldCentric_mirror(0.0, 0.2, 0.0)
                 pointAngle_mirror(180.0)
                 ScorerState.triggerRelease()
-                if (isTimedOut(0.5)) {
+                if (isTimedOut(0.4)) {
                     ScorerState.triggerPullBack()
                     nextStage()
                     PurePursuit.reset()
@@ -316,7 +353,8 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
             }
 
             progStages.intakingThirdStone -> {
-                intake.state = MainIntake.State.IN
+                if (world_y_mirror < 0.0)
+                    intake.state = MainIntake.State.IN
                 lift.triggerIntake()
 
                 val doneWithCurve = PurePursuit.followCurve(intakePaths[2](world_point_mirror))
@@ -324,7 +362,7 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
                 if (world_y_mirror < -0.0)
                     lift.triggerIntake()
 
-                if (doneWithCurve || intake.sensorTriggered) {
+                if (doneWithCurve || loadedIntake) {
                     nextStage()
                     outPath = outtakePaths[2](world_point_mirror)
                 }
@@ -341,12 +379,17 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
             progStages.droppingThirdStone -> {
                 moveFieldCentric_mirror(0.0, 0.2, 0.0)
                 pointAngle_mirror(180.0)
-                val backTime = 0.5
+                val backTime = 0.4
                 if (isTimedOut(backTime))
                     ScorerState.triggerRelease()
-                if (isTimedOut(backTime + 0.5)) {
+                if (isTimedOut(backTime + 0.25)) {
                     ScorerState.triggerPullBack()
-                    nextStage()
+
+                    if (SkystoneDetector.place != SkystoneRandomization.NEAR)
+                        nextStage(progStages.yeetToPark.ordinal)
+                    else
+                        nextStage()
+
                     PurePursuit.reset()
 
                     outPath = intakePaths[3](world_point_mirror)
@@ -354,7 +397,8 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
             }
 
             progStages.intakingFourthStone -> {
-                intake.state = MainIntake.State.IN
+                if (world_y_mirror < 0.0)
+                    intake.state = MainIntake.State.IN
                 lift.triggerIntake()
 
                 val doneWithCurve = PurePursuit.followCurve(outPath)
@@ -362,7 +406,7 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
                 if (world_y_mirror < -0.0)
                     lift.triggerIntake()
 
-                if (doneWithCurve || intake.sensorTriggered) {
+                if (doneWithCurve || loadedIntake) {
                     nextStage()
                     outPath = outtakePaths[3](world_point_mirror)
                 }
@@ -379,10 +423,10 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
             progStages.droppingFourthStone -> {
                 moveFieldCentric_mirror(0.0, 0.2, 0.0)
                 pointAngle_mirror(180.0)
-                val backTime = 0.5
+                val backTime = 0.4
                 if (isTimedOut(backTime))
                     ScorerState.triggerRelease()
-                if (isTimedOut(backTime + 0.5)) {
+                if (isTimedOut(backTime + 0.25)) {
                     ScorerState.triggerPullBack()
                     nextStage()
                     PurePursuit.reset()
@@ -390,7 +434,7 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
             }
 
             progStages.yeetToPark -> {
-                val error = goToPosition_mirror(36.0, 3.0, 180.0)
+                val error = goToPosition_mirror(31.0, 3.0, 180.0)
                 if (error.point.hypot < 3.0 && Speedometer.fieldSpeed.hypot < 5.0) {
                     nextStage()
                     ScorerState.triggerLoad()
