@@ -19,7 +19,7 @@ object SimpleMotion {
     @JvmField
     var moveP = 0.06
     @JvmField
-    var turnD = 0.0
+    var turnD = 0.0025
     @JvmField
     var moveD = 0.008
 

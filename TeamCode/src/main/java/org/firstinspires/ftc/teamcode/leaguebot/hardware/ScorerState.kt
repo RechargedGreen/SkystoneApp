@@ -11,7 +11,7 @@ object ScorerState {
     var grabTime = 0.5
 
     @JvmField
-    var retractBeforeLoadTime = 0.75
+    var retractBeforeLoadTime = 0.6
 
     fun triggerExtend() {
         state = State.EXTEND
