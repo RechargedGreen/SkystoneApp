@@ -190,6 +190,6 @@ class SuperSonicLift {
 
     val left = RevHubMotor("leftLift", Go_5_2::class).openLoopControl.float
     val right = RevHubMotor("rightLift", Go_5_2::class).reverse.openLoopControl.float
-    val encoder = Encoder(Robot.lynx1, 1, MotorEncoder.G3_7)
+    val encoder = Encoder(Robot.lynx1, 1, MotorEncoder.G5_2)
     val bottomPressed get() = !Robot.lynx1.cachedInput.getDigitalInput(1) || !(Robot.lynx1.cachedInput.getDigitalInput(3))
 }
