@@ -417,7 +417,6 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
             progStages.intakingThirdStone -> {
                 if (world_y_mirror < 0.0)
                     intake.state = MainIntake.State.IN
-                lift.triggerIntake()
 
                 if (world_y_mirror < startLoadClawY)
                     ScorerState.triggerLoad()
@@ -465,7 +464,6 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
             progStages.intakingFourthStone -> {
                 if (world_y_mirror < 0.0)
                     intake.state = MainIntake.State.IN
-                lift.triggerIntake()
 
                 val doneWithCurve = PurePursuit.followCurve(outPath)
 
@@ -473,7 +471,7 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
                 if (world_y_mirror < startLoadClawY)
                     ScorerState.triggerLoad()
 
-                if (world_y_mirror < -0.0)
+                if (world_y_mirror < 0.0)
                     lift.triggerIntake()
 
                 if (doneWithCurve || loadedIntake) {

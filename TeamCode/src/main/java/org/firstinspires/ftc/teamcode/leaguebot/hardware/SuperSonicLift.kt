@@ -131,7 +131,7 @@ class SuperSonicLift {
         when (controlState) {
             ControlStates.LOWER -> {
                 checkCalibration()
-                power = if (height > 10.0) -0.3 else if (height > 2.0) -0.25 else -0.25
+                power = -0.3
             }
 
             ControlStates.HEIGHT -> {
