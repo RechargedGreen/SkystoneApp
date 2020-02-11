@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.teamcode.field.Point
 import org.firstinspires.ftc.teamcode.field.Pose
+import org.firstinspires.ftc.teamcode.field.checkMirror
 import org.firstinspires.ftc.teamcode.movement.PurePursuit.angleBetween_deg
 import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.gun_turn_d
 import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.gun_turn_p
@@ -32,28 +33,42 @@ class PurePursuitPath(var followDistance: Double, var moveSpeed: Double = 1.0, v
 
     fun resetArgs() {
         followDistance = firstFollowDistance
+        moveSpeed = 0.0
+        forceMoveSpeedEarly = true
+    }
+
+    fun toXInternal(x: Double) {
+        addInternal(Point(x, curvePoints.last().point.y))
     }
 
     fun toX(x: Double) {
-        add(Point(x, curvePoints.last().point.y))
+        toX(x.checkMirror)
     }
 
-    fun add(point: Point) {
+    fun addInternal(point: Point) {
         curvePoints.add(CurvePoint(point, followDistance, moveSpeed, forceMoveSpeedEarly))
     }
 
+    fun add(point: Point) {
+        addInternal(point.checkMirror)
+    }
+
     fun extrude(distance: Double, angle: Double) {
+        extrudeInternal(distance, angle.checkMirror)
+    }
+
+    fun extrudeInternal(distance: Double, angle: Double) {
         val rad = angle.toRadians
         val lastPoint = curvePoints.last().point
-        add(Point(lastPoint.x + rad.sin * distance, lastPoint.y + rad.cos * distance))
+        addInternal(Point(lastPoint.x + rad.sin * distance, lastPoint.y + rad.cos * distance))
     }
 
-    fun toY(axis: Double) {
-        add(Point(curvePoints.last().point.x, axis))
+    fun toY(y: Double) {
+        add(Point(curvePoints.last().point.x, y))
     }
 
-    fun extend(distance: Double){
-        extrude(distance, angleBetween_deg(curvePoints[curvePoints.size - 2].point, curvePoints.last().point))
+    fun extend(distance: Double) {
+        extrudeInternal(distance, angleBetween_deg(curvePoints[curvePoints.size - 2].point, curvePoints.last().point))
     }
 
     var finalAngle = Double.NaN
@@ -184,7 +199,7 @@ object PurePursuit {
             if (finalAngle.notNaN())
                 finishingMove = true
         }
-        val followMeCurvePoint = if(lastIndex < allPoints.size - 1) allPoints[lastIndex + 1] else allPoints.last()
+        val followMeCurvePoint = if (lastIndex < allPoints.size - 1) allPoints[lastIndex + 1] else allPoints.last()
 
         val moveSpeed = followMeCurvePoint.moveSpeed
         goToFollowPoint(followMe, robotLocation.point, followAngle)
