@@ -9,18 +9,17 @@ import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.intake
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.lift
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.ScorerState
 import org.firstinspires.ftc.teamcode.leaguebot.misc.LeagueBotAutoBase
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.moveFieldCentric_mirror
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_turn
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_y
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.stopDrive
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_angle_mirror
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_x_mirror
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_y_mirror
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.goToPosition_mirror
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.moveD
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.moveP
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.pointAngle_mirror
 import org.firstinspires.ftc.teamcode.movement.Speedometer
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.moveFieldCentric_mirror
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_y
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.stopDrive
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_angle_mirror
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_x_mirror
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_y_mirror
 import org.firstinspires.ftc.teamcode.movement.toRadians
 import org.firstinspires.ftc.teamcode.odometry.ThreeWheel.yTraveled
 import org.firstinspires.ftc.teamcode.opmodeLib.Alliance
@@ -138,7 +137,7 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
         var preFoundationX_blue = 40.0
 
         @JvmField
-        var preFoundationY = 48.0
+        var preFoundationY = 43.0
 
         @JvmField
         var backIntoFoundationX = 28.0
@@ -315,8 +314,8 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
 
             progStages.rotateFoundation -> {
                 stopDrive()
-                movement_turn = foundationTurnSpeed * ALLIANCE.sign
-                if (world_angle_mirror.deg < 0.0 || world_angle_mirror.deg > 175.0) {
+                val error = pointAngle_mirror(180.0).absoluteValue
+                if (error < 6.0) {
                     nextStage()
                     foundationGrabber.release()
                     ScorerState.triggerPullBack()
@@ -349,7 +348,7 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
             }
 
             progStages.secondStoneRotate -> {
-                val error = pointAngle_mirror(if(ALLIANCE == Alliance.RED) 220.0 else 200.0)
+                val error = pointAngle_mirror(if (ALLIANCE == Alliance.RED) 220.0 else 200.0)
                 if (error.absoluteValue < 3.0 && Speedometer.degPerSec < 5.0)
                     nextStage()
             }

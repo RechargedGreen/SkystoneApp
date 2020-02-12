@@ -34,7 +34,7 @@ object DrivePosition {
     val world_x_mirror get() = world_x_raw.checkMirror
 
     val world_y_raw get() = world_pose_raw.y
-    val world_y_mirror get() = world_y_raw.checkMirror
+    val world_y_mirror get() = world_y_raw
 
     val world_point_raw: Point get() = world_pose_raw.point
     val world_point_mirror: Point get() = world_point_raw.checkMirror

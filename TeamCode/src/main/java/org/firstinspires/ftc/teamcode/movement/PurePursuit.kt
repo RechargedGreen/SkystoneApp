@@ -42,7 +42,7 @@ class PurePursuitPath(var followDistance: Double, var moveSpeed: Double = 1.0, v
     }
 
     fun toX(x: Double) {
-        toX(x.checkMirror)
+        toXInternal(x.checkMirror)
     }
 
     fun addInternal(point: Point) {
@@ -64,7 +64,7 @@ class PurePursuitPath(var followDistance: Double, var moveSpeed: Double = 1.0, v
     }
 
     fun toY(y: Double) {
-        add(Point(curvePoints.last().point.x, y))
+        addInternal(Point(curvePoints.last().point.x, y))
     }
 
     fun extend(distance: Double) {

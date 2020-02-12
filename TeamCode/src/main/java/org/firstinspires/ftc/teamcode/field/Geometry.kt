@@ -18,7 +18,7 @@ data class Pose(
     constructor(x: Double, y: Double, heading_rad: Double) : this(Point(x, y), Angle.createWrappedRad(heading_rad))
 
     val checkMirror get() = if (ALLIANCE.isRed()) this else mirrored
-    val mirrored get() = Pose(Point(-point.x, point.y), heading)
+    val mirrored get() = Pose(Point(-point.x, point.y), -heading)
     val x = point.x
     val y = point.y
     val deg = heading.deg
