@@ -67,7 +67,7 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
 
     var hasCrossedY = false
 
-    val startLoadClawY = 24.0
+    val startLoadClawY = 36.0
 
     enum class progStages {
         intakingFirstStone,
@@ -205,7 +205,7 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
     fun setupMidIntakePaths() {
         intakePaths.add {
             val firstIntakePath = PurePursuitPath(20.0)
-            firstIntakePath.add(startPoint)
+            firstIntakePath.add(Point(startPoint.x, startPoint.y + if(ALLIANCE.isRed()) 0.0 else 1.5))
             firstIntakePath.moveSpeed = intakeMoveSpeed
             firstIntakePath.extrude(60.0, -90.0 - midAngle)
             firstIntakePath
