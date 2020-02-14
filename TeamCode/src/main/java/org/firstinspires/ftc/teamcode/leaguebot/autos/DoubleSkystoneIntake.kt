@@ -121,7 +121,7 @@ object SecondStoneBiases_BLUE {
 }
 
 @Config
-abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(Field.EAST_WALL - 8.625, Field.SOUTH_WALL + 38.25, (-90.0).toRadians)) {
+abstract class Skystones(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(Field.EAST_WALL - 8.625, Field.SOUTH_WALL + 38.25, (-90.0).toRadians)) {
     companion object {
         @JvmField
         var xOffset = 15.0
@@ -384,7 +384,7 @@ abstract class DoubleSkystoneIntake(alliance: Alliance) : LeagueBotAutoBase(alli
 }
 
 @Autonomous
-class DoubleSkystoneIntake_BLUE : DoubleSkystoneIntake(Alliance.BLUE)
+class Skystones_BLUE : Skystones(Alliance.BLUE)
 
 @Autonomous
-class DoubleSkystoneIntake_RED : DoubleSkystoneIntake(Alliance.RED)
+class Skystones_RED : Skystones(Alliance.RED)

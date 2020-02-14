@@ -9,8 +9,6 @@ import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.*
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.veloControl
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.setPosition_mirror
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_x_mirror
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_y_mirror
 import org.firstinspires.ftc.teamcode.ryanVision.*
 import org.firstinspires.ftc.teamcode.util.*
 import org.firstinspires.ftc.teamcode.vision.*
