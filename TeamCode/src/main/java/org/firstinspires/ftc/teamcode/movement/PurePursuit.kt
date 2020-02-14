@@ -1,22 +1,11 @@
 package org.firstinspires.ftc.teamcode.movement
 
-import com.acmerobotics.dashboard.config.Config
-import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.teamcode.field.Point
 import org.firstinspires.ftc.teamcode.field.Pose
 import org.firstinspires.ftc.teamcode.field.checkMirror
 import org.firstinspires.ftc.teamcode.movement.PurePursuit.angleBetween_deg
-import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.gun_turn_d
-import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.gun_turn_p
-import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.slowDownAmount
-import org.firstinspires.ftc.teamcode.movement.PurePursuitConstants.slowDownDegrees
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.goToPosition_raw
-import org.firstinspires.ftc.teamcode.movement.Speedometer.point_slip
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.moveFieldCentric_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_turn
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_x
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_y
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.veloControl
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_angle_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_deg_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_pose_raw
@@ -78,21 +67,6 @@ val Double.sin get() = Math.sin(this)
 val Double.cos get() = Math.cos(this)
 val Double.tan get() = Math.tan(this)
 
-@Config
-object PurePursuitConstants {
-    @JvmField
-    var gun_turn_p = 0.03 // was 0.03
-    @JvmField
-    var gun_turn_d = 0.002 // was .0015
-    @JvmField
-    var distanceFactor = 0.2
-
-    @JvmField
-    var slowDownAmount = 0.75
-    @JvmField
-    var slowDownDegrees = 40.0
-}
-
 object PurePursuit {
 
     var lastCurvePointIndex = 0
@@ -139,31 +113,8 @@ object PurePursuit {
     }
 
     fun goToFollowPoint(targetPoint: Point, robotLocation: Point, followAngle: Double) {
-        //goToPosition_raw(targetPoint.x, targetPoint.y, angleBetween_deg(robotLocation, targetPoint) + followAngle)
-
-
-        val slip = point_slip
-        val adjustedTarget = Point(targetPoint.x - slip.x, targetPoint.y - slip.y)
-        moveFieldCentric_raw(adjustedTarget.x - robotLocation.x, adjustedTarget.y - robotLocation.y, 0.0)
-
-        val targetAngle = angleBetween_deg(robotLocation, targetPoint) + followAngle
-
-        val angleError = angleWrap_deg(targetAngle - world_deg_raw)
-        movement_turn = Range.clip(angleError * gun_turn_p - Speedometer.degPerSec * gun_turn_d, -1.0, 1.0)
-
-        val movementAbs = (movement_y + movement_x).absoluteValue
-
-        if (movementAbs != 0.0) {
-            movement_y /= movementAbs
-            movement_x /= movementAbs
-        }
-
-        var slowDownScale = Range.clip(1.0 - (angleError.absoluteValue / slowDownDegrees), 1.0 - slowDownAmount, 1.0)
-        if (angleError.absoluteValue < 4.0)
-            slowDownScale = 1.0
-
-        movement_x *= slowDownScale
-        movement_y *= slowDownScale
+        val angleBetween = angleBetween_deg(robotLocation, targetPoint)
+        goToPosition_raw(targetPoint.x, targetPoint.y, angleBetween + followAngle)
     }
 
     var lastIndex = 0
@@ -188,7 +139,7 @@ object PurePursuit {
 
         val curvePoint = findCurvePoint(allPoints, robotLocation.point)
 
-        var followMe = getFollowPoint(allPoints, robotLocation, curvePoint.followDistance, followAngle)
+        val followMe = getFollowPoint(allPoints, robotLocation, curvePoint.followDistance, followAngle)
 
         val finalPoint = allPoints.last()
 
@@ -202,16 +153,14 @@ object PurePursuit {
         val followMeCurvePoint = if (lastIndex < allPoints.size - 1) allPoints[lastIndex + 1] else allPoints.last()
 
         val moveSpeed = followMeCurvePoint.moveSpeed
+
         goToFollowPoint(followMe, robotLocation.point, followAngle)
+
         if (distanceBetweenPoints(finalPoint.point, robotLocation.point) < followMeCurvePoint.followDistance / 2.0)
             movement_turn = 0.0
-        movement_y *= moveSpeed
-        movement_x *= moveSpeed
 
         if (finishingMove)
             goToPosition_raw(finalPoint.point.x, finalPoint.point.y, finalAngle)
-
-        veloControl = !finishingMove
 
         return distToEndPoint < 5.0
     }

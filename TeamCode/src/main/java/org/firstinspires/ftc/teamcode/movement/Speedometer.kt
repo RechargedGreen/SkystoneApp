@@ -48,6 +48,4 @@ object Speedometer {
 
     var fieldSpeed: Point = Point(0.0, 0.0)
         private set
-
-    val point_slip get() = Point(fieldSpeed.x * PurePursuitConstants.distanceFactor, fieldSpeed.y * PurePursuitConstants.distanceFactor)
 }

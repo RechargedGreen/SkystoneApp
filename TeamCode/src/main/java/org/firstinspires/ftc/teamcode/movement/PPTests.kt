@@ -92,7 +92,7 @@ class SquareTest : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
     }
 }
 
-@TeleOp(group = "c")
+/*@TeleOp(group = "c")
 class PPTurnTuner : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
     var driving = false
     override fun onMainLoop() {
@@ -104,9 +104,10 @@ class PPTurnTuner : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
         else
             movement_turn = -(world_deg_raw) * PurePursuitConstants.gun_turn_p - PurePursuitConstants.gun_turn_d * Speedometer.degPerSec
     }
-}
+}*/
 
 
+/*
 @TeleOp(group = "c")
 class SlippageCalculater : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) {
     enum class progStages {
@@ -212,4 +213,4 @@ class SlippageCalculater : LeagueBotAutoBase(Alliance.RED, Pose(0.0, 0.0, 0.0)) 
             }
         }
     }
-}
+}*/
