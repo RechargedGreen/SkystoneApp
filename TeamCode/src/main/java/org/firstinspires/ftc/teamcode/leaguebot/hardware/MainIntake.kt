@@ -7,7 +7,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.bulkLib.BlackMagic.hMap
 import org.firstinspires.ftc.teamcode.bulkLib.Go_3_7
 import org.firstinspires.ftc.teamcode.bulkLib.RevHubMotor
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.intake
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.lift
+import org.firstinspires.ftc.teamcode.opmodeLib.Globals.mode
 
 @Config
 class MainIntake {
@@ -57,7 +59,7 @@ class MainIntake {
     fun update() {
         val power = when (state.hardwareState) {
             HardwareStates.STOP -> STOP_POWER
-            HardwareStates.IN -> /*if (!mode.isAutonomous || sensorTriggered) 1.0 else IN_POWER*/1.0
+            HardwareStates.IN -> if (!mode.isAutonomous || sensorTriggered) 1.0 else IN_POWER
             HardwareStates.OUT -> OUT_POWER
         }
 
@@ -76,8 +78,7 @@ class MainIntake {
     }
 
     companion object {
-        @JvmField
-        var IN_POWER = 0.7
+        val IN_POWER get() = if(intake.state == State.FINISH_AUTO_INTAKE) 1.0 else 0.7
         private const val STOP_POWER = 0.0
         private const val OUT_POWER = -1.0
 

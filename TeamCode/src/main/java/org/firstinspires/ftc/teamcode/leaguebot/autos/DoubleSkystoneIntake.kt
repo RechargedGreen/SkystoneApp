@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.leaguebot.autos
 
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.MainIntake
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.foundationGrabber
@@ -15,6 +16,8 @@ import org.firstinspires.ftc.teamcode.movement.SimpleMotion.moveP
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.pointAngle_mirror
 import org.firstinspires.ftc.teamcode.movement.Speedometer
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.moveFieldCentric_mirror
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_turn
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_x
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_y
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.stopDrive
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_angle_mirror
@@ -31,11 +34,11 @@ import kotlin.math.absoluteValue
 @Config
 object FirstStoneBiases_RED {
     @JvmField
-    var far_left = 16.5
+    var far_left = 15.5
     @JvmField
-    var far_middle = 18.0
+    var far_middle = 16.1
     @JvmField
-    var far_right = 18.0
+    var far_right = 17.0
     val biases: ArrayList<Double>
         get() {
             val list = ArrayList<Double>()
@@ -52,11 +55,11 @@ object FirstStoneBiases_RED {
 @Config
 object FirstStoneBiases_BLUE {
     @JvmField
-    var far_left = 17.5
+    var far_left = 16.5
     @JvmField
-    var far_middle = 19.0
+    var far_middle = 17.0
     @JvmField
-    var far_right = 19.0
+    var far_right = 18.0
     val biases: ArrayList<Double>
         get() {
             val list = ArrayList<Double>()
@@ -83,7 +86,7 @@ object SecondStoneBiases_RED {
     @JvmField
     var near_left = 18.5
     @JvmField
-    var near_middle = 18.4
+    var near_middle = 18.25
     @JvmField
     var near_right = 19.0
     val biases: ArrayList<Double>
@@ -102,11 +105,11 @@ object SecondStoneBiases_RED {
 @Config
 object SecondStoneBiases_BLUE {
     @JvmField
-    var near_left = 19.5
+    var near_left = 18.5
     @JvmField
-    var near_middle = 20.2
+    var near_middle = 19.2
     @JvmField
-    var near_right = 20.2
+    var near_right = 19.2
     val biases: ArrayList<Double>
         get() {
             val list = ArrayList<Double>()
@@ -121,13 +124,13 @@ object SecondStoneBiases_BLUE {
 }
 
 @Config
-abstract class Skystones(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(Field.EAST_WALL - 8.625, Field.SOUTH_WALL + 38.25, (-90.0).toRadians)) {
+abstract class Skystones(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(Field.EAST_WALL - 7.625, Field.SOUTH_WALL + 38.25, (-90.0).toRadians)) {
     companion object {
         @JvmField
-        var xOffset = 15.0
+        var xOffset = 14.0 // 15.0 gdc ree
 
         @JvmField
-        var intakeAngleOffset = -50.0
+        var intakeAngleOffset = -45.0
         @JvmField
         var intakeSpeed = 0.3
 
@@ -271,14 +274,21 @@ abstract class Skystones(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
             progStages.backOut, progStages.secondBackOut -> {
                 val xSpeed = (preFoundationX - world_x_mirror) * moveP - Speedometer.fieldSpeed.x.checkMirror * moveD
                 moveFieldCentric_mirror(xSpeed, xSpeed.absoluteValue * 0.5, 0.0)
-                pointAngle_mirror(180.0)
+                pointAngle_mirror(-90.0 - 30.0)
+                //pointAngle_mirror(180.0)
 
                 if ((preFoundationX - world_x_mirror).absoluteValue < 2.0)
                     nextStage()
             }
 
             progStages.preFoundationCrossField -> {
-                goToPosition_mirror(preFoundationX, preFoundationY, 180.0, yClip = 1.0)
+                val error = goToPosition_mirror(preFoundationX, preFoundationY, 180.0, yClip = 1.0)
+
+                if(error.deg.absoluteValue > 15.0){
+                    movement_y = 0.0
+                    movement_x = 0.0
+                }
+
                 if (world_y_mirror > 24.0) {
                     ScorerState.triggerExtend()
                     foundationGrabber.prepForGrab()
@@ -315,6 +325,9 @@ abstract class Skystones(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
             progStages.rotateFoundation -> {
                 stopDrive()
                 val error = pointAngle_mirror(180.0).absoluteValue
+
+                movement_turn = Range.clip(movement_turn, -0.5, 0.5)
+
                 if (error < 6.0) {
                     nextStage()
                     foundationGrabber.release()
