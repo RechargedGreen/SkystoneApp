@@ -4,11 +4,9 @@ import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.field.*
-import org.firstinspires.ftc.teamcode.leaguebot.hardware.Grabber
-import org.firstinspires.ftc.teamcode.leaguebot.hardware.MainIntake
-import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.*
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.autoClaw
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.grabber
-import org.firstinspires.ftc.teamcode.leaguebot.hardware.ScorerState
 import org.firstinspires.ftc.teamcode.leaguebot.misc.LeagueBotTeleOpBase
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.setPosition_raw
@@ -58,14 +56,23 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
     var extensionRoutineState = ExtensionRoutineState.OFF
     var liftState = LiftState.GOING_DOWN
 
-    override fun onStart() {
-        super.onStart()
-        AutoCap.reset()
-    }
+    var clawDown = false
+    var clawGrab = false
 
     override fun onMainLoop() {
-
         DriveMovement.gamepadControl(driver)
+
+        if(driver.dLeft.justPressed)
+            clawDown = !clawDown
+        if(driver.dDown.justPressed)
+            clawGrab = !clawGrab
+        autoClaw.state = when{
+            clawGrab && clawDown -> AutoClaw.State.GRABBING
+            clawGrab && !clawDown -> AutoClaw.State.STOW_STONE
+            !clawGrab && clawDown -> AutoClaw.State.PRE_GRAB
+            else -> AutoClaw.State.STOW_RELEASE
+        }
+        autoClaw.state = AutoClaw.State.TELEOP
 
         when {
             operator.rightTriggerB.justPressed -> towerHeight = highestTower
@@ -144,13 +151,6 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
             }
         }
 
-        /*if (driver.dUp.justPressed)
-            grabbingFoundationToggle = !grabbingFoundationToggle
-        if (grabbingFoundationToggle)
-            Robot.foundationGrabber.grab()
-        else
-            Robot.foundationGrabber.release()*/
-
         if (driver.dUp.justPressed)
             foundationState = FoundationStates.values()[(foundationState.ordinal + 1) % FoundationStates.values().size]
         when (foundationState) {
@@ -159,15 +159,8 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
             FoundationStates.GRAB -> Robot.foundationGrabber.grab()
         }
 
-
         if (driver.b.justPressed)
             grabber.doingCap = !grabber.doingCap
-            /*AutoCap.toggle()*/
-
-        if ((!AutoCap.isActive) && Robot.lift.height > 5.0)
-            Robot.cap.deployed = false
-
-        //DriveMovement.moveFieldCentric(driver.leftStick.x, driver.leftStick.y, driver.rightStick.x)
 
         if (operator.b.currentState)
             setPosition_raw(Pose(0.0, 0.0, 0.0))
@@ -177,105 +170,10 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
         telemetry.addData("highest tower, ", highestTower)
         telemetry.addData("input bias", inputBias)
         telemetry.addLine()
-        AutoCap.update()
-        telemetry.addLine()
-        telemetry.addData("grabbingFoundation", grabbingFoundationToggle)
+        telemetry.addData("Claw state", autoClaw.state)
         telemetry.addData("extension routine", extensionRoutineState)
         telemetry.addData("lift state", liftState)
         telemetry.addData("hasReleased", hasReleased)
         telemetry.addLine()
     }
-}
-
-
-object AutoCap {
-    enum class progStates {
-        waiting,
-        centerStone,
-        release,
-        lift,
-        cap,
-        lower,
-        grabStone,
-        finished
-    }
-
-    val timer = ElapsedTime()
-
-    var progState = 0
-
-    fun trigger() {
-        nextStage(1)
-    }
-
-    fun abort() {
-        nextStage(0)
-    }
-
-    fun toggle() {
-        if (progState > 0)
-            abort()
-        else
-            trigger()
-    }
-
-    fun reset() {
-        abort()
-    }
-
-    fun nextStage(stage: Int = progState + 1) {
-        progState = stage
-        timer.reset()
-    }
-
-    fun update() {
-        val currentStage = progStates.values()[progState]
-        Globals.mode.telemetry.addData("cap stage", currentStage)
-        when (currentStage) {
-            AutoCap.progStates.waiting -> {
-            }
-            AutoCap.progStates.centerStone -> {
-                Robot.lift.lower()
-                if (Robot.lift.bottomPressed)
-                    ScorerState.triggerGrab()
-                if (ScorerState.timeSpentGrabbing > 0.5)
-                    nextStage()
-            }
-            AutoCap.progStates.release -> {
-                Robot.lift.lower()
-                ScorerState.triggerCapRelease()
-                if (timer.seconds() > 0.1)
-                    nextStage()
-            }
-            AutoCap.progStates.lift -> {
-                Robot.lift.heightTarget = 12.0
-                ScorerState.triggerCapRelease()
-                if (Robot.lift.height > 5.0)
-                    nextStage()
-            }
-            AutoCap.progStates.cap -> {
-                Robot.lift.heightTarget = 8.0
-                Robot.cap.deployed = true
-                ScorerState.triggerCapRelease()
-                if (timer.seconds() > 0.5)
-                    nextStage()
-            }
-            AutoCap.progStates.lower -> {
-                Robot.lift.ultraManual = -0.2
-                ScorerState.triggerCapRelease()
-                if (Robot.lift.bottomPressed)
-                    nextStage()
-            }
-            AutoCap.progStates.grabStone -> {
-                Robot.lift.lower()
-                ScorerState.triggerGrab()
-                if (ScorerState.clearToLift)
-                    nextStage()
-            }
-            AutoCap.progStates.finished -> {
-            }
-        }
-    }
-
-    val isActive get() = progState != 0 && progState != AutoCap.progStates.finished.ordinal
 }

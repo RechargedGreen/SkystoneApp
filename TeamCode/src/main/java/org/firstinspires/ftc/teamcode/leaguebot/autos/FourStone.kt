@@ -33,7 +33,7 @@ import org.firstinspires.ftc.teamcode.vision.SkystoneDetector
 import org.firstinspires.ftc.teamcode.vision.SkystoneRandomization
 import kotlin.math.absoluteValue
 
-val startPoint = Point(Field.EAST_WALL - 8.625, Field.SOUTH_WALL + 38.25)
+private val startPoint = Point(Field.EAST_WALL - 8.625, Field.SOUTH_WALL + 38.25)
 
 @Config
 abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(startPoint.x, startPoint.y, (-90.0).toRadians)) {

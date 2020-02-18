@@ -27,7 +27,7 @@ object Robot : BaseBot {
     lateinit var extension: Extension
     lateinit var grabber: Grabber
 
-    lateinit var cap: Capstone
+    lateinit var autoClaw:AutoClaw
 
     override fun setup() {
         lynx1 = hMap.get(LynxModule::class.java, "Expansion Hub 1")
@@ -45,7 +45,7 @@ object Robot : BaseBot {
 
         odometryPuller = OdometryPuller()
 
-        cap = Capstone()
+        autoClaw = AutoClaw()
 
         ScorerState.triggerLoad()
     }
@@ -68,7 +68,8 @@ object Robot : BaseBot {
 
         ScorerState.update()
         odometryPuller.update()
-        cap.update()
+
+        autoClaw.update()
     }
 
     fun endDoNothing() {
