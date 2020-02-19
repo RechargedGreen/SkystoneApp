@@ -6,6 +6,8 @@ import org.firstinspires.ftc.teamcode.field.checkMirror
 import org.firstinspires.ftc.teamcode.movement.PurePursuit.angleBetween_deg
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.goToPosition_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_turn
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_x
+import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_y
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_angle_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_deg_raw
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_pose_raw
@@ -145,10 +147,9 @@ object PurePursuit {
 
         val distToEndPoint = hypot(finalPoint.point.x - world_x_raw, finalPoint.point.y - world_y_raw)
 
-        if (lastIndex >= allPoints.size - 2 && hypot(finalPoint.point.x - world_x_raw, finalPoint.point.y - world_y_raw) <= 10.0) {
+        if (hypot(finalPoint.point.x - world_x_raw, finalPoint.point.y - world_y_raw) <= curvePoint.followDistance) {
             lastIndex = allPoints.size - 1
-            if (finalAngle.notNaN())
-                finishingMove = true
+            finishingMove = true
         }
         val followMeCurvePoint = if (lastIndex < allPoints.size - 1) allPoints[lastIndex + 1] else allPoints.last()
 
@@ -160,9 +161,17 @@ object PurePursuit {
             movement_turn = 0.0
 
         if (finishingMove)
-            goToPosition_raw(finalPoint.point.x, finalPoint.point.y, finalAngle)
+            goToPosition_raw(finalPoint.point.x, finalPoint.point.y, if (finalAngle.notNaN()) finalAngle else angleBetween_deg(path.curvePoints[path.curvePoints.size - 2].point, finalPoint.point))
+        else ////////////// forcing full power
+        {
+            val totalAbs = movement_y.absoluteValue + movement_x.absoluteValue
+            if (totalAbs != 0.0) {
+                movement_y /= totalAbs
+                movement_x /= totalAbs
+            }
+        }
 
-        return distToEndPoint < 5.0
+        return distToEndPoint < 3.0
     }
 
     var followMe: Point? = null

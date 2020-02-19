@@ -20,7 +20,8 @@ class AutoClaw {
         STOW_RELEASE({ AutoClawSignal(redFlipStow, redClawRelease) }, { AutoClawSignal(0.0, 0.0) }),
         STOW_STONE({ AutoClawSignal(redFlipStow, redClawGrab) }, { AutoClawSignal(0.0, 0.0) }),
         PRE_GRAB({ AutoClawSignal(redFlipGrab, redClawRelease) }, { AutoClawSignal(0.0, 0.0) }),
-        TELEOP({ AutoClawSignal(redFlipTeleop, redClawTeleop) }, {AutoClawSignal(0.0, 0.0)})
+        VERTICAL({ AutoClawSignal(redFlipVertical, redFlipGrab) }, { AutoClawSignal(0.0, 0.0) }),
+        TELEOP({ AutoClawSignal(redFlipTeleop, redClawTeleop) }, { AutoClawSignal(0.0, 0.0) })
     }
 
     internal class Claw(flip: String, claw: String) {

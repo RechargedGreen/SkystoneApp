@@ -56,9 +56,9 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
         var intakeMoveSpeed = 0.4
     }
 
-    val nearAngle get() = if(ALLIANCE.isRed()) nearAngle_r else nearAngle_b
-    val midAngle get() = if(ALLIANCE.isRed()) midAngle_r else midAngle_b
-    val farAngle get() = if(ALLIANCE.isRed()) farAngle_r else farAngle_b
+    val nearAngle get() = if (ALLIANCE.isRed()) nearAngle_r else nearAngle_b
+    val midAngle get() = if (ALLIANCE.isRed()) midAngle_r else midAngle_b
+    val farAngle get() = if (ALLIANCE.isRed()) farAngle_r else farAngle_b
 
     val intakePaths = ArrayList<(Point) -> PurePursuitPath>()
     val outtakePaths = ArrayList<(Point) -> PurePursuitPath>()
@@ -137,7 +137,7 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
             thirdOuttakePath.add(it)
             thirdOuttakePath.toX(38.0)
             thirdOuttakePath.toY(12.0)
-            thirdOuttakePath.add(Point(if(ALLIANCE.isRed()) 54.0 else 51.0, 24.0))
+            thirdOuttakePath.add(Point(if (ALLIANCE.isRed()) 54.0 else 51.0, 24.0))
             thirdOuttakePath.toY(32.0)
             thirdOuttakePath
         }
@@ -205,7 +205,7 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
     fun setupMidIntakePaths() {
         intakePaths.add {
             val firstIntakePath = PurePursuitPath(20.0)
-            firstIntakePath.add(Point(startPoint.x, startPoint.y + if(ALLIANCE.isRed()) 0.0 else 1.5))
+            firstIntakePath.add(Point(startPoint.x, startPoint.y + if (ALLIANCE.isRed()) 0.0 else 1.5))
             firstIntakePath.moveSpeed = intakeMoveSpeed
             firstIntakePath.extrude(60.0, -90.0 - midAngle)
             firstIntakePath
@@ -221,7 +221,7 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
             secondIntakePath.add(Point(36.0, -5.0))
 
             secondIntakePath.moveSpeed = intakeMoveSpeed
-            secondIntakePath.toY(if(ALLIANCE.isRed()) -34.0 else -32.5)
+            secondIntakePath.toY(if (ALLIANCE.isRed()) -34.0 else -32.5)
             secondIntakePath.extrude(27.0, -90.0 - 15.0)
 
             secondIntakePath
@@ -234,7 +234,7 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
             thirdIntakePath.moveSpeed = 0.8
             thirdIntakePath.toY(-36.0)
             thirdIntakePath.moveSpeed = 0.6
-            thirdIntakePath.toY(if(ALLIANCE.isRed()) -48.0 else - 48.75)
+            thirdIntakePath.toY(if (ALLIANCE.isRed()) -48.0 else -48.75)
             thirdIntakePath.toX(6.0)
             /*thirdIntakePath.toY(-28.0)
             thirdIntakePath.moveSpeed = 0.5
@@ -280,7 +280,7 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
             secondIntakePath.add(Point(36.0, -5.0))
 
             secondIntakePath.moveSpeed = 0.3
-            secondIntakePath.toY(if(ALLIANCE.isRed()) -47.0 else -46.2)
+            secondIntakePath.toY(if (ALLIANCE.isRed()) -47.0 else -46.2)
             secondIntakePath.toX(6.0)
 
             /*secondIntakePath.moveSpeed = intakeMoveSpeed
@@ -294,7 +294,7 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
             val thirdIntakePath = PurePursuitPath(20.0)
             thirdIntakePath.add(it)
             thirdIntakePath.moveSpeed = 0.7
-            thirdIntakePath.add(Point(36.0, if(ALLIANCE.isRed()) -12.0 else -11.0))
+            thirdIntakePath.add(Point(36.0, if (ALLIANCE.isRed()) -12.0 else -11.0))
 
             /*thirdIntakePath.toY(-40.0)
 
@@ -303,7 +303,7 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
             thirdIntakePath.toX(6.0)*/
 
             thirdIntakePath.moveSpeed = 0.3
-            thirdIntakePath.add(Point(24.0, if(ALLIANCE.isRed()) -23.25 else -22.0))
+            thirdIntakePath.add(Point(24.0, if (ALLIANCE.isRed()) -23.25 else -22.0))
             thirdIntakePath.extend(15.0)
 
             thirdIntakePath
@@ -340,12 +340,12 @@ abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, P
                 val path = intakePaths[0](world_point_mirror)
                 val doneWithCurve = PurePursuit.followCurve(path)
 
-                if(SkystoneDetector.place == SkystoneRandomization.FAR){
+                if (SkystoneDetector.place == SkystoneRandomization.FAR) {
                     veloControl = true
                     pointAngle_mirror(-90.0 - farAngle)
 
                     val moveAbs = movement_y.absoluteValue + movement_x.absoluteValue
-                    if(moveAbs != 0.0){
+                    if (moveAbs != 0.0) {
                         movement_y /= moveAbs
                         movement_x /= moveAbs
                         movement_y *= 0.3

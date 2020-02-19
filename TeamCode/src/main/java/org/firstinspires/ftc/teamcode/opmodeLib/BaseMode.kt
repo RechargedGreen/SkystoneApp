@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.*
 import org.firstinspires.ftc.robotcore.internal.opmode.*
 import org.firstinspires.ftc.teamcode.bulkLib.*
 import org.firstinspires.ftc.teamcode.field.*
+import org.firstinspires.ftc.teamcode.movement.PurePursuit
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.*
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.veloControl
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.setPosition_mirror
@@ -35,6 +36,7 @@ abstract class BaseMode(private val bot: BaseBot, val isAutonomous: Boolean, pri
 
     open fun nextStage(nextStage: Int = stage + 1, initStateVariables: Boolean = true) {
         /*if (stage != nextStage)*/
+        PurePursuit.reset()
         forceStageChange()
         stage = nextStage
     }
