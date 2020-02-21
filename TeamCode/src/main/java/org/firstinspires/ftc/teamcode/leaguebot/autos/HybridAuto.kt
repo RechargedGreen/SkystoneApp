@@ -43,6 +43,7 @@ abstract class HybridAuto(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose
     private val midStones = arrayOf(1, 4, 5, 3/*, 2*/)
     private val farStones = arrayOf(0, 3, 5, 4/*, 2*/)
     private val stones by lazy {
+
         when (SkystoneDetector.place) {
             SkystoneRandomization.NEAR -> nearStones
             SkystoneRandomization.MID -> midStones

@@ -16,17 +16,17 @@ class AutoClaw {
             var redSignal = state.redSignal
             var blueSignal = state.blueSignal
 
-            /*if (mode.isAutonomous) {
+            if (mode.isAutonomous) {
                 if (ALLIANCE.isRed())
                     blueSignal = State.TELEOP.blueSignal
                 else
                     redSignal = State.TELEOP.redSignal
-            }*/
+            }
 
-            /*if (foundationGrabber.state != LeagueFoundationGrabber.State.up || !foundationGrabber.clearsClaw) {
+            if ((foundationGrabber.state != LeagueFoundationGrabber.State.up || !foundationGrabber.clearsClaw) && mode.secondsIntoMode > 0.6) {
                 redSignal = State.VERTICAL.redSignal
                 blueSignal = State.VERTICAL.blueSignal
-            }*/
+            }
 
             redClaw.setSignal(redSignal())
             blueClaw.setSignal(blueSignal())
@@ -89,12 +89,12 @@ class AutoClaw {
         var blue_ClawRelease = 0.92
 
         @JvmField
-        var blue_ClawTeleop = 0.5
+        var blue_ClawTeleop = 0.8
 
         @JvmField
-        var blue_FlipVertical = 0.5
+        var blue_FlipVertical = 0.72
 
         @JvmField
-        var blue_FlipTeleop = 0.5
+        var blue_FlipTeleop = 0.94
     }
 }

@@ -23,4 +23,4 @@ abstract class ClawTest(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(0
 class ClawTest_Red : ClawTest(Alliance.RED)
 
 @TeleOp(group = "c")
-class ClawTest_Blue : ClawTest(Alliance.RED)
+class ClawTest_Blue : ClawTest(Alliance.BLUE)

@@ -13,7 +13,7 @@ class LeagueFoundationGrabber {
     private val upTimer = ElapsedTime()
     private val actingTimer = ElapsedTime()
 
-    val clearsClaw get() = upTimer.seconds() > 0.5
+    val clearsClaw get() = upTimer.seconds() > 0.8
     private val clawCleared get() = actingTimer.seconds() > 0.25
 
     enum class State(val leftPos: () -> Double, val rightPos: () -> Double) {
@@ -38,9 +38,9 @@ class LeagueFoundationGrabber {
 
     fun update() {
         if (state == State.up)
-            upTimer.reset()
-        else
             actingTimer.reset()
+        else
+            upTimer.reset()
 
         val state = if (clawCleared) state else State.up
 
