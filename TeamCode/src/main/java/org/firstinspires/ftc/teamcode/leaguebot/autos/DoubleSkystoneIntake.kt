@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.leaguebot.autos
 
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.teamcode.field.*
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.MainIntake
@@ -397,7 +398,9 @@ abstract class Skystones(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
 }
 
 @Autonomous
+@Disabled
 class Skystones_BLUE : Skystones(Alliance.BLUE)
 
 @Autonomous
+@Disabled
 class Skystones_RED : Skystones(Alliance.RED)

@@ -5,30 +5,18 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.field.Field
 import org.firstinspires.ftc.teamcode.field.Point
 import org.firstinspires.ftc.teamcode.field.Pose
-import org.firstinspires.ftc.teamcode.leaguebot.hardware.MainIntake
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.AutoClaw
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.autoClaw
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.foundationGrabber
-import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.intake
-import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.lift
-import org.firstinspires.ftc.teamcode.leaguebot.hardware.ScorerState
 import org.firstinspires.ftc.teamcode.leaguebot.misc.LeagueBotAutoBase
 import org.firstinspires.ftc.teamcode.movement.PurePursuit
-import org.firstinspires.ftc.teamcode.movement.PurePursuit.angleWrap_deg
 import org.firstinspires.ftc.teamcode.movement.PurePursuitPath
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.goToPosition_mirror
 import org.firstinspires.ftc.teamcode.movement.SimpleMotion.pointAngle_mirror
-import org.firstinspires.ftc.teamcode.movement.Speedometer
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.moveFieldCentric_mirror
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_x
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.movement_y
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.stopDrive
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement.veloControl
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_deg_mirror
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_point_mirror
-import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_x_mirror
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.world_y_mirror
 import org.firstinspires.ftc.teamcode.movement.toRadians
 import org.firstinspires.ftc.teamcode.opmodeLib.Alliance
-import org.firstinspires.ftc.teamcode.opmodeLib.RunData.ALLIANCE
 import org.firstinspires.ftc.teamcode.vision.SkystoneDetector
 import org.firstinspires.ftc.teamcode.vision.SkystoneRandomization
 import kotlin.math.absoluteValue
@@ -36,498 +24,181 @@ import kotlin.math.absoluteValue
 private val startPoint = Point(Field.EAST_WALL - 8.625, Field.SOUTH_WALL + 38.25)
 
 @Config
-abstract class FourStone(val alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(startPoint.x, startPoint.y, (-90.0).toRadians)) {
+abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(startPoint.x, startPoint.y, (-90.0).toRadians)) {
     companion object {
         @JvmField
-        var nearAngle_r = 25.0
+        var grabX = 32.5
         @JvmField
-        var nearAngle_b = 24.0
+        var followDistance = 35.0
 
         @JvmField
-        var midAngle_r = 30.5
-        @JvmField
-        var midAngle_b = 30.5
+        var crossX = 38.0
 
         @JvmField
-        var farAngle_r = 39.5
-        @JvmField
-        var farAngle_b = 39.5
-        @JvmField
-        var intakeMoveSpeed = 0.4
+        var toFoundationX = 44.0
     }
 
-    val nearAngle get() = if (ALLIANCE.isRed()) nearAngle_r else nearAngle_b
-    val midAngle get() = if (ALLIANCE.isRed()) midAngle_r else midAngle_b
-    val farAngle get() = if (ALLIANCE.isRed()) farAngle_r else farAngle_b
+    private val stoneYs = arrayOf(-59.0, -51.0, -43.0, -35.0, -27.0, -19.0)
+    private val nearStones = arrayOf(2, 5, 4, 3/*, 1*/)
+    private val midStones = arrayOf(1, 4, 5, 3/*, 2*/)
+    private val farStones = arrayOf(0, 3, 5, 4/*, 2*/)
+    private val stones by lazy {
 
-    val intakePaths = ArrayList<(Point) -> PurePursuitPath>()
-    val outtakePaths = ArrayList<(Point) -> PurePursuitPath>()
+        when (SkystoneDetector.place) {
+            SkystoneRandomization.NEAR -> nearStones
+            SkystoneRandomization.MID -> midStones
+            SkystoneRandomization.FAR -> farStones
+        }
+    }
 
-    lateinit var outPath: PurePursuitPath
+    val stone get() = stones[cycle]
+    private var cycle = 0
 
-    var hasCrossedY = false
-
-    val startLoadClawY = 36.0
+    private val grabY get() = stoneYs[stone]
 
     enum class progStages {
-        intakingFirstStone,
-        outTakingFirstStone,
 
-        intakingSecondStone,
-        drivingBackSecondStone,
-        droppingSecondStone,
+        goBack,
+        goToStone,
 
-        intakingThirdStone,
-        drivingBackThirdStone,
-        droppingThirdStone,
+        grab,
 
-        intakingFourthStone,
-        drivingBackFourthStone,
-        droppingFourthStone,
+        cross,
 
-        yeetToPark,
+        eject,
+
+        rotate,
+        backUp,
+        pull,
+        rotateFoundation,
+        park,
 
         stopDoNothing
     }
 
-    fun setupIntakePaths() {
-        when (SkystoneDetector.place) {
-            SkystoneRandomization.NEAR -> setupNearIntakePaths()
-            SkystoneRandomization.MID -> setupMidIntakePaths()
-            SkystoneRandomization.FAR -> setupFarIntakePaths()
-        }
-    }
-
-    fun setupOuttakePaths() {
-        /*outtakePaths.add {
-            val firstOuttakePath = PurePursuitPath(20.0)
-            firstOuttakePath.add(it)
-            firstOuttakePath.toX(38.0)
-            firstOuttakePath.toY(20.0)
-            firstOuttakePath.toY(44.0)
-            firstOuttakePath.toX(0.0)
-            firstOuttakePath
-        }*/
-
-        outtakePaths.add {
-            val firstOuttakePath = PurePursuitPath(20.0)
-            firstOuttakePath.add(it)
-            firstOuttakePath.toX(38.0)
-            firstOuttakePath.toY(0.0)
-            firstOuttakePath.add(Point(47.0, 30.0))
-            firstOuttakePath.toY(50.0)
-            firstOuttakePath.moveSpeed = 0.5
-            firstOuttakePath.toX(-49.0)
-            firstOuttakePath.moveSpeed = 0.3
-            firstOuttakePath.toX(0.0)
-            firstOuttakePath
-        }
-
-        outtakePaths.add {
-            val secondOuttakePath = PurePursuitPath(20.0)
-            secondOuttakePath.finalAngle = 180.0
-            secondOuttakePath.add(it)
-            secondOuttakePath.toX(38.0)
-            secondOuttakePath.toY(36.0)
-            secondOuttakePath
-        }
-
-        outtakePaths.add {
-            val thirdOuttakePath = PurePursuitPath(20.0)
-            thirdOuttakePath.add(it)
-            thirdOuttakePath.toX(38.0)
-            thirdOuttakePath.toY(12.0)
-            thirdOuttakePath.add(Point(if (ALLIANCE.isRed()) 54.0 else 51.0, 24.0))
-            thirdOuttakePath.toY(32.0)
-            thirdOuttakePath
-        }
-
-        outtakePaths.add {
-            val fourthOuttakePath = PurePursuitPath(20.0)
-            fourthOuttakePath.add(it)
-            fourthOuttakePath.toX(38.0)
-            fourthOuttakePath.toY(18.0)
-            fourthOuttakePath.add(Point(45.0, 30.0))
-            fourthOuttakePath.toY(32.0)
-            fourthOuttakePath
-        }
-    }
-
-    fun setupNearIntakePaths() {
-        intakePaths.add {
-            val firstIntakePath = PurePursuitPath(20.0)
-            firstIntakePath.add(startPoint)
-            firstIntakePath.moveSpeed = intakeMoveSpeed
-            firstIntakePath.extrude(53.0, -90.0 - nearAngle)
-            firstIntakePath
-        }
-
-        intakePaths.add {
-            val secondIntakePath = PurePursuitPath(20.0)
-            secondIntakePath.add(Point(0.0, 44.0))
-            secondIntakePath.toX(58.0)
-
-            secondIntakePath.toY(30.0) // was 20
-            secondIntakePath.moveSpeed = 0.7
-            secondIntakePath.add(Point(36.0, -12.0))
-
-            secondIntakePath.moveSpeed = intakeMoveSpeed
-            secondIntakePath.add(Point(24.0, -24.0))
-            secondIntakePath.extend(5.0)
-
-            secondIntakePath
-        }
-
-        intakePaths.add {
-            val thirdIntakePath = PurePursuitPath(20.0)
-            thirdIntakePath.add(Point(38.0, 48.0))
-            thirdIntakePath.toY(-13.0)
-            thirdIntakePath.forceMoveSpeedEarly = true
-            thirdIntakePath.moveSpeed = intakeMoveSpeed
-            thirdIntakePath.extrude(50.0, -135.0)
-            thirdIntakePath
-        }
-
-        intakePaths.add {
-            val fourthIntakePath = PurePursuitPath(20.0)
-
-            fourthIntakePath.add(it)
-            fourthIntakePath.add(Point(38.0, 12.0))
-            fourthIntakePath.toY(-24.0)
-            fourthIntakePath.add(Point(24.0, -64.0))
-
-            fourthIntakePath.extend(3.0)
-
-            fourthIntakePath
-        }
-    }
-
-    fun setupMidIntakePaths() {
-        intakePaths.add {
-            val firstIntakePath = PurePursuitPath(20.0)
-            firstIntakePath.add(Point(startPoint.x, startPoint.y + if (ALLIANCE.isRed()) 0.0 else 1.5))
-            firstIntakePath.moveSpeed = intakeMoveSpeed
-            firstIntakePath.extrude(60.0, -90.0 - midAngle)
-            firstIntakePath
-        }
-
-        intakePaths.add {
-            val secondIntakePath = PurePursuitPath(20.0)
-            secondIntakePath.add(Point(0.0, 44.0))
-            secondIntakePath.toX(58.0)
-
-            secondIntakePath.toY(30.0) // was 20
-            secondIntakePath.moveSpeed = 0.7
-            secondIntakePath.add(Point(36.0, -5.0))
-
-            secondIntakePath.moveSpeed = intakeMoveSpeed
-            secondIntakePath.toY(if (ALLIANCE.isRed()) -34.0 else -32.5)
-            secondIntakePath.extrude(27.0, -90.0 - 15.0)
-
-            secondIntakePath
-        }
-
-        intakePaths.add {
-            val thirdIntakePath = PurePursuitPath(20.0)
-            thirdIntakePath.add(Point(38.0, 48.0))
-
-            thirdIntakePath.moveSpeed = 0.8
-            thirdIntakePath.toY(-36.0)
-            thirdIntakePath.moveSpeed = 0.6
-            thirdIntakePath.toY(if (ALLIANCE.isRed()) -48.0 else -48.75)
-            thirdIntakePath.toX(6.0)
-            /*thirdIntakePath.toY(-28.0)
-            thirdIntakePath.moveSpeed = 0.5
-            thirdIntakePath.extrude(35.0, -120.0)*/
-            thirdIntakePath
-        }
-
-        intakePaths.add {
-            val fourthIntakePath = PurePursuitPath(20.0)
-
-            fourthIntakePath.add(it)
-            fourthIntakePath.add(Point(38.0, 12.0))
-
-            fourthIntakePath.moveSpeed = 0.8
-
-            fourthIntakePath.toY(-17.0)
-
-            fourthIntakePath.moveSpeed = 0.6
-
-            fourthIntakePath.toY(-26.0)
-            fourthIntakePath.toX(6.0)
-
-            fourthIntakePath
-        }
-    }
-
-    fun setupFarIntakePaths() {
-        intakePaths.add {
-            val firstIntakePath = PurePursuitPath(20.0)
-            firstIntakePath.add(startPoint)
-            firstIntakePath.moveSpeed = intakeMoveSpeed
-            firstIntakePath.extrude(60.0, -90.0 - farAngle)
-            firstIntakePath
-        }
-
-        intakePaths.add {
-            val secondIntakePath = PurePursuitPath(20.0)
-            secondIntakePath.add(Point(0.0, 44.0))
-            secondIntakePath.toX(58.0)
-
-            secondIntakePath.toY(30.0) // was 20
-            secondIntakePath.moveSpeed = 0.7
-            secondIntakePath.add(Point(36.0, -5.0))
-
-            secondIntakePath.moveSpeed = 0.3
-            secondIntakePath.toY(if (ALLIANCE.isRed()) -47.0 else -46.2)
-            secondIntakePath.toX(6.0)
-
-            /*secondIntakePath.moveSpeed = intakeMoveSpeed
-            secondIntakePath.toY(-40.0)
-            secondIntakePath.extrude(30.0, -90.0 - 17.0)*/
-
-            secondIntakePath
-        }
-
-        intakePaths.add {
-            val thirdIntakePath = PurePursuitPath(20.0)
-            thirdIntakePath.add(it)
-            thirdIntakePath.moveSpeed = 0.7
-            thirdIntakePath.add(Point(36.0, if (ALLIANCE.isRed()) -12.0 else -11.0))
-
-            /*thirdIntakePath.toY(-40.0)
-
-            thirdIntakePath.moveSpeed = 0.3
-            thirdIntakePath.toY(-58.0)
-            thirdIntakePath.toX(6.0)*/
-
-            thirdIntakePath.moveSpeed = 0.3
-            thirdIntakePath.add(Point(24.0, if (ALLIANCE.isRed()) -23.25 else -22.0))
-            thirdIntakePath.extend(15.0)
-
-            thirdIntakePath
-        }
-    }
-
-    override fun onInitLoop() {
-        telemetry.addData("order", SkystoneDetector.place)
-    }
-
     override fun onStart() {
-        intake.state = MainIntake.State.IN
-        lift.triggerIntake()
-        PurePursuit.reset()
-
-        setupIntakePaths()
-        setupOuttakePaths()
+        super.onStart()
+        nextStage(progStages.goToStone.ordinal)
     }
-
-    val loadedIntake get() = intake.sensorTriggered && world_y_mirror < -4.0
 
     override fun onMainLoop() {
         val currentStage = progStages.values()[stage]
-        telemetry.addData("currentStage", currentStage)
+
+        telemetry.addData("stage", currentStage)
 
         stopDrive()
+
         when (currentStage) {
-            progStages.stopDoNothing -> {
-                if (isTimedOut(2.0))
-                    requestOpModeStop()
-            }
+            progStages.goBack -> {
+                val path = PurePursuitPath(followDistance)
+                path.add(Point(crossX, 72.0))
+                path.toY(grabY)
+                PurePursuit.followCurve(path, 180.0)
 
-            progStages.intakingFirstStone -> {
-                val path = intakePaths[0](world_point_mirror)
-                val doneWithCurve = PurePursuit.followCurve(path)
+                pointAngle_mirror(0.0)
 
-                if (SkystoneDetector.place == SkystoneRandomization.FAR) {
-                    veloControl = true
-                    pointAngle_mirror(-90.0 - farAngle)
-
-                    val moveAbs = movement_y.absoluteValue + movement_x.absoluteValue
-                    if (moveAbs != 0.0) {
-                        movement_y /= moveAbs
-                        movement_x /= moveAbs
-                        movement_y *= 0.3
-                        movement_x *= 0.3
-                    }
-                }
-
-                if (loadedIntake || doneWithCurve || isTimedOut(4.0)) {
-                    intake.state = MainIntake.State.FINISH_AUTO_INTAKE
+                if (world_y_mirror < 5.0)
                     nextStage()
-                    outPath = outtakePaths[0](world_point_mirror)
-                    PurePursuit.reset()
-                }
             }
 
-            progStages.outTakingFirstStone -> {
-                PurePursuit.followCurve(outPath, 180.0)
-                if (world_y_mirror > 10.0)
-                    hasCrossedY = true
-
-                if (hasCrossedY) {
-                    foundationGrabber.prepForGrab()
-                    ScorerState.triggerExtend()
-                }
-
-                if (hasCrossedY && world_x_mirror < 31.0) {
+            progStages.goToStone -> {
+                autoClaw.state = AutoClaw.State.PRE_GRAB
+                val error = goToPosition_mirror(grabX, grabY, 0.0)
+                if (error.point.y.absoluteValue < 2.5 && error.point.x.absoluteValue < 2.5)
                     nextStage()
-                    foundationGrabber.grab()
-                    hasCrossedY = false
-                    ScorerState.triggerRelease()
-                    PurePursuit.reset()
-                }
             }
 
-            progStages.intakingSecondStone -> {
-                if (world_y_mirror < 0.0)
-                    intake.state = MainIntake.State.IN
-
-                if (world_y_mirror < startLoadClawY)
-                    ScorerState.triggerLoad()
-
-                var doneWithCurve = false
+            progStages.grab -> {
+                autoClaw.state = AutoClaw.State.GRABBING
+                val error = goToPosition_mirror(grabX, grabY, 0.0)
                 if (isTimedOut(0.5))
-                    doneWithCurve = PurePursuit.followCurve(intakePaths[1](world_point_mirror))
-
-                if (angleWrap_deg(world_deg_mirror) > 170.0 || angleWrap_deg(world_deg_mirror) < -135.0) {
-                    foundationGrabber.release()
-                    ScorerState.triggerPullBack()
-                }
-
-                if (world_y_mirror < 0.0)
-                    lift.triggerIntake()
-
-                if (loadedIntake || doneWithCurve) {
-                    intake.state = MainIntake.State.FINISH_AUTO_INTAKE
-                    nextStage()
-                    PurePursuit.reset()
-
-                    outPath = outtakePaths[1](world_point_mirror)
-                }
-            }
-
-            progStages.drivingBackSecondStone -> {
-                val doneWithCurve = PurePursuit.followCurve(outPath, 180.0)
-                if (world_y_mirror > 8.0)
-                    ScorerState.triggerExtend()
-                if (doneWithCurve)
                     nextStage()
             }
 
-            progStages.droppingSecondStone -> {
-                moveFieldCentric_mirror(0.0, 0.3, 0.0)
-                pointAngle_mirror(180.0)
-                ScorerState.triggerRelease()
-                if (isTimedOut(0.4)) {
-                    ScorerState.triggerPullBack()
+            progStages.cross -> {
+                autoClaw.state = AutoClaw.State.STOW_STONE
+                val curve = PurePursuitPath(followDistance)
+                curve.add(Point(toFoundationX, grabY))
+                curve.toY(24.0)
+                curve.add(Point(29.0, if (cycle < 2) 56.0 else 46.0))
+
+                val doneWithCurve = PurePursuit.followCurve(curve)
+
+                pointAngle_mirror(0.0)
+
+                if (stone < 5 && cycle < 2 && !isTimedOut(0.25))
+                    stopDrive()
+
+                if (doneWithCurve) {
+                    autoClaw.state = AutoClaw.State.PRE_GRAB
                     nextStage()
-                    PurePursuit.reset()
                 }
             }
 
-            progStages.intakingThirdStone -> {
-                if (world_y_mirror < 0.0)
-                    intake.state = MainIntake.State.IN
-
-                if (world_y_mirror < startLoadClawY)
-                    ScorerState.triggerLoad()
-
-                val doneWithCurve = PurePursuit.followCurve(intakePaths[2](world_point_mirror))
-
-                if (world_y_mirror < 0.0)
-                    lift.triggerIntake()
-
-                if (doneWithCurve || loadedIntake) {
-                    nextStage()
-                    intake.state = MainIntake.State.FINISH_AUTO_INTAKE
-                    outPath = outtakePaths[2](world_point_mirror)
-                }
-            }
-
-            progStages.drivingBackThirdStone -> {
-                val doneWithCurve = PurePursuit.followCurve(outPath, 180.0)
-                if (world_y_mirror > 8.0)
-                    ScorerState.triggerExtend()
-                if (doneWithCurve)
-                    nextStage()
-            }
-
-            progStages.droppingThirdStone -> {
-                moveFieldCentric_mirror(0.0, 0.3, 0.0)
-                pointAngle_mirror(180.0)
-                val backTime = 0.4
-                if (isTimedOut(backTime))
-                    ScorerState.triggerRelease()
-                if (isTimedOut(backTime + 0.25)) {
-                    ScorerState.triggerPullBack()
-
-                    if (SkystoneDetector.place != SkystoneRandomization.NEAR)
-                        nextStage(progStages.yeetToPark.ordinal)
-                    else {
-                        outPath = intakePaths[3](world_point_mirror)
+            progStages.eject -> {
+                if (isTimedOut(0.25)) {
+                    cycle++
+                    if (cycle >= stones.size) {
+                        autoClaw.state = AutoClaw.State.TELEOP
+                        foundationGrabber.prepForGrab()
                         nextStage()
+                    } else {
+                        nextStage(progStages.goBack.ordinal)
+                        autoClaw.state = AutoClaw.State.TELEOP
                     }
-
-                    PurePursuit.reset()
                 }
             }
 
-            progStages.intakingFourthStone -> {
-                if (world_y_mirror < 0.0)
-                    intake.state = MainIntake.State.IN
-
-                val doneWithCurve = PurePursuit.followCurve(outPath)
-
-
-                if (world_y_mirror < startLoadClawY)
-                    ScorerState.triggerLoad()
-
-                if (world_y_mirror < 0.0)
-                    lift.triggerIntake()
-
-                if (doneWithCurve || loadedIntake) {
-                    nextStage()
-                    intake.state = MainIntake.State.FINISH_AUTO_INTAKE
-                    outPath = outtakePaths[3](world_point_mirror)
+            progStages.rotate -> {
+                if (isTimedOut(0.2)) {
+                    val error = goToPosition_mirror(28.0, 49.5, 90.0)
+                    if (error.deg.absoluteValue < 6.0 && error.x.absoluteValue < 3.0)
+                        nextStage()
                 }
             }
 
-            progStages.drivingBackFourthStone -> {
-                val doneWithCurve = PurePursuit.followCurve(outPath, 180.0)
-                if (world_y_mirror > 8.0)
-                    ScorerState.triggerExtend()
-                if (doneWithCurve)
+            progStages.backUp -> {
+                val error = goToPosition_mirror(23.0, 49.5, 90.0)
+                if (error.x.absoluteValue < 3.0)
                     nextStage()
             }
 
-            progStages.droppingFourthStone -> {
-                moveFieldCentric_mirror(0.0, 0.3, 0.0)
-                pointAngle_mirror(180.0)
-                val backTime = 0.4
-                if (isTimedOut(backTime))
-                    ScorerState.triggerRelease()
-                if (isTimedOut(backTime + 0.25)) {
-                    ScorerState.triggerPullBack()
-                    nextStage()
-                    PurePursuit.reset()
+            progStages.pull -> {
+                foundationGrabber.grab()
+                if (isTimedOut(0.25)) {
+                    val error = goToPosition_mirror(53.0, 49.5, 90.0)
+                    if (error.x.absoluteValue < 3.0)
+                        nextStage()
                 }
             }
 
-            progStages.yeetToPark -> {
+            progStages.rotateFoundation -> {
+                val error = pointAngle_mirror(180.0)
+
+                //movement_turn = Range.clip(movement_turn, -0.5, 0.5)
+
+                if (error.absoluteValue < 5.0) {
+                    nextStage()
+                    foundationGrabber.release()
+                }
+            }
+
+            progStages.park -> {
                 val error = goToPosition_mirror(31.0, 4.5, 180.0)
-                if (error.point.hypot < 3.0 && Speedometer.fieldSpeed.hypot < 5.0) {
+                if (error.point.hypot < 3.0)
                     nextStage()
-                    ScorerState.triggerLoad()
-                }
+            }
+
+            progStages.stopDoNothing -> {
+                if (isTimedOut(1.0))
+                    requestOpModeStop()
             }
         }
     }
 }
 
 @Autonomous
-class FourStone_RED : FourStone(Alliance.RED)
+class FourStone_Red : FourStone(Alliance.RED)
 
 @Autonomous
 class FourStone_BLUE : FourStone(Alliance.BLUE)
