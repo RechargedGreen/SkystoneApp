@@ -143,7 +143,7 @@ abstract class HybridAuto(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose
                         nextStage()
                     } else {
                         nextStage(progStages.goBack.ordinal)
-                        autoClaw.state = AutoClaw.State.STOW_RELEASE
+                        autoClaw.state = AutoClaw.State.TELEOP
                     }
                 }
             }

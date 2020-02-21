@@ -2,15 +2,15 @@ package org.firstinspires.ftc.teamcode.leaguebot.teleop
 
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.util.ElapsedTime
-import org.firstinspires.ftc.teamcode.field.*
-import org.firstinspires.ftc.teamcode.leaguebot.hardware.*
+import org.firstinspires.ftc.teamcode.field.Pose
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.MainIntake
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.autoClaw
 import org.firstinspires.ftc.teamcode.leaguebot.hardware.Robot.grabber
+import org.firstinspires.ftc.teamcode.leaguebot.hardware.ScorerState
 import org.firstinspires.ftc.teamcode.leaguebot.misc.LeagueBotTeleOpBase
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.setPosition_raw
-import org.firstinspires.ftc.teamcode.opmodeLib.Globals
 
 @TeleOp(group = "a")
 @Config
@@ -61,18 +61,6 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
 
     override fun onMainLoop() {
         DriveMovement.gamepadControl(driver)
-
-        if(driver.dLeft.justPressed)
-            clawDown = !clawDown
-        if(driver.dDown.justPressed)
-            clawGrab = !clawGrab
-        autoClaw.state = when{
-            clawGrab && clawDown -> AutoClaw.State.GRABBING
-            clawGrab && !clawDown -> AutoClaw.State.STOW_STONE
-            !clawGrab && clawDown -> AutoClaw.State.PRE_GRAB
-            else -> AutoClaw.State.STOW_RELEASE
-        }
-        autoClaw.state = AutoClaw.State.TELEOP
 
         when {
             operator.rightTriggerB.justPressed -> towerHeight = highestTower

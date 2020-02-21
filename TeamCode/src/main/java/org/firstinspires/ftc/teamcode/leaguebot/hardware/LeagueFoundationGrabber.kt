@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.leaguebot.hardware
 
 import com.acmerobotics.dashboard.config.Config
+import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.bulkLib.RevHubServo
 import org.firstinspires.ftc.teamcode.opmodeLib.Globals
 
@@ -9,6 +10,11 @@ class LeagueFoundationGrabber {
     private val leftServo = RevHubServo("rightFoundation")
     private val rightServo = RevHubServo("leftFoundation")
 
+    private val upTimer = ElapsedTime()
+    private val actingTimer = ElapsedTime()
+
+    val clearsClaw get() = upTimer.seconds() > 0.5
+    private val clawCleared get() = actingTimer.seconds() > 0.25
 
     enum class State(val leftPos: () -> Double, val rightPos: () -> Double) {
         up({ lUp }, { rUp }),
@@ -31,6 +37,13 @@ class LeagueFoundationGrabber {
     }
 
     fun update() {
+        if (state == State.up)
+            upTimer.reset()
+        else
+            actingTimer.reset()
+
+        val state = if (clawCleared) state else State.up
+
         val l = state.leftPos()
         val r = state.rightPos()
         if (Globals.mode.movementAllowed) {
