@@ -35,7 +35,7 @@ abstract class HybridAuto(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose
         var crossX = 38.0
 
         @JvmField
-        var toFoundationX = 40.0
+        var toFoundationX = 44.0
     }
 
     private val stoneYs = arrayOf(-59.0, -51.0, -43.0, -35.0, -27.0, -19.0)
@@ -120,7 +120,7 @@ abstract class HybridAuto(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose
                 val curve = PurePursuitPath(followDistance)
                 curve.add(Point(toFoundationX, grabY))
                 curve.toY(24.0)
-                curve.add(Point(if (cycle < 2) 29.0 else 28.0, if (cycle < 2) 58.0 else 46.0))
+                curve.add(Point(29.0, if (cycle < 2) 56.0 else 46.0))
 
                 val doneWithCurve = PurePursuit.followCurve(curve)
 
@@ -139,7 +139,7 @@ abstract class HybridAuto(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose
                 if (isTimedOut(0.25)) {
                     cycle++
                     if (cycle >= stones.size) {
-                        autoClaw.state = AutoClaw.State.VERTICAL
+                        autoClaw.state = AutoClaw.State.TELEOP
                         foundationGrabber.prepForGrab()
                         nextStage()
                     } else {
@@ -199,3 +199,6 @@ abstract class HybridAuto(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose
 
 @Autonomous
 class HybridAuto_Red : HybridAuto(Alliance.RED)
+
+@Autonomous
+class HybridAuto_BLUE : HybridAuto(Alliance.BLUE)

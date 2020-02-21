@@ -21,7 +21,7 @@ object SimpleMotion {
     @JvmField
     var turnD = 0.0025
     @JvmField
-    var moveD = 0.008
+    var moveD = 0.01 // 0.008
 
     fun goToPosition_raw(x: Double, y: Double, deg: Double, clipSpeed: Boolean = true, slowDownDegrees: Double = 15.0, slowDownAmount: Double = 8.0, yClip: Double = Double.NaN, xClip: Double = Double.NaN): Pose {
         val turnLeft = (deg - world_angle_raw.deg).angleWrapDeg
