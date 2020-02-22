@@ -40,6 +40,7 @@ class AutoClaw {
         STOW_STONE({ AutoClawSignal(red_FlipStow, red_ClawGrab) }, { AutoClawSignal(blue_FlipStow, blue_ClawGrab) }),
         PRE_GRAB({ AutoClawSignal(red_FlipGrab, red_ClawRelease) }, { AutoClawSignal(blue_FlipGrab, blue_ClawRelease) }),
         VERTICAL({ AutoClawSignal(red_FlipVertical, red_ClawTeleop) }, { AutoClawSignal(blue_FlipVertical, blue_ClawTeleop) }),
+        EJECT({ AutoClawSignal(red_FlipGrab, red_ClawTeleop) }, { AutoClawSignal(blue_FlipGrab, blue_ClawTeleop) }),
         TELEOP({ AutoClawSignal(red_FlipTeleop, red_ClawTeleop) }, { AutoClawSignal(blue_FlipTeleop, blue_ClawTeleop) })
     }
 
