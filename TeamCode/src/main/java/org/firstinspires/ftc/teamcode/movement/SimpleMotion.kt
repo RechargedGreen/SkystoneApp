@@ -14,12 +14,17 @@ import org.firstinspires.ftc.teamcode.util.clip
 
 @Config
 object SimpleMotion {
+
+    ////// TURN
     @JvmField
     var turnP = 0.03
     @JvmField
-    var moveP = 0.1
-    @JvmField
     var turnD = 0.0025
+
+
+    /////// MOVE
+    @JvmField
+    var moveP = 0.13
     @JvmField
     var moveD = 0.018
 

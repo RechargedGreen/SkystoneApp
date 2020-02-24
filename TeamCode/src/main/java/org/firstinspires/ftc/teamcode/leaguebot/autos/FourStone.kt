@@ -33,25 +33,44 @@ private val startPoint = Point(Field.EAST_WALL - 8.625, Field.SOUTH_WALL + 38.25
 abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(startPoint.x, startPoint.y, (-90.0).toRadians)) {
     companion object {
         @JvmField
-        var grabX = 33.5
+        var grabX_red = 33.5
+        @JvmField
+        var grabX_blue = 33.68
         @JvmField
         var followDistance = 35.0
 
         @JvmField
-        var crossX = 40.0
+        var crossX_red = 44.0
+        @JvmField
+        var crossX_blue = 47.5
 
         @JvmField
-        var farY = 56.0
+        var farY_red = 56.0
+        @JvmField
+        var farY_blue = 58.5
 
         @JvmField
-        var nearY = 46.0
+        var nearY_red = 46.0
+        @JvmField
+        var nearY_blue = 46.0
 
         @JvmField
-        var placeX = 26.75
+        var placeX_red = 26.75
+        @JvmField
+        var placeX_blue = 32.5
 
         @JvmField
-        var toFoundationX = 44.0
+        var toFoundationX_red = 44.0
+        @JvmField
+        var toFoundationX_blue = 47.0
     }
+
+    private val crossX get() = if (ALLIANCE.isRed()) crossX_red else crossX_blue
+    private val placeX get() = if (ALLIANCE.isRed()) placeX_red else placeX_blue
+    private val grabX get() = if (ALLIANCE.isRed()) grabX_red else grabX_blue
+    private val toFoundationX get() = if (ALLIANCE.isRed()) toFoundationX_red else toFoundationX_blue
+    private val nearY get() = if (ALLIANCE.isRed()) nearY_red else nearY_blue
+    private val farY get() = if (ALLIANCE.isRed()) farY_red else farY_blue
 
     private val stoneYs = arrayOf(-59.75, -51.75, -43.75, -35.75, -27.75, -19.75)
     private val nearStones = arrayOf(2, 5, 4, 3/*, 1*/)
@@ -105,7 +124,7 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
 
         when (currentStage) {
             progStages.goBack -> {
-                if(!isTimedOut(0.25))
+                if (!isTimedOut(0.25))
                     stopDrive()
 
                 val path = PurePursuitPath(followDistance)
@@ -129,7 +148,7 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
             progStages.grab -> {
                 autoClaw.state = AutoClaw.State.GRABBING
                 val error = goToPosition_mirror(grabX, grabY, 0.0)
-                if (isTimedOut(0.35))
+                if (isTimedOut(0.45))
                     nextStage()
             }
 
@@ -192,7 +211,7 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
                 val maxSpeed = 1.0
                 movement_turn = Range.clip(movement_turn, -maxSpeed, maxSpeed)
 
-                movement_y = movement_turn * ALLIANCE.sign * 1.6
+                movement_y = movement_turn * ALLIANCE.sign * if (ALLIANCE.isRed()) 1.6 else 2.0
 
                 if (!isTimedOut(0.25))
                     stopDrive()
@@ -205,14 +224,14 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
                 moveFieldCentric_mirror(0.0, 0.5, 0.0)
                 pointAngle_mirror(180.0)
 
-                if (isTimedOut(1.0) || secondsTillEnd < 1.5) {
+                if (isTimedOut(1.5) || secondsTillEnd < 1.5) {
                     nextStage()
                     foundationGrabber.release()
                 }
             }
 
             progStages.park -> {
-                val error = goToPosition_mirror(31.0, 4.5, 180.0)
+                val error = goToPosition_mirror(35.0, 4.5, 180.0)
 
                 if (!isTimedOut(0.25))
                     stopDrive()
