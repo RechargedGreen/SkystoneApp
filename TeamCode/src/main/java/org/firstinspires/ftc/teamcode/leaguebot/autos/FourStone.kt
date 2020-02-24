@@ -62,7 +62,7 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
         @JvmField
         var toFoundationX_red = 44.0
         @JvmField
-        var toFoundationX_blue = 47.0
+        var toFoundationX_blue = 47.75
     }
 
     private val crossX get() = if (ALLIANCE.isRed()) crossX_red else crossX_blue
@@ -141,7 +141,7 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
             progStages.goToStone -> {
                 autoClaw.state = AutoClaw.State.PRE_GRAB
                 val error = goToPosition_mirror(grabX, grabY, 0.0)
-                if (error.point.y.absoluteValue < 2.0 && error.point.x.absoluteValue < 1.24 && world_deg_mirror < 4.0 && world_deg_mirror > -3.0)
+                if (error.point.y.absoluteValue < 2.0 && error.point.x.absoluteValue < 1.25 && world_deg_mirror.absoluteValue < 4.5)
                     nextStage()
             }
 
