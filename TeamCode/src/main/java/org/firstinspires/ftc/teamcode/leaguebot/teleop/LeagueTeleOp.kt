@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.leaguebot.hardware.ScorerState
 import org.firstinspires.ftc.teamcode.leaguebot.misc.LeagueBotTeleOpBase
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DriveMovement
 import org.firstinspires.ftc.teamcode.movement.basicDriveFunctions.DrivePosition.setPosition_raw
+import org.firstinspires.ftc.teamcode.util.threshold
 
 @TeleOp(group = "a")
 @Config
@@ -31,6 +32,8 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
         @JvmField
         var intakeHeight = 1.15
     }
+
+    val inputIncrement = 0.75
 
     var inputBias = 0.0
 
@@ -70,8 +73,8 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
         }
 
         when {
-            operator.y.justPressed -> inputBias += 0.25
-            operator.a.justPressed -> inputBias -= 0.25
+            operator.y.justPressed -> inputBias += inputIncrement
+            operator.a.justPressed -> inputBias -= inputIncrement
             operator.x.justPressed -> inputBias = 0.0
         }
 
@@ -135,7 +138,7 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
                 if (towerHeight == 0 || !ScorerState.clearToLift)
                     Robot.lift.lower()
                 else
-                    Robot.lift.heightTarget = towerHeight.toDouble() * stoneH + liftBias + inputBias + operator.rightStick.y * 4.0
+                    Robot.lift.heightTarget = towerHeight.toDouble() * stoneH + liftBias + inputBias
             }
         }
 

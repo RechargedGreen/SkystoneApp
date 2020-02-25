@@ -41,13 +41,13 @@ class Grabber {
 
     companion object {
         @JvmField
-        var frontGrabPosition = 0.0
+        var frontGrabPosition = 0.24
         @JvmField
         var frontReleasePosition = 0.45
         @JvmField
         var frontFullReleasePosition = 1.0
         @JvmField
-        var backGrabPosition = 0.8
+        var backGrabPosition = 0.78
         @JvmField
         var backReleasePosition = 0.43
 

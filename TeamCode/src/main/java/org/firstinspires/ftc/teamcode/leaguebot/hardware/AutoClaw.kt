@@ -37,6 +37,7 @@ class AutoClaw {
 
     enum class State(internal val redSignal: () -> AutoClawSignal, internal val blueSignal: () -> AutoClawSignal) {
         GRABBING({ AutoClawSignal(red_FlipGrab, red_ClawGrab) }, { AutoClawSignal(blue_FlipGrab, blue_ClawGrab) }),
+        PART_EJECT({ AutoClawSignal(red_FlipPartial, red_ClawGrab) }, { AutoClawSignal(blue_FlipPartial, blue_ClawGrab) }),
         STOW_STONE({ AutoClawSignal(red_FlipStow, red_ClawGrab) }, { AutoClawSignal(blue_FlipStow, blue_ClawGrab) }),
         PRE_GRAB({ AutoClawSignal(red_FlipGrab, red_ClawRelease) }, { AutoClawSignal(blue_FlipGrab, blue_ClawRelease) }),
         VERTICAL({ AutoClawSignal(red_FlipVertical, red_ClawTeleop) }, { AutoClawSignal(blue_FlipVertical, blue_ClawTeleop) }),
@@ -75,7 +76,10 @@ class AutoClaw {
         var red_FlipVertical = 0.5
 
         @JvmField
-        var red_FlipTeleop = 0.22
+        var red_FlipPartial = 0.5
+
+        @JvmField
+        var red_FlipTeleop = 0.24
 
         @JvmField
         var blue_FlipStow = 0.91
@@ -94,6 +98,9 @@ class AutoClaw {
 
         @JvmField
         var blue_FlipVertical = 0.72
+
+        @JvmField
+        var blue_FlipPartial = 0.72
 
         @JvmField
         var blue_FlipTeleop = 0.94

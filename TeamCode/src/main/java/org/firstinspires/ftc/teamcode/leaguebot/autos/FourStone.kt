@@ -47,7 +47,7 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
         @JvmField
         var farY_red = 56.8
         @JvmField
-        var farY_blue = 56.8
+        var farY_blue = 55.0
 
         @JvmField
         var nearY_red = 48.0
@@ -154,6 +154,10 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
 
             progStages.cross -> {
                 autoClaw.state = AutoClaw.State.STOW_STONE
+
+                if (world_y_mirror > 24.0) // commenting this will revert to early monday code
+                    autoClaw.state = AutoClaw.State.PART_EJECT
+
                 val curve = PurePursuitPath(followDistance)
                 curve.add(Point(toFoundationX, grabY))
                 curve.toY(24.0)
@@ -173,10 +177,6 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
             }
 
             progStages.eject -> {
-
-                /*if (isTimedOut(0.5))
-                    autoClaw.state = AutoClaw.State.PRE_GRAB*/
-
                 if (isTimedOut(0.25)) {
                     cycle++
                     autoClaw.state = AutoClaw.State.TELEOP
@@ -198,7 +198,7 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
             }
 
             progStages.backUp -> {
-                val error = goToPosition_mirror(if(ALLIANCE.isRed()) 23.0 else 25.0, 49.5, 90.0)
+                val error = goToPosition_mirror(if (ALLIANCE.isRed()) 23.0 else 25.0, 49.5, 90.0)
                 if (error.x.absoluteValue < 3.0)
                     nextStage()
             }

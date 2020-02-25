@@ -17,7 +17,7 @@ object SimpleMotion {
 
     ////// TURN
     @JvmField
-    var turnP = 0.03
+    var turnP = 0.035
     @JvmField
     var turnD = 0.0025
 
@@ -26,7 +26,7 @@ object SimpleMotion {
     @JvmField
     var moveP = 0.13
     @JvmField
-    var moveD = 0.021
+    var moveD = 0.026 // 0.021 before consistency testing
 
     fun goToPosition_raw(x: Double, y: Double, deg: Double, clipSpeed: Boolean = true, slowDownDegrees: Double = 15.0, slowDownAmount: Double = 8.0, yClip: Double = Double.NaN, xClip: Double = Double.NaN): Pose {
         val turnLeft = (deg - world_angle_raw.deg).angleWrapDeg
