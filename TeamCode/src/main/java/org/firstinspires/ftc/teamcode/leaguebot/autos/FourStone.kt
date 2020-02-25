@@ -33,7 +33,7 @@ private val startPoint = Point(Field.EAST_WALL - 8.625, Field.SOUTH_WALL + 38.25
 abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(startPoint.x, startPoint.y, (-90.0).toRadians)) {
     companion object {
         @JvmField
-        var grabX_red = 33.5
+        var grabX_red = 33.2
         @JvmField
         var grabX_blue = 33.68
         @JvmField
@@ -45,12 +45,12 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
         var crossX_blue = 47.5
 
         @JvmField
-        var farY_red = 56.0
+        var farY_red = 56.8
         @JvmField
-        var farY_blue = 58.5
+        var farY_blue = 56.8
 
         @JvmField
-        var nearY_red = 46.0
+        var nearY_red = 48.0
         @JvmField
         var nearY_blue = 46.0
 
@@ -167,17 +167,17 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
                     stopDrive()
 
                 if (doneWithCurve) {
-                    autoClaw.state = if (cycle < 1) AutoClaw.State.EJECT else if (cycle < 2) AutoClaw.State.PRE_GRAB else AutoClaw.State.EJECT
+                    autoClaw.state = AutoClaw.State.EJECT
                     nextStage()
                 }
             }
 
             progStages.eject -> {
 
-                if (isTimedOut(if (cycle < 2) 0.07 else 0.2))
-                    autoClaw.state = AutoClaw.State.PRE_GRAB
+                /*if (isTimedOut(0.5))
+                    autoClaw.state = AutoClaw.State.PRE_GRAB*/
 
-                if (isTimedOut(0.3)) {
+                if (isTimedOut(0.25)) {
                     cycle++
                     autoClaw.state = AutoClaw.State.TELEOP
                     if (cycle >= stones.size) {
@@ -198,7 +198,7 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
             }
 
             progStages.backUp -> {
-                val error = goToPosition_mirror(23.0, 49.5, 90.0)
+                val error = goToPosition_mirror(if(ALLIANCE.isRed()) 23.0 else 25.0, 49.5, 90.0)
                 if (error.x.absoluteValue < 3.0)
                     nextStage()
             }

@@ -135,7 +135,7 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
                 if (towerHeight == 0 || !ScorerState.clearToLift)
                     Robot.lift.lower()
                 else
-                    Robot.lift.heightTarget = towerHeight.toDouble() * stoneH + liftBias + inputBias
+                    Robot.lift.heightTarget = towerHeight.toDouble() * stoneH + liftBias + inputBias + operator.rightStick.y * 4.0
             }
         }
 
