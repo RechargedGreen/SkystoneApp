@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.field
 
-import com.acmerobotics.roadrunner.geometry.Pose2d
-import com.acmerobotics.roadrunner.geometry.Vector2d
 import org.firstinspires.ftc.teamcode.field.Geometry.TAU
 import org.firstinspires.ftc.teamcode.opmodeLib.Globals
 import org.firstinspires.ftc.teamcode.opmodeLib.RunData.ALLIANCE
@@ -24,11 +22,7 @@ data class Pose(
     val deg = heading.deg
     val rad = heading.rad
     val distance = point.hypot
-
-    val toRoadRunner = Pose2d(y, -x, -rad)
 }
-
-val Pose2d.toNormal get() = Pose(-y, x, -heading)
 
 object Geometry {
     const val TAU = Math.PI * 2.0
@@ -119,11 +113,7 @@ data class Point(
     companion object {
         val ORIGIN = Point(0.0, 0.0)
     }
-
-    var toRoadRunner = Vector2d(y, -x)
 }
-
-val Vector2d.toNormal get() = Point(-y, x)
 
 data class Line(val p1: Point, val p2: Point) {
     val slope = (p1.y - p2.y) / (p1.x - p2.x)
