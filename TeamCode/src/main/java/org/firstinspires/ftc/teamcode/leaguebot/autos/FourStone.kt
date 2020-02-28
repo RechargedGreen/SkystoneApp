@@ -155,7 +155,7 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
             progStages.cross -> {
                 autoClaw.state = AutoClaw.State.STOW_STONE
 
-                if (world_y_mirror > 24.0) // commenting this will revert to early monday code
+                if (world_y_mirror > 24.0 && cycle >=2) // commenting this will revert to early monday code
                     autoClaw.state = AutoClaw.State.PART_EJECT
 
                 val curve = PurePursuitPath(followDistance)

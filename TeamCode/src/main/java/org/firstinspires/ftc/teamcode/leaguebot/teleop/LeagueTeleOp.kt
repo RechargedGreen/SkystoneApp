@@ -33,7 +33,7 @@ open class LeagueTeleOp : LeagueBotTeleOpBase() {
         var intakeHeight = 1.15
     }
 
-    val inputIncrement = 0.75
+    val inputIncrement = 0.25
 
     var inputBias = 0.0
 
