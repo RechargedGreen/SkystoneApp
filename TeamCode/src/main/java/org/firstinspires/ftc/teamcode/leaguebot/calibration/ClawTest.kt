@@ -16,6 +16,7 @@ abstract class ClawTest(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(0
             driver.rightTriggerB.currentState -> autoClaw.state = AutoClaw.State.PRE_GRAB
             driver.b.currentState -> autoClaw.state = AutoClaw.State.GRABBING
             driver.x.currentState -> autoClaw.state = AutoClaw.State.PART_EJECT
+            driver.y.currentState -> autoClaw.state = AutoClaw.State.PUSH
         }
     }
 }

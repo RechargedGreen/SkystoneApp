@@ -33,7 +33,7 @@ private val startPoint = Point(Field.EAST_WALL - 8.625, Field.SOUTH_WALL + 38.25
 abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(startPoint.x, startPoint.y, (-90.0).toRadians)) {
     companion object {
         @JvmField
-        var grabX_red = 33.2
+        var grabX_red = 32.7
         @JvmField
         var grabX_blue = 33.68
         @JvmField
@@ -45,22 +45,22 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
         var crossX_blue = 47.5
 
         @JvmField
-        var farY_red = 56.8
+        var farY_red = 58.8
         @JvmField
-        var farY_blue = 55.0
+        var farY_blue = 58.0
 
         @JvmField
-        var nearY_red = 48.0
+        var nearY_red = 51.0
         @JvmField
-        var nearY_blue = 46.0
+        var nearY_blue = 51.0
 
         @JvmField
         var placeX_red = 26.75
         @JvmField
-        var placeX_blue = 32.5
+        var placeX_blue = 34.5
 
         @JvmField
-        var toFoundationX_red = 44.0
+        var toFoundationX_red = 47.75
         @JvmField
         var toFoundationX_blue = 47.75
     }
@@ -72,7 +72,7 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
     private val nearY get() = if (ALLIANCE.isRed()) nearY_red else nearY_blue
     private val farY get() = if (ALLIANCE.isRed()) farY_red else farY_blue
 
-    private val stoneYs = arrayOf(-59.75, -51.75, -43.75, -35.75, -27.75, -19.75)
+    private val stoneYs = arrayOf(-59.25, -51.25, -43.25, -35.25, -27.25, -19.25)
     private val nearStones = arrayOf(2, 5, 4, 3/*, 1*/)
     private val midStones = arrayOf(1, 4, 5, 3/*, 2*/)
     private val farStones = arrayOf(0, 3, 5, 4/*, 2*/)
@@ -89,6 +89,8 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
     private var cycle = 0
 
     private val grabY get() = stoneYs[stone]
+
+    private val placeY get() = if (cycle % 2 == 0) farY else nearY
 
     enum class progStages {
 
@@ -155,13 +157,16 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
             progStages.cross -> {
                 autoClaw.state = AutoClaw.State.STOW_STONE
 
-                if (world_y_mirror > 24.0 && cycle >=2) // commenting this will revert to early monday code
-                    autoClaw.state = AutoClaw.State.PART_EJECT
+                if (world_y_mirror > 24.0 && cycle >= 2) // commenting this will revert to early monday code
+                    autoClaw.state = AutoClaw.State.PUSH //AutoClaw.State.PART_EJECT
 
                 val curve = PurePursuitPath(followDistance)
                 curve.add(Point(toFoundationX, grabY))
-                curve.toY(24.0)
-                curve.add(Point(placeX, if (cycle % 2 == 0) farY else nearY))
+                if (cycle < 2)
+                    curve.toY(24.0)
+                else
+                    curve.toY(placeY)
+                curve.add(Point(placeX, placeY))
 
                 val doneWithCurve = PurePursuit.followCurve(curve)
 
@@ -198,7 +203,7 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
             }
 
             progStages.backUp -> {
-                val error = goToPosition_mirror(if (ALLIANCE.isRed()) 23.0 else 25.0, 49.5, 90.0)
+                val error = goToPosition_mirror(if (ALLIANCE.isRed()) 23.5 else 25.0, if (ALLIANCE.isRed()) 49.5 else 49.5, 90.0)
                 if (error.x.absoluteValue < 3.0)
                     nextStage()
             }
@@ -211,12 +216,12 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
                 val maxSpeed = 1.0
                 movement_turn = Range.clip(movement_turn, -maxSpeed, maxSpeed)
 
-                movement_y = movement_turn * ALLIANCE.sign * if (ALLIANCE.isRed()) 1.6 else 2.0
+                movement_y = movement_turn * ALLIANCE.sign * if (ALLIANCE.isRed()) 2.0 else 2.0
 
-                if (!isTimedOut(0.25))
+                if (!isTimedOut(0.5))
                     stopDrive()
 
-                if (error.absoluteValue < 5.0)
+                if (error.absoluteValue < 5.0 || secondsTillEnd < 1.25)
                     nextStage()
             }
 

@@ -42,7 +42,8 @@ class AutoClaw {
         PRE_GRAB({ AutoClawSignal(red_FlipGrab, red_ClawRelease) }, { AutoClawSignal(blue_FlipGrab, blue_ClawRelease) }),
         VERTICAL({ AutoClawSignal(red_FlipVertical, red_ClawTeleop) }, { AutoClawSignal(blue_FlipVertical, blue_ClawTeleop) }),
         EJECT({ AutoClawSignal(red_FlipGrab, red_ClawTeleop) }, { AutoClawSignal(blue_FlipGrab, blue_ClawTeleop) }),
-        TELEOP({ AutoClawSignal(red_FlipTeleop, red_ClawTeleop) }, { AutoClawSignal(blue_FlipTeleop, blue_ClawTeleop) })
+        TELEOP({ AutoClawSignal(red_FlipTeleop, red_ClawTeleop) }, { AutoClawSignal(blue_FlipTeleop, blue_ClawTeleop) }),
+        PUSH({ AutoClawSignal(red_FlipPush, red_ClawGrab) }, { AutoClawSignal(blue_FlipPush, blue_ClawGrab) })
     }
 
     internal class Claw(flip: String, claw: String) {
@@ -62,6 +63,9 @@ class AutoClaw {
 
         @JvmField
         var red_FlipGrab = 0.927
+
+        @JvmField
+        var red_FlipPush = 0.73
 
         @JvmField
         var red_ClawGrab = 0.67
@@ -86,6 +90,8 @@ class AutoClaw {
 
         @JvmField
         var blue_FlipGrab = 0.26
+        @JvmField
+        var blue_FlipPush = 0.47
 
         @JvmField
         var blue_ClawGrab = 0.35

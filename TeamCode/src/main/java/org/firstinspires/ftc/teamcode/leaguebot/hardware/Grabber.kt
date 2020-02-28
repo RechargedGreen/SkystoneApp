@@ -33,10 +33,10 @@ class Grabber {
 
     enum class State(internal val frontPosition: () -> Double, internal val backPosition: () -> Double) {
         GRAB({ frontGrabPosition }, { backGrabPosition }),
-        RELEASE({ frontReleasePosition }, { if(grabber.doingCap) capPosition else backReleasePosition }),
-        LOAD({ frontLoadPosition}, { backGrabPosition}),
-        PRE_LOAD({ frontReleasePosition}, { backGrabPosition}),
-        FULL_RELEASE({frontFullReleasePosition}, { backReleasePosition})
+        RELEASE({ frontReleasePosition }, { if (grabber.doingCap) capPosition else backReleasePosition }),
+        LOAD({ frontLoadPosition }, { backGrabPosition }),
+        PRE_LOAD({ frontReleasePosition }, { backGrabPosition }),
+        FULL_RELEASE({ frontFullReleasePosition }, { backReleasePosition })
     }
 
     companion object {
@@ -45,16 +45,16 @@ class Grabber {
         @JvmField
         var frontReleasePosition = 0.45
         @JvmField
-        var frontFullReleasePosition = 1.0
+        var frontFullReleasePosition = 0.27
         @JvmField
         var backGrabPosition = 0.78
         @JvmField
-        var backReleasePosition = 0.43
+        var backReleasePosition = 0.38
 
         @JvmField
         var frontLoadPosition = 1.0
 
         @JvmField
-        var capPosition = 0.0
+        var capPosition = 0.26
     }
 }
