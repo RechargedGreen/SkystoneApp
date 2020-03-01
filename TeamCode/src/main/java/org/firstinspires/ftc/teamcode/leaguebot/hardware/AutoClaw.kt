@@ -100,7 +100,7 @@ class AutoClaw {
         var blue_ClawRelease = 0.92
 
         @JvmField
-        var blue_ClawTeleop = 0.8
+        var blue_ClawTeleop = 0.794
 
         @JvmField
         var blue_FlipVertical = 0.72
@@ -109,6 +109,6 @@ class AutoClaw {
         var blue_FlipPartial = 0.72
 
         @JvmField
-        var blue_FlipTeleop = 0.94
+        var blue_FlipTeleop = 0.933
     }
 }

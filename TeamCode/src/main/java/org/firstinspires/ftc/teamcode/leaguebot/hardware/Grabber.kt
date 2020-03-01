@@ -47,7 +47,7 @@ class Grabber {
         @JvmField
         var frontFullReleasePosition = 0.27
         @JvmField
-        var backGrabPosition = 0.78
+        var backGrabPosition = 0.72
         @JvmField
         var backReleasePosition = 0.38
 

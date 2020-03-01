@@ -60,7 +60,7 @@ abstract class FourStone(alliance: Alliance) : LeagueBotAutoBase(alliance, Pose(
         var placeX_blue = 34.5
 
         @JvmField
-        var toFoundationX_red = 47.75
+        var toFoundationX_red = 49.75
         @JvmField
         var toFoundationX_blue = 47.75
     }
